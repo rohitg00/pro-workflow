@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/server-filesystem"]
+    }
+  },
+  "projects": {
+    "disabledMcpServers": []
+  },
+  "_comment": [
+    "Pro Workflow MCP Config",
+    "",
+    "RULE: Keep <10 MCPs enabled, <80 tools total",
+    "",
+    "Essential MCPs:",
+    "- github: PR creation, issue tracking",
+    "- memory: Persist learnings across sessions",
+    "- filesystem: File operations",
+    "",
+    "Add as needed:",
+    "- supabase: Database operations",
+    "- vercel: Deployment",
+    "- context7: Live documentation",
+    "",
+    "Disable when not using:",
+    "- Add to projects.disabledMcpServers"
+  ]
+}

@@ -317,6 +317,56 @@ Based on Twitter thread insights:
 
 ---
 
+## Contexts
+
+Switch modes based on what you're doing.
+
+| Context | Trigger | Behavior |
+|---------|---------|----------|
+| **dev** | "Let's build" | Code first, iterate fast |
+| **review** | "Review this" | Read-only, security focus |
+| **research** | "Help me understand" | Explore, summarize, plan |
+
+Use: "Switch to dev mode" or load context file.
+
+---
+
+## Agents
+
+Specialized subagents for focused tasks.
+
+| Agent | Purpose | Tools |
+|-------|---------|-------|
+| **planner** | Break down complex tasks | Read-only |
+| **reviewer** | Code review, security audit | Read + test |
+
+### When to Delegate
+
+Use planner agent when:
+- Task touches >5 files
+- Architecture decision needed
+- Requirements unclear
+
+Use reviewer agent when:
+- Before committing
+- PR reviews
+- Security concerns
+
+---
+
+## MCP Config
+
+Keep <10 MCPs enabled, <80 tools total.
+
+Essential:
+- `github` - PRs, issues
+- `memory` - Persist learnings
+- `filesystem` - File ops
+
+See `mcp-config.example.json` for setup.
+
+---
+
 ## Commands
 
 | Command | Purpose |

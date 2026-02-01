@@ -82,31 +82,42 @@ cp -r /tmp/pw/scripts ~/.claude/scripts/pro-workflow/
 cp -r /tmp/pw/commands/* ~/.claude/commands/
 ```
 
+## Contexts & Agents
+
+| Context | When | Behavior |
+|---------|------|----------|
+| dev | Building | Code first, iterate |
+| review | PRs | Read-only, security focus |
+| research | Exploring | Summarize, plan |
+
+| Agent | Purpose |
+|-------|---------|
+| planner | Break down complex tasks |
+| reviewer | Code review, security audit |
+
 ## Structure
 
 ```
 pro-workflow/
-├── SKILL.md              # Main skill
-├── README.md             # This file
-├── config.json           # Options
+├── SKILL.md                  # Main skill
+├── README.md
+├── config.json
+├── mcp-config.example.json   # MCP setup
 ├── hooks/
-│   └── hooks.json        # Hook definitions
-├── scripts/
-│   ├── quality-gate.js   # Edit tracking
-│   ├── post-edit-check.js # Issue detection
-│   ├── session-check.js  # Wrap-up reminders
-│   ├── session-start.js  # Load LEARNED
-│   └── session-end.js    # Capture learnings
-├── commands/
-│   ├── wrap-up.md        # Session wrap-up
-│   ├── learn-rule.md     # Correction capture
-│   └── parallel.md       # Worktree guide
+│   └── hooks.json
+├── scripts/                  # Hook scripts
+├── commands/                 # Slash commands
+├── contexts/                 # Mode switching
+│   ├── dev.md
+│   ├── review.md
+│   └── research.md
+├── agents/                   # Subagents
+│   ├── planner.md
+│   └── reviewer.md
+├── rules/
+│   └── core-rules.md         # Universal rules
 └── templates/
     └── split-claude-md/
-        ├── CLAUDE.md     # Entry point
-        ├── AGENTS.md     # Workflow rules
-        ├── SOUL.md       # Style prefs
-        └── LEARNED.md    # Auto-populated
 ```
 
 ## Install via SkillKit
