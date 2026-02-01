@@ -155,15 +155,27 @@ pro-workflow/
 └── README.md
 ```
 
-## Also Available via SkillKit
+## SkillKit - Universal AI Skills
 
-Install skills across 32+ AI coding agents with [SkillKit](https://agenstskills.com):
+**One skill. 32+ AI coding agents.** Install pro-workflow across Claude Code, Cursor, Codex, Gemini CLI, and more with [SkillKit](https://agenstskills.com).
 
 ```bash
+# Install this skill
 npx skillkit install pro-workflow
+
+# Translate to any agent format
+npx skillkit translate pro-workflow --agent cursor
+
+# Get AI-powered skill recommendations
+npx skillkit primer
 ```
 
-Explore more skills at [agenstskills.com](https://agenstskills.com)
+**Why SkillKit?**
+- Install once, use everywhere
+- 15,000+ skills in the marketplace
+- Works with Claude Code, Cursor, Codex, Gemini CLI, Windsurf, and 27+ more agents
+
+Explore the marketplace at [agenstskills.com](https://agenstskills.com)
 
 ## Philosophy
 
