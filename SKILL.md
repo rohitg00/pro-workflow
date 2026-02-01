@@ -1,278 +1,294 @@
 ---
 name: pro-workflow
-description: Professional Claude Code workflow patterns from community best practices. Covers self-correcting CLAUDE.md, plan mode, parallel sessions with git worktrees, subagent strategies, DevOps wrap-up commands, context discipline, and model selection. Use when setting up optimal Claude Code workflows or seeking productivity improvements.
+description: Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Distilled from real production use.
 tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
-# Pro Workflow Skill
+# Pro Workflow
 
-Battle-tested Claude Code workflow patterns distilled from power users and the Claude Code creator's recommendations.
+Real-world Claude Code patterns from power users who ship production code daily. Not theory - workflows that compound over time.
 
-## Core Principles
+## The Core Insight
 
-### 1. Self-Correcting CLAUDE.md
+> "80% of my code is written by AI, 20% is spent reviewing and correcting it." — Karpathy
 
-The most powerful feedback loop: have Claude write its own rules after corrections.
+This skill optimizes for that ratio. Every pattern here reduces correction cycles.
 
-**How it works:**
-1. When you correct Claude, ask it to update CLAUDE.md with the lesson
-2. Over time, your CLAUDE.md "trains itself" based on real corrections
-3. Creates a compounding improvement loop
+---
 
-**Implementation:**
+## 1. The Self-Correction Loop
+
+**The single most powerful pattern.** Your CLAUDE.md trains itself through corrections.
+
+### How It Works
+
+When you correct Claude:
+1. Claude acknowledges the mistake
+2. Proposes a rule to prevent it
+3. You approve → rule goes into memory
+4. Future sessions avoid the same mistake
+
+### Add to CLAUDE.md
+
 ```markdown
-## CLAUDE.md Auto-Update Rule
+## Self-Correction Protocol
 
-When I make a mistake and the user corrects me, I should:
-1. Acknowledge the correction
-2. Propose an addition to CLAUDE.md that prevents the same mistake
-3. Ask for approval before updating
+When the user corrects me or I make a mistake:
+1. Acknowledge specifically what went wrong
+2. Propose a concise rule: `[LEARN] Category: One-line rule`
+3. Wait for approval before adding to LEARNED section
 
-Format for learned rules:
-## Learned: [Category]
-- [Specific rule from correction]
-- Context: [When this applies]
+### LEARNED
+<!-- Auto-populated through corrections -->
 ```
 
-**Trigger phrases:**
-- "Add that to CLAUDE.md"
-- "Remember this for next time"
-- "Update your rules with this"
+### Trigger Phrases
 
-### 2. Plan Mode First
+- "Add that to your rules"
+- "Remember this"
+- "Don't do that again"
 
-Quality difference between "just do it" and planning first is significant.
+### Example Flow
 
-**When to use plan mode:**
-- Multi-file changes
-- Architectural decisions
-- Features touching >3 files
-- Anything requiring >10 tool calls
+```
+User: You edited the wrong file
+Claude: I edited src/utils.ts when you meant src/lib/utils.ts.
 
-**Plan mode workflow:**
-1. Enter plan mode: `/plan` or ask Claude to plan first
-2. Claude explores codebase, identifies files
-3. Presents implementation plan
-4. Wait for explicit approval
-5. Execute plan step by step
+[LEARN] Navigation: Confirm full path before editing files with common names.
 
-**CLAUDE.md instruction:**
-```markdown
-## Planning Rule
-For any task that:
-- Touches more than 3 files
-- Involves architectural decisions
-- Has multiple valid approaches
-
-ALWAYS enter plan mode first. Present plan and wait for "proceed" before executing.
+Should I add this?
 ```
 
-### 3. Git Worktrees for Parallel Sessions
+---
 
-Zero dead time by running multiple Claude sessions in parallel.
+## 2. Parallel Sessions with Worktrees
 
-**Setup:**
+**Zero dead time.** While one Claude thinks, work on something else.
+
+### Setup
+
 ```bash
 # Create worktrees for parallel work
-git worktree add ../project-feature-a feature-a
-git worktree add ../project-feature-b feature-b
-git worktree add ../project-bugfix bugfix-branch
+git worktree add ../project-feat feature-branch
+git worktree add ../project-fix bugfix-branch
 
-# Each worktree gets its own Claude session
-cd ../project-feature-a && claude
-# In another terminal:
-cd ../project-feature-b && claude
+# Each gets its own Claude session
+# Terminal 1: cd ~/project && claude
+# Terminal 2: cd ~/project-feat && claude
 ```
 
-**Benefits:**
-- Work on feature while waiting for long operation
-- Parallel exploration of different approaches
-- Like having a small dev team you can clone
+### When to Parallelize
 
-**CLAUDE.md instruction:**
+| Scenario | Action |
+|----------|--------|
+| Waiting on tests | Start new feature in worktree |
+| Long build | Debug issue in parallel |
+| Exploring approaches | Try 2-3 simultaneously |
+
+### Add to CLAUDE.md
+
 ```markdown
-## Parallel Work Pattern
-This project uses git worktrees for parallel development.
-- Main codebase: ~/project
-- Feature work: ~/project-feature-*
-- Bugfixes: ~/project-bugfix
-
-When blocked on a long operation, suggest user can start a parallel session.
+## Parallel Work
+When blocked on long operations, suggest starting a parallel session in a worktree.
 ```
 
-### 4. Split CLAUDE.md Architecture
+---
 
-For complex projects, split configuration by concern.
+## 3. The Wrap-Up Ritual
 
-**File structure:**
+End sessions with intention. Capture learnings, verify state.
+
+### /wrap-up Checklist
+
+1. **Changes Audit** - List modified files, uncommitted changes
+2. **State Check** - Run `git status`, tests, lint
+3. **Learning Capture** - What mistakes? What worked?
+4. **Next Session** - What's next? Any blockers?
+5. **Summary** - One paragraph of what was accomplished
+
+### Create Command
+
+`~/.claude/commands/wrap-up.md`:
+
+```markdown
+Execute wrap-up checklist:
+1. `git status` - uncommitted changes?
+2. `npm test -- --changed` - tests passing?
+3. What was learned this session?
+4. Propose LEARNED additions
+5. One-paragraph summary
+```
+
+---
+
+## 4. Split Memory Architecture
+
+For complex projects, modularize Claude memory.
+
+### Structure
+
 ```
 .claude/
-├── CLAUDE.md          # Main entry, imports others
-├── AGENTS.md          # Workflow rules, subagent config
-├── SOUL.md            # Personality, style, tone
-├── COMMANDS.md        # Custom commands/skills
-└── LEARNED.md         # Auto-populated corrections
+├── CLAUDE.md        # Entry point
+├── AGENTS.md        # Workflow rules
+├── SOUL.md          # Style preferences
+└── LEARNED.md       # Auto-populated
 ```
 
-**CLAUDE.md (main entry):**
+### AGENTS.md
+
 ```markdown
-# Project Context
+# Workflow Rules
 
-## Quick Links
-- Workflow rules: see .claude/AGENTS.md
-- Style guide: see .claude/SOUL.md
-- Custom commands: see .claude/COMMANDS.md
-- Learned patterns: see .claude/LEARNED.md
+## Planning
+Plan mode when: >3 files, architecture decisions, multiple approaches.
 
-[Project-specific content here]
-```
-
-### 5. DevOps Agent & Wrap-Up Command
-
-End-of-session review ensures nothing is forgotten.
-
-**Setup /wrap-up command:**
-```markdown
-## /wrap-up Command
-
-At end of session, this command:
-1. Reviews all changes made
-2. Checks for uncommitted work
-3. Verifies tests still pass
-4. Updates CLAUDE.md with learnings
-5. Creates session summary
-
-Trigger: User says "wrap up" or "/wrap-up"
-```
-
-**Wrap-up checklist:**
-- [ ] All changes committed?
-- [ ] Tests passing?
-- [ ] Documentation updated?
-- [ ] TODOs addressed or noted?
-- [ ] CLAUDE.md updated with learnings?
-
-### 6. Subagent Strategy
-
-Use subagents strategically with clear instructions.
-
-**CLAUDE.md instruction:**
-```markdown
-## Subagent Rules
-
-Use subagents (Task tool) for:
-- Parallel exploration of multiple files
-- Long-running operations that can background
-- Independent research tasks
-
-Provide subagents with:
-1. Clear, specific objective
-2. Relevant file paths
-3. Success criteria
-4. What to return
-
-Avoid subagents for:
-- Simple single-file reads
-- Sequential dependent operations
-- Tasks requiring full conversation context
-```
-
-### 7. Context Window Discipline
-
-Verification-first workflows and planning before execution.
-
-**Principles:**
-1. Read before write - always understand existing code
-2. Verify before proceeding - run tests, check types
-3. Compact strategically - at task boundaries, not mid-work
-4. Summarize complex explorations
-
-**CLAUDE.md instruction:**
-```markdown
-## Context Discipline
-
-Before any edit:
-1. Read the file first (ALWAYS)
-2. Understand the surrounding context
-3. Verify approach with user if ambiguous
-
-After significant work:
-1. Run relevant tests
-2. Check for type errors
-3. Offer to compact at logical boundaries
-```
-
-### 8. Model Selection Strategy
-
-Choose the right model for the task.
-
-**Guidelines:**
-| Task Type | Recommended Model |
-|-----------|------------------|
-| Quick fixes, typos | Sonnet/Haiku |
-| Multi-file refactors | Opus |
-| Complex architecture | Opus 4.5 + Thinking |
-| Code generation | Sonnet |
-| Debugging complex issues | Opus 4.5 + Thinking |
-
-**Opus 4.5 with Thinking:**
-- Slower but often "one-shot" solution
-- Saves time by avoiding correction cycles
-- Best for non-trivial professional development
-
-### 9. Post-Hooks for Quality Gates
-
-Automatic linting and type checking after edits.
-
-**Note:** Hooks execute after response is complete.
-
-**Alternative - CLAUDE.md instruction:**
-```markdown
 ## Quality Gates
+Before complete: lint, typecheck, test --related.
 
-After ANY code edit, before marking task complete:
-1. Run: `npm run lint` (or equivalent)
-2. Run: `npm run typecheck` (or equivalent)
-3. Run: `npm test -- --related` (affected tests)
-
-Do NOT submit work until all gates pass.
+## Subagents
+Use for: parallel exploration, background tasks.
+Avoid for: tasks needing conversation context.
 ```
+
+### SOUL.md
+
+```markdown
+# Style
+
+- Concise over verbose
+- Action over explanation
+- Acknowledge mistakes directly
+- No features beyond scope
+```
+
+---
+
+## 5. The 80/20 Review Pattern
+
+Batch reviews at checkpoints, not every change.
+
+### Review Points
+
+1. After plan approval
+2. After each milestone
+3. Before destructive operations
+4. At /wrap-up
+
+### Add to CLAUDE.md
+
+```markdown
+## Review Checkpoints
+Pause for review at: plan completion, >5 file edits, git operations, auth/security code.
+Between: proceed with confidence.
+```
+
+---
+
+## 6. Model Selection
+
+**Opus 4.5 + Thinking is often one-shot** - saves correction cycles.
+
+| Task | Model |
+|------|-------|
+| Quick fixes | Haiku |
+| Features | Sonnet |
+| Refactors | Opus |
+| Architecture | Opus 4.5 + Thinking |
+| Hard bugs | Opus 4.5 + Thinking |
+
+### Add to CLAUDE.md
+
+```markdown
+## Model Hints
+Escalate to Opus+Thinking when: first attempt failed, multi-system coordination, non-obvious bugs.
+```
+
+---
+
+## 7. Context Discipline
+
+200k tokens is precious. Manage it.
+
+### Rules
+
+1. Read before edit
+2. Compact at task boundaries
+3. Disable unused MCPs (<10 enabled, <80 tools)
+4. Summarize explorations
+
+### Good Compact Points
+
+- After planning, before execution
+- After completing a feature
+- When context >70%
+
+---
+
+## 8. Learning Log
+
+Auto-document insights from sessions.
+
+### Add to CLAUDE.md
+
+```markdown
+## Learning Log
+After tasks, note learnings:
+`[DATE] [TOPIC]: Key insight`
+
+Append to .claude/learning-log.md
+```
+
+---
 
 ## Quick Setup
 
-Add to your root CLAUDE.md:
+### Minimal
+
+Add to your CLAUDE.md:
 
 ```markdown
-## Pro Workflow Settings
+## Pro Workflow
 
 ### Self-Correction
-When I correct you, update CLAUDE.md with the lesson learned.
+When corrected, propose rule → add to LEARNED after approval.
 
 ### Planning
-For multi-file changes: plan first, wait for approval, then execute.
+Multi-file: plan first, wait for "proceed".
 
-### Quality Gates
-After edits: lint, typecheck, test before considering done.
+### Quality
+After edits: lint, typecheck, test.
 
-### Context
-Read files before editing. Verify understanding before proceeding.
-
-### Wrap-Up
-On "/wrap-up": review changes, check for uncommitted work, update learnings.
+### LEARNED
 ```
 
-## Commands This Skill Provides
+### Full Setup
+
+```bash
+git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
+cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
+cp -r /tmp/pw/commands/* ~/.claude/commands/
+```
+
+---
+
+## Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/wrap-up` | End-of-session review |
-| `/learn` | Extract pattern to CLAUDE.md |
-| `/plan` | Enter planning mode |
-| `/parallel` | Suggest worktree setup |
+| `/wrap-up` | End-of-session ritual |
+| `/learn-rule` | Extract correction to memory |
+| `/parallel` | Worktree setup guide |
 
-## Related Resources
+---
 
-- [Boris Cherny's Claude Code Thread](https://x.com/bcherny) - Original insights
-- `strategic-compact` skill - Context compaction strategy
-- `continuous-learning` skill - Auto pattern extraction
-- `plan` skill - Detailed planning workflow
+## Philosophy
+
+1. **Compound improvements** - Small corrections → big gains
+2. **Trust but verify** - Let AI work, review at checkpoints
+3. **Zero dead time** - Parallel sessions
+4. **Memory is precious** - Yours and Claude's
+
+---
+
+*From Claude Code power users and real production use.*

@@ -1,78 +1,95 @@
-# Pro Workflow Skill
+# Pro Workflow
 
-Professional Claude Code workflow patterns from community best practices and the Claude Code creator's recommendations.
+Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
 
-## What's Included
+## The Core Idea
 
-### Core Patterns
+> "80% of my code is written by AI, 20% is spent reviewing and correcting it." — Karpathy
 
-| Pattern | Description |
-|---------|-------------|
-| **Self-Correcting CLAUDE.md** | Claude writes its own rules after corrections |
-| **Plan Mode First** | Always plan before executing multi-file changes |
-| **Git Worktrees** | Run parallel Claude sessions with zero dead time |
-| **Split Architecture** | Organize CLAUDE.md into focused files |
-| **DevOps Wrap-Up** | End-of-session review and learning capture |
-| **Subagent Strategy** | When and how to use subagents effectively |
-| **Context Discipline** | Verification-first workflows |
-| **Model Selection** | Choose the right model for the task |
+This skill optimizes for that ratio. Every pattern reduces correction cycles.
+
+## Patterns
+
+| Pattern | What It Does |
+|---------|--------------|
+| **Self-Correction Loop** | Claude learns from your corrections automatically |
+| **Parallel Worktrees** | Zero dead time - work while Claude thinks |
+| **Wrap-Up Ritual** | End sessions with intention, capture learnings |
+| **Split Memory** | Modular CLAUDE.md for complex projects |
+| **80/20 Review** | Batch reviews at checkpoints |
+| **Model Selection** | Opus+Thinking for one-shot accuracy |
+| **Context Discipline** | Manage your 200k token budget |
+| **Learning Log** | Auto-document insights |
 
 ## Quick Start
 
-Use the skill by invoking `/pro-workflow` or asking Claude about workflow optimization.
+### Minimal Setup
 
-### Add to Your Project
-
-Copy the essential rules to your project's CLAUDE.md:
+Add to your CLAUDE.md:
 
 ```markdown
-## Pro Workflow Settings
+## Pro Workflow
 
 ### Self-Correction
-When I correct you, update CLAUDE.md with the lesson learned.
+When corrected, propose rule → add to LEARNED after approval.
 
 ### Planning
-For multi-file changes: plan first, wait for approval, then execute.
+Multi-file: plan first, wait for "proceed".
 
-### Quality Gates
-After edits: lint, typecheck, test before considering done.
+### Quality
+After edits: lint, typecheck, test.
+
+### LEARNED
 ```
 
-### Use Split Architecture
-
-Copy templates from `templates/split-claude-md/` to your project:
+### Full Setup
 
 ```bash
-cp -r ~/.claude/skills/pro-workflow/templates/split-claude-md/* ./.claude/
+git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
+cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
+cp -r /tmp/pw/commands/* ~/.claude/commands/
 ```
 
-## Files
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/wrap-up` | End-of-session checklist |
+| `/learn-rule` | Extract correction to memory |
+| `/parallel` | Worktree setup guide |
+
+## Structure
 
 ```
 pro-workflow/
-├── SKILL.md           # Main skill definition
-├── README.md          # This file
-├── config.json        # Configuration options
+├── SKILL.md              # Main skill
+├── README.md             # This file
+├── config.json           # Options
+├── commands/
+│   ├── wrap-up.md        # Session wrap-up
+│   ├── learn-rule.md     # Correction capture
+│   └── parallel.md       # Worktree guide
 └── templates/
     └── split-claude-md/
-        ├── CLAUDE.md      # Main entry point
-        ├── AGENTS.md      # Workflow rules
-        ├── SOUL.md        # Style/personality
-        ├── COMMANDS.md    # Custom commands
-        └── LEARNED.md     # Auto-populated corrections
+        ├── CLAUDE.md     # Entry point
+        ├── AGENTS.md     # Workflow rules
+        ├── SOUL.md       # Style prefs
+        └── LEARNED.md    # Auto-populated
 ```
 
-## Configuration
+## Install via SkillKit
 
-Edit `config.json` to customize behavior:
+```bash
+skillkit install pro-workflow
+```
 
-- `self_correction.auto_update_claude_md` - Auto-update without approval
-- `plan_mode.threshold_files` - Files count that triggers plan mode
-- `quality_gates.*_command` - Customize lint/test commands
+## Philosophy
 
-## Credits
+1. **Compound improvements** - Small corrections → big gains over time
+2. **Trust but verify** - Let AI work, review at checkpoints
+3. **Zero dead time** - Parallel sessions keep momentum
+4. **Memory is precious** - Both yours and Claude's
 
-Patterns distilled from:
-- Boris Cherny (Claude Code creator) - X thread
-- Community best practices - Various contributors
-- everything-claude-code skill collection
+---
+
+*Distilled from Claude Code power users and real production use.*
