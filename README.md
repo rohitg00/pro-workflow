@@ -1,6 +1,10 @@
 # Pro Workflow
 
+[![GitHub stars](https://img.shields.io/github/stars/rohitg00/pro-workflow?style=social)](https://github.com/rohitg00/pro-workflow)
+
 Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
+
+**If this helps your workflow, please give it a star!**
 
 ## The Core Idea
 
@@ -153,9 +157,13 @@ pro-workflow/
 
 ## Also Available via SkillKit
 
+Install skills across 32+ AI coding agents with [SkillKit](https://agenstskills.com):
+
 ```bash
 npx skillkit install pro-workflow
 ```
+
+Explore more skills at [agenstskills.com](https://agenstskills.com)
 
 ## Philosophy
 
@@ -163,6 +171,15 @@ npx skillkit install pro-workflow
 2. **Trust but verify** - Let AI work, review at checkpoints
 3. **Zero dead time** - Parallel sessions keep momentum
 4. **Memory is precious** - Both yours and Claude's
+
+---
+
+## Support
+
+If you find this useful:
+- **Star this repo** to help others discover it
+- Check out [SkillKit](https://agenstskills.com) for more AI coding skills
+- [Report issues](https://github.com/rohitg00/pro-workflow/issues) or suggest improvements
 
 ---
 
