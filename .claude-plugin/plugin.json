@@ -1,7 +1,7 @@
 {
   "name": "pro-workflow",
-  "version": "1.0.0",
-  "description": "Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.",
+  "version": "1.1.0",
+  "description": "Battle-tested Claude Code workflows with persistent storage and searchable learnings. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.",
   "author": {
     "name": "Rohit Ghumare",
     "url": "https://github.com/rohitg00"
@@ -17,7 +17,10 @@
     "worktrees",
     "hooks",
     "agents",
-    "best-practices"
+    "best-practices",
+    "sqlite",
+    "fts5",
+    "searchable"
   ],
   "skills": ["./skills/"],
   "agents": [

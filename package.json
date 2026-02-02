@@ -1,0 +1,58 @@
+{
+  "name": "pro-workflow",
+  "version": "1.1.0",
+  "description": "Battle-tested Claude Code workflows with persistent storage and searchable learnings",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "db:init": "node dist/db/index.js"
+  },
+  "keywords": [
+    "claude-code",
+    "workflow",
+    "productivity",
+    "self-correction",
+    "worktrees",
+    "hooks",
+    "agents",
+    "best-practices",
+    "sqlite",
+    "fts5"
+  ],
+  "author": {
+    "name": "Rohit Ghumare",
+    "url": "https://github.com/rohitg00"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rohitg00/pro-workflow"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^20.17.14",
+    "typescript": "^5.7.3"
+  },
+  "files": [
+    "dist",
+    "scripts",
+    "hooks",
+    "commands",
+    "agents",
+    "contexts",
+    "templates",
+    "rules",
+    "skills",
+    "config.json",
+    "README.md"
+  ]
+}

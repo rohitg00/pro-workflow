@@ -1,16 +1,4 @@
 #!/usr/bin/env node
-/**
- * UserPromptSubmit Hook
- *
- * Runs before user prompt is sent to Claude.
- * Detects correction patterns to support self-correction loop.
- *
- * Input (stdin): { session_id, prompt }
- * Output (stdout): Same JSON, optionally modified
- * Exit 0: Continue
- * Exit 2: Block with message
- */
-
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -29,6 +17,15 @@ function log(msg) {
   console.error(msg);
 }
 
+function getStore() {
+  const distPath = path.join(__dirname, '..', 'dist', 'db', 'store.js');
+  if (fs.existsSync(distPath)) {
+    const { createStore } = require(distPath);
+    return createStore();
+  }
+  return null;
+}
+
 async function main() {
   let data = '';
 
@@ -40,8 +37,8 @@ async function main() {
     try {
       const input = JSON.parse(data);
       const prompt = input.prompt || '';
+      const sessionId = input.session_id || 'default';
 
-      // Detect correction patterns
       const correctionPatterns = [
         /no,?\s*(that's|thats)?\s*(wrong|incorrect|not right)/i,
         /you\s*(should|shouldn't|need to|forgot)/i,
@@ -57,10 +54,9 @@ async function main() {
       const isCorrection = correctionPatterns.some(p => p.test(prompt));
 
       if (isCorrection) {
-        log('[ProWorkflow] Correction detected - remember to capture with [LEARN]');
+        log('[ProWorkflow] Correction detected - use /learn to capture this pattern');
       }
 
-      // Detect learning triggers
       const learnPatterns = [
         /remember (this|that)/i,
         /add (this|that) to (your )?rules/i,
@@ -72,22 +68,40 @@ async function main() {
       const isLearnTrigger = learnPatterns.some(p => p.test(prompt));
 
       if (isLearnTrigger) {
-        log('[ProWorkflow] Learning trigger detected');
+        log('[ProWorkflow] Learning trigger detected - use /learn to save to database');
       }
 
-      // Track prompt count
-      const tempDir = getTempDir();
-      ensureDir(tempDir);
-      const sessionId = input.session_id || 'default';
-      const countFile = path.join(tempDir, `prompt-count-${sessionId}`);
-
-      let count = 1;
-      if (fs.existsSync(countFile)) {
-        count = parseInt(fs.readFileSync(countFile, 'utf8').trim(), 10) + 1;
+      let store = null;
+      try {
+        store = getStore();
+      } catch (e) {
+        // Store not available
       }
-      fs.writeFileSync(countFile, String(count));
 
-      // Output unchanged
+      if (store) {
+        try {
+          store.updateSessionCounts(sessionId, 0, isCorrection ? 1 : 0, 1);
+        } catch (e) {
+          store = null;
+        } finally {
+          if (store) {
+            try { store.close(); } catch (e) { /* ignore close errors */ }
+          }
+        }
+      }
+
+      if (!store) {
+        const tempDir = getTempDir();
+        ensureDir(tempDir);
+        const countFile = path.join(tempDir, `prompt-count-${sessionId}`);
+
+        let count = 1;
+        if (fs.existsSync(countFile)) {
+          count = parseInt(fs.readFileSync(countFile, 'utf8').trim(), 10) + 1;
+        }
+        fs.writeFileSync(countFile, String(count));
+      }
+
       console.log(data);
     } catch (err) {
       console.log(data);

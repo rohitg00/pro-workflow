@@ -1,4 +1,12 @@
 {
+  "database": {
+    "path": "~/.pro-workflow/data.db",
+    "auto_init": true
+  },
+  "search": {
+    "default_limit": 10,
+    "highlight_matches": true
+  },
   "self_correction": {
     "enabled": true,
     "auto_update_claude_md": false,

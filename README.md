@@ -1,10 +1,20 @@
 # Pro Workflow
 
 [![GitHub stars](https://img.shields.io/github/stars/rohitg00/pro-workflow?style=social)](https://github.com/rohitg00/pro-workflow)
+[![npm version](https://img.shields.io/npm/v/pro-workflow)](https://www.npmjs.com/package/pro-workflow)
 
 Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
 
+**v1.1.0: Now with persistent SQLite storage and searchable learnings!**
+
 **If this helps your workflow, please give it a star!**
+
+## What's New in v1.1.0
+
+- **Persistent Storage**: Learnings survive reboots in `~/.pro-workflow/data.db`
+- **Full-Text Search**: Find past learnings instantly with BM25-powered FTS5
+- **Session Analytics**: Track edits, corrections, and prompts per session
+- **New Commands**: `/learn`, `/search`, `/list` for database operations
 
 ## The Core Idea
 
@@ -43,6 +53,17 @@ Or via CLI:
 claude plugin marketplace add rohitg00/pro-workflow
 claude plugin install pro-workflow@pro-workflow
 ```
+
+### Build with SQLite Support
+
+After installation, build the TypeScript for persistent storage:
+
+```bash
+cd ~/.claude/plugins/*/pro-workflow  # Navigate to plugin directory
+npm install && npm run build
+```
+
+This creates the SQLite database at `~/.pro-workflow/data.db`.
 
 ### Or load directly
 
@@ -83,8 +104,41 @@ After plugin install, commands are namespaced:
 | Command | Purpose |
 |---------|---------|
 | `/pro-workflow:wrap-up` | End-of-session checklist |
-| `/pro-workflow:learn-rule` | Extract correction to memory |
+| `/pro-workflow:learn-rule` | Extract correction to memory (file-based) |
 | `/pro-workflow:parallel` | Worktree setup guide |
+| `/pro-workflow:learn` | **NEW** Save learning to SQLite database |
+| `/pro-workflow:search` | **NEW** Search learnings by keyword |
+| `/pro-workflow:list` | **NEW** List all stored learnings |
+
+## Database Features
+
+### Persistent Learnings
+
+Learnings are stored in SQLite with FTS5 full-text search:
+
+```
+~/.pro-workflow/
+└── data.db    # SQLite database with learnings and sessions
+```
+
+### Search Examples
+
+```
+/search testing           # Find all testing-related learnings
+/search "file paths"      # Exact phrase search
+/search git commit        # Multiple terms
+```
+
+### Learning Categories
+
+- Navigation (file paths, finding code)
+- Editing (code changes, patterns)
+- Testing (test approaches)
+- Git (commits, branches)
+- Quality (lint, types, style)
+- Context (when to clarify)
+- Architecture (design decisions)
+- Performance (optimization)
 
 ## Hooks
 
@@ -96,9 +150,9 @@ Automated enforcement of workflow patterns.
 | PreToolUse | Before git commit/push | Remind about quality gates, wrap-up |
 | PostToolUse | After code edits | Check for console.log, TODOs, secrets |
 | PostToolUse | After tests | Suggest [LEARN] from failures |
-| SessionStart | New session | Load LEARNED patterns |
+| SessionStart | New session | Load learnings from database |
 | Stop | Each response | Periodic wrap-up reminders |
-| SessionEnd | Session close | Check uncommitted changes |
+| SessionEnd | Session close | Save session stats to database |
 
 ### Install Hooks
 
@@ -131,6 +185,15 @@ pro-workflow/
 │   ├── plugin.json           # Plugin manifest
 │   ├── marketplace.json      # Marketplace config
 │   └── README.md
+├── src/                      # TypeScript source (NEW)
+│   ├── db/
+│   │   ├── index.ts          # Database initialization
+│   │   ├── store.ts          # Stateless store factory
+│   │   └── schema.sql        # SQLite schema with FTS5
+│   ├── search/
+│   │   └── fts.ts            # BM25 search helpers
+│   └── index.ts
+├── dist/                     # Compiled JavaScript
 ├── skills/
 │   └── pro-workflow/
 │       └── SKILL.md          # Main skill
@@ -140,7 +203,10 @@ pro-workflow/
 ├── commands/
 │   ├── wrap-up.md
 │   ├── learn-rule.md
-│   └── parallel.md
+│   ├── parallel.md
+│   ├── learn.md              # NEW
+│   ├── search.md             # NEW
+│   └── list.md               # NEW
 ├── hooks/
 │   └── hooks.json
 ├── scripts/                  # Hook scripts
@@ -152,6 +218,8 @@ pro-workflow/
 │   └── core-rules.md
 ├── templates/
 │   └── split-claude-md/
+├── package.json              # NEW
+├── tsconfig.json             # NEW
 └── README.md
 ```
 

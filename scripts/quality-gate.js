@@ -1,11 +1,4 @@
 #!/usr/bin/env node
-/**
- * Quality Gate Tracker
- *
- * Tracks file edits and reminds about quality gates.
- * Part of the 80/20 review pattern - batch reviews at checkpoints.
- */
-
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -24,34 +17,66 @@ function log(msg) {
   console.error(msg);
 }
 
-async function main() {
-  const tempDir = getTempDir();
-  ensureDir(tempDir);
+function getStore() {
+  const distPath = path.join(__dirname, '..', 'dist', 'db', 'store.js');
+  if (fs.existsSync(distPath)) {
+    const { createStore } = require(distPath);
+    return createStore();
+  }
+  return null;
+}
 
-  const sessionId = process.env.CLAUDE_SESSION_ID || process.ppid || 'default';
-  const editCountFile = path.join(tempDir, `edit-count-${sessionId}`);
+async function main() {
+  const sessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
 
   let count = 1;
+  let store = null;
 
-  if (fs.existsSync(editCountFile)) {
-    count = parseInt(fs.readFileSync(editCountFile, 'utf8').trim(), 10) + 1;
+  try {
+    store = getStore();
+  } catch (e) {
+    // Store not available
   }
 
-  fs.writeFileSync(editCountFile, String(count));
+  if (store) {
+    try {
+      const session = store.getSession(sessionId);
+      if (session) {
+        store.updateSessionCounts(sessionId, 1, 0, 0);
+        count = session.edit_count + 1;
+      }
+    } catch (e) {
+      store = null;
+    } finally {
+      if (store) {
+        try { store.close(); } catch (e) { /* ignore close errors */ }
+      }
+    }
+  }
 
-  // Review checkpoint at 5 edits (from Twitter thread: "after >5 file edits")
+  if (!store) {
+    const tempDir = getTempDir();
+    ensureDir(tempDir);
+
+    const editCountFile = path.join(tempDir, `edit-count-${sessionId}`);
+
+    if (fs.existsSync(editCountFile)) {
+      count = parseInt(fs.readFileSync(editCountFile, 'utf8').trim(), 10) + 1;
+    }
+
+    fs.writeFileSync(editCountFile, String(count));
+  }
+
   if (count === 5) {
     log('[ProWorkflow] 5 edits reached - good checkpoint for review');
     log('[ProWorkflow] Run: git diff --stat | to see changes');
   }
 
-  // Remind at 10 edits
   if (count === 10) {
     log('[ProWorkflow] 10 edits - strongly consider quality gates:');
     log('[ProWorkflow]   npm run lint && npm run typecheck && npm test --changed');
   }
 
-  // Every 10 edits after that
   if (count > 10 && count % 10 === 0) {
     log(`[ProWorkflow] ${count} edits - run quality gates before continuing`);
   }
