@@ -60,9 +60,11 @@ jobs:
       - name: Validate hooks.json
         run: |
           node -e "
-            const hooks = require('./hooks/hooks.json');
-            if (!hooks.hooks || !Array.isArray(hooks.hooks)) throw new Error('Invalid hooks.json');
-            console.log('Hooks validation passed:', hooks.hooks.length, 'hooks configured');
+            const config = require('./hooks/hooks.json');
+            if (!config.hooks || typeof config.hooks !== 'object') throw new Error('Invalid hooks.json');
+            const hookTypes = Object.keys(config.hooks);
+            if (hookTypes.length === 0) throw new Error('No hooks configured');
+            console.log('Hooks validation passed:', hookTypes.length, 'hook types configured:', hookTypes.join(', '));
           "
 
       - name: Check required files exist
