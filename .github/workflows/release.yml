@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Verify versions match
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          PLUGIN_VERSION=$(node -p "require('./.claude-plugin/plugin.json').version")
+          TAG_VERSION="${{ steps.version.outputs.VERSION }}"
+          
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "Error: package.json version ($PKG_VERSION) doesn't match tag ($TAG_VERSION)"
+            exit 1
+          fi
+          
+          if [ "$PLUGIN_VERSION" != "$TAG_VERSION" ]; then
+            echo "Error: plugin.json version ($PLUGIN_VERSION) doesn't match tag ($TAG_VERSION)"
+            exit 1
+          fi
+          
+          echo "Version check passed: $TAG_VERSION"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            CHANGES=$(git log --pretty=format:"- %s" HEAD)
+          else
+            CHANGES=$(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD)
+          fi
+          
+          # Write to file for multiline output
+          echo "$CHANGES" > /tmp/changelog.txt
+          echo "Generated changelog with $(echo "$CHANGES" | wc -l) commits"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: pro-workflow v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## What's Changed
+            
+            $(cat /tmp/changelog.txt)
+            
+            ## Installation
+            
+            ### Claude Plugin
+            ```bash
+            claude plugin marketplace add rohitg00/pro-workflow
+            claude plugin install pro-workflow@pro-workflow
+            ```
+            
+            ### npm Package
+            ```bash
+            npm install pro-workflow
+            ```
+            
+            ### Build SQLite Support
+            ```bash
+            cd ~/.claude/plugins/*/pro-workflow
+            npm install && npm run build
+            ```
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

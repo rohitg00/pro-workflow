@@ -72,6 +72,7 @@ async function main() {
       }
 
       let store = null;
+      let sessionUpdated = false;
       try {
         store = getStore();
       } catch (e) {
@@ -80,9 +81,13 @@ async function main() {
 
       if (store) {
         try {
-          store.updateSessionCounts(sessionId, 0, isCorrection ? 1 : 0, 1);
+          const session = store.getSession(sessionId);
+          if (session) {
+            store.updateSessionCounts(sessionId, 0, isCorrection ? 1 : 0, 1);
+            sessionUpdated = true;
+          }
         } catch (e) {
-          store = null;
+          // DB error, fall back to file-based
         } finally {
           if (store) {
             try { store.close(); } catch (e) { /* ignore close errors */ }
@@ -90,7 +95,7 @@ async function main() {
         }
       }
 
-      if (!store) {
+      if (!sessionUpdated) {
         const tempDir = getTempDir();
         ensureDir(tempDir);
         const countFile = path.join(tempDir, `prompt-count-${sessionId}`);

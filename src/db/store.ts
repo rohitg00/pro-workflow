@@ -78,7 +78,7 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
   `);
 
   const startSessionStmt = db.prepare(`
-    INSERT OR REPLACE INTO sessions (id, project, started_at)
+    INSERT OR IGNORE INTO sessions (id, project, started_at)
     VALUES (@id, @project, datetime('now'))
   `);
 
