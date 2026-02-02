@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "1.1.0",
+  "version": "0.1.0",
   "description": "Battle-tested Claude Code workflows with persistent storage and searchable learnings",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
