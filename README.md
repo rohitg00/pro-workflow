@@ -5,11 +5,11 @@
 
 Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
 
-**v0.1.0: Now with persistent SQLite storage and searchable learnings!**
+**v1.0.0: Now with persistent SQLite storage and searchable learnings!**
 
 **If this helps your workflow, please give it a star!**
 
-## What's New in v0.1.0
+## What's New in v1.0.0
 
 - **Persistent Storage**: Learnings survive reboots in `~/.pro-workflow/data.db`
 - **Full-Text Search**: Find past learnings instantly with BM25-powered FTS5
