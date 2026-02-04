@@ -47,6 +47,8 @@ Available categories:
 - Context
 - Architecture
 - Performance
+- Claude-Code
+- Prompting
 
 ## Related Commands
 

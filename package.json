@@ -51,6 +51,7 @@
     "contexts",
     "templates",
     "rules",
+    "references",
     "skills",
     "config.json",
     "README.md"

@@ -20,6 +20,10 @@ Capture a lesson from this session into permanent memory.
    - Git (commits, branches)
    - Quality (lint, types, style)
    - Context (when to clarify)
+   - Architecture (design decisions)
+   - Performance (optimization)
+   - Claude-Code (sessions, modes, CLAUDE.md, skills, subagents, hooks, MCP)
+   - Prompting (scope, constraints, acceptance criteria)
 
 3. **Propose addition**
    Show what will be added to LEARNED section.
@@ -35,6 +39,20 @@ Recent mistake: Edited wrong utils.ts file
 [LEARN] Navigation: Confirm full path when multiple files share a name.
 
 Add to LEARNED section? (y/n)
+```
+
+---
+
+## Claude Code Examples
+
+```
+[LEARN] Claude-Code: Use plan mode before multi-file changes.
+Docs: https://code.claude.com/docs/common-workflows
+
+[LEARN] Claude-Code: Compact context at task boundaries, not mid-work.
+Docs: https://code.claude.com/docs/common-workflows
+
+[LEARN] Prompting: Always include acceptance criteria in prompts.
 ```
 
 ---

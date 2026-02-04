@@ -241,6 +241,41 @@ Append to .claude/learning-log.md
 
 ---
 
+## Learn Claude Code
+
+**Master Claude Code through built-in best practices and official documentation.**
+
+Pro-workflow teaches Claude Code concepts directly and links to official docs at **https://code.claude.com/docs/** for deep dives.
+
+### What You'll Learn
+
+| Topic | Pro-Workflow Pattern | Official Docs |
+|-------|---------------------|---------------|
+| Sessions & context management | Pattern 7: Context Discipline | Common Workflows |
+| Modes (Plan/Normal/Auto) | Pattern 5: 80/20 Review | Common Workflows |
+| CLAUDE.md & project memory | Pattern 4: Split Memory | Settings |
+| Writing rules & constraints | Pattern 1: Self-Correction Loop | Settings |
+| Effective prompting | Pattern 5: 80/20 Review | — |
+| Skills & automation | Pattern 8: Learning Log | Settings |
+| Subagents & parallelism | Pattern 2: Parallel Worktrees | Sub-agents |
+| Hooks & quality gates | All hooks in hooks.json | Hooks |
+| Security & permissions | — | Security |
+| MCP configuration | Pattern 7: Context Discipline | MCP |
+
+### Learning Path
+
+1. **Start** — CLI shortcuts, context management, modes
+2. **Build** — CLAUDE.md, writing rules, prompting, skills
+3. **Scale** — Subagents, hooks, MCP, GitHub Actions
+4. **Optimize** — Pro-Workflow patterns 1-8 for production use
+5. **Reference** — Official docs for deep dives on any topic
+
+### Use /learn
+
+Run `/learn` for a topic-by-topic guide with practices and official doc links.
+
+---
+
 ## Quick Setup
 
 ### Minimal
@@ -374,6 +409,9 @@ See `mcp-config.example.json` for setup.
 | `/wrap-up` | End-of-session ritual |
 | `/learn-rule` | Extract correction to memory |
 | `/parallel` | Worktree setup guide |
+| `/learn` | Claude Code best practices & save learnings |
+| `/search` | Search learnings by keyword |
+| `/list` | List all stored learnings |
 
 ---
 

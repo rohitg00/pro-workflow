@@ -36,3 +36,16 @@ Universal rules for any project. Add to CLAUDE.md or use as reference.
 - Sonnet for features
 - Opus for architecture
 - Opus+Thinking for hard bugs
+
+## Claude Code Mastery
+Docs: https://code.claude.com/docs/
+- Use plan mode for multi-file changes
+- Write CLAUDE.md with structure, conventions, rules
+- Manage context: /compact at task boundaries, /context to check usage
+- Prompts need scope + context + constraints + acceptance criteria
+- Build skills for repeated workflows (>3 repetitions)
+- Delegate to subagents for parallel exploration
+- Keep <10 MCPs, <80 tools
+- Use hooks for automated quality gates
+- Review security model before handling sensitive data
+- See references/claude-code-resources.md for full guide

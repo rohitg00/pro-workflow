@@ -106,7 +106,7 @@ After plugin install, commands are namespaced:
 | `/pro-workflow:wrap-up` | End-of-session checklist |
 | `/pro-workflow:learn-rule` | Extract correction to memory (file-based) |
 | `/pro-workflow:parallel` | Worktree setup guide |
-| `/pro-workflow:learn` | **NEW** Save learning to SQLite database |
+| `/pro-workflow:learn` | **NEW** Claude Code best practices & save learnings |
 | `/pro-workflow:search` | **NEW** Search learnings by keyword |
 | `/pro-workflow:list` | **NEW** List all stored learnings |
 
@@ -139,6 +139,8 @@ Learnings are stored in SQLite with FTS5 full-text search:
 - Context (when to clarify)
 - Architecture (design decisions)
 - Performance (optimization)
+- Claude-Code (sessions, modes, CLAUDE.md, skills, subagents, hooks, MCP)
+- Prompting (scope, constraints, acceptance criteria)
 
 ## Hooks
 
@@ -185,7 +187,7 @@ pro-workflow/
 │   ├── plugin.json           # Plugin manifest
 │   ├── marketplace.json      # Marketplace config
 │   └── README.md
-├── src/                      # TypeScript source (NEW)
+├── src/                      # TypeScript source
 │   ├── db/
 │   │   ├── index.ts          # Database initialization
 │   │   ├── store.ts          # Stateless store factory
@@ -198,29 +200,45 @@ pro-workflow/
 │   └── pro-workflow/
 │       └── SKILL.md          # Main skill
 ├── agents/
-│   ├── planner.md
-│   └── reviewer.md
+│   ├── planner.md            # Planner agent
+│   └── reviewer.md           # Reviewer agent
 ├── commands/
-│   ├── wrap-up.md
-│   ├── learn-rule.md
-│   ├── parallel.md
-│   ├── learn.md              # NEW
-│   ├── search.md             # NEW
-│   └── list.md               # NEW
+│   ├── wrap-up.md # Wrap-up command
+│   ├── learn-rule.md # Learn rule command
+│   ├── parallel.md # Parallel command
+│   ├── learn.md
+│   ├── search.md # Search command
+│   └── list.md # List command
 ├── hooks/
-│   └── hooks.json
+│   └── hooks.json # Hooks file
 ├── scripts/                  # Hook scripts
 ├── contexts/
-│   ├── dev.md
-│   ├── review.md
-│   └── research.md
+│   ├── dev.md # Dev context
+│   ├── review.md # Review context
+│   └── research.md # Research context
+├── references/
+│   └── claude-code-resources.md # Claude code resources reference file
 ├── rules/
-│   └── core-rules.md
+│   └── core-rules.md # Core rules file
 ├── templates/
-│   └── split-claude-md/
-├── package.json              # NEW
-├── tsconfig.json             # NEW
-└── README.md
+│   └── split-claude-md/ # Split claude md template
+├── package.json
+├── tsconfig.json # TypeScript configuration file
+└── README.md # README file
+```
+
+## Learn Claude Code
+
+Pro-workflow teaches Claude Code best practices directly, with links to official documentation for deep dives.
+
+**Official Docs:** https://code.claude.com/docs/
+
+Topics covered: sessions, context management, modes, CLAUDE.md, prompting, writing rules, skills, subagents, hooks, MCP, security, and IDE integration.
+
+```
+/pro-workflow:learn                 # Best practices guide & save learnings
+/pro-workflow:learn-rule            # Capture corrections to memory
+/pro-workflow:search claude-code    # Find past Claude Code learnings
 ```
 
 ## SkillKit - Universal AI Skills
