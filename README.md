@@ -5,16 +5,21 @@
 
 Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
 
-**v1.0.0: Now with persistent SQLite storage and searchable learnings!**
+**v1.1.0: Agent teams, custom subagents, adaptive thinking, smart commit, and session insights!**
 
 **If this helps your workflow, please give it a star!**
 
-## What's New in v1.0.0
+## What's New in v1.1.0
 
+- **`/commit`**: Smart commit with quality gates, code review, and learning capture
+- **`/insights`**: Session analytics, learning patterns, correction trends, and productivity metrics
+- **Agent Teams**: Coordinate multiple Claude Code sessions with shared task lists and inter-agent messaging
+- **Custom Subagents**: Create project or user-level subagents with custom tools, memory, and hooks
+- **Adaptive Thinking**: Opus 4.6 calibrates reasoning depth per task automatically
+- **Context Compaction**: Keep long-running agents alive with auto-compaction and PreCompact hooks
+- **Updated Model Selection**: Haiku 4.5, Sonnet 4.5, Opus 4.6 model recommendations
 - **Persistent Storage**: Learnings survive reboots in `~/.pro-workflow/data.db`
 - **Full-Text Search**: Find past learnings instantly with BM25-powered FTS5
-- **Session Analytics**: Track edits, corrections, and prompts per session
-- **New Commands**: `/learn`, `/search`, `/list` for database operations
 
 ## The Core Idea
 
@@ -109,6 +114,8 @@ After plugin install, commands are namespaced:
 | `/pro-workflow:learn` | **NEW** Claude Code best practices & save learnings |
 | `/pro-workflow:search` | **NEW** Search learnings by keyword |
 | `/pro-workflow:list` | **NEW** List all stored learnings |
+| `/pro-workflow:commit` | **NEW** Smart commit with quality gates and code review |
+| `/pro-workflow:insights` | **NEW** Session analytics and learning patterns |
 
 ## Database Features
 
@@ -179,6 +186,22 @@ cp -r /tmp/pw/commands/* ~/.claude/commands/
 | planner | Break down complex tasks |
 | reviewer | Code review, security audit |
 
+### Agent Teams (Experimental)
+
+Coordinate multiple Claude Code sessions working together:
+
+```bash
+# Enable in settings.json
+{ "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }
+```
+
+- Lead session coordinates, teammates work independently
+- Teammates message each other directly
+- Shared task list with dependency management
+- Display modes: in-process (`Shift+Up/Down`) or split panes (tmux/iTerm2)
+- Delegate mode (`Shift+Tab`): lead orchestrates only
+- Docs: https://code.claude.com/docs/agent-teams
+
 ## Structure
 
 ```
@@ -203,12 +226,14 @@ pro-workflow/
 │   ├── planner.md            # Planner agent
 │   └── reviewer.md           # Reviewer agent
 ├── commands/
-│   ├── wrap-up.md # Wrap-up command
-│   ├── learn-rule.md # Learn rule command
-│   ├── parallel.md # Parallel command
+│   ├── wrap-up.md
+│   ├── learn-rule.md
+│   ├── parallel.md
 │   ├── learn.md
-│   ├── search.md # Search command
-│   └── list.md # List command
+│   ├── search.md
+│   ├── list.md
+│   ├── commit.md
+│   └── insights.md
 ├── hooks/
 │   └── hooks.json # Hooks file
 ├── scripts/                  # Hook scripts

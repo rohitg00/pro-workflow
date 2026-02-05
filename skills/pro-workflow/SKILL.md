@@ -187,21 +187,26 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.5 + Thinking is often one-shot** - saves correction cycles.
+**Opus 4.6 with adaptive thinking** calibrates reasoning depth automatically.
 
 | Task | Model |
 |------|-------|
-| Quick fixes | Haiku |
-| Features | Sonnet |
-| Refactors | Opus |
-| Architecture | Opus 4.5 + Thinking |
-| Hard bugs | Opus 4.5 + Thinking |
+| Quick fixes | Haiku 4.5 |
+| Features | Sonnet 4.5 |
+| Refactors | Opus 4.6 |
+| Architecture | Opus 4.6 + Extended Thinking |
+| Hard bugs | Opus 4.6 + Extended Thinking |
+
+### Adaptive Thinking
+
+Opus 4.6 automatically calibrates reasoning depth per task - lightweight for simple operations, deep analysis for complex problems. No configuration needed.
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Model Hints
 Escalate to Opus+Thinking when: first attempt failed, multi-system coordination, non-obvious bugs.
+Use subagents with Haiku for fast read-only exploration, Sonnet for balanced work.
 ```
 
 ---
@@ -216,12 +221,21 @@ Escalate to Opus+Thinking when: first attempt failed, multi-system coordination,
 2. Compact at task boundaries
 3. Disable unused MCPs (<10 enabled, <80 tools)
 4. Summarize explorations
+5. Use subagents to isolate high-volume output (tests, logs, docs)
+
+### Context Compaction
+
+- Auto-compacts at ~95% capacity (keeps long-running agents alive)
+- Configure earlier compaction: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50`
+- Use PreCompact hooks to save state before compaction
+- Subagents auto-compact independently from the main session
 
 ### Good Compact Points
 
 - After planning, before execution
 - After completing a feature
 - When context >70%
+- Before switching task domains
 
 ---
 
@@ -252,13 +266,16 @@ Pro-workflow teaches Claude Code concepts directly and links to official docs at
 | Topic | Pro-Workflow Pattern | Official Docs |
 |-------|---------------------|---------------|
 | Sessions & context management | Pattern 7: Context Discipline | Common Workflows |
-| Modes (Plan/Normal/Auto) | Pattern 5: 80/20 Review | Common Workflows |
+| Modes (Plan/Normal/Auto/Delegate) | Pattern 5: 80/20 Review | Common Workflows |
 | CLAUDE.md & project memory | Pattern 4: Split Memory | Settings |
 | Writing rules & constraints | Pattern 1: Self-Correction Loop | Settings |
 | Effective prompting | Pattern 5: 80/20 Review | — |
 | Skills & automation | Pattern 8: Learning Log | Settings |
-| Subagents & parallelism | Pattern 2: Parallel Worktrees | Sub-agents |
+| Custom subagents | Pattern 2: Parallel Worktrees | Sub-agents |
+| Agent teams | Pattern 2: Parallel Worktrees | Agent Teams |
 | Hooks & quality gates | All hooks in hooks.json | Hooks |
+| Context compaction | Pattern 7: Context Discipline | Common Workflows |
+| Adaptive thinking | Pattern 6: Model Selection | — |
 | Security & permissions | — | Security |
 | MCP configuration | Pattern 7: Context Discipline | MCP |
 
@@ -266,8 +283,8 @@ Pro-workflow teaches Claude Code concepts directly and links to official docs at
 
 1. **Start** — CLI shortcuts, context management, modes
 2. **Build** — CLAUDE.md, writing rules, prompting, skills
-3. **Scale** — Subagents, hooks, MCP, GitHub Actions
-4. **Optimize** — Pro-Workflow patterns 1-8 for production use
+3. **Scale** — Custom subagents, agent teams, hooks, MCP, GitHub Actions
+4. **Optimize** — Pro-Workflow patterns 1-8, adaptive thinking, context compaction
 5. **Reference** — Official docs for deep dives on any topic
 
 ### Use /learn
@@ -387,6 +404,26 @@ Use reviewer agent when:
 - PR reviews
 - Security concerns
 
+### Custom Subagents
+
+Create project-specific subagents in `.claude/agents/` or user-wide in `~/.claude/agents/`:
+- Define with YAML frontmatter + markdown system prompt
+- Control tools, model, permission mode, hooks, and persistent memory
+- Use `/agents` to create, edit, and manage interactively
+- Preload skills into subagents for domain knowledge
+
+### Agent Teams (Experimental)
+
+Coordinate multiple Claude Code sessions as a team:
+- Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Lead session coordinates, teammates work independently
+- Teammates message each other directly (not just report back)
+- Shared task list with dependency management
+- Display: in-process (Shift+Up/Down) or split panes (tmux/iTerm2)
+- Delegate mode (Shift+Tab): lead coordinates only, no code edits
+- Best for: parallel reviews, competing hypotheses, cross-layer changes
+- **Docs:** https://code.claude.com/docs/agent-teams
+
 ---
 
 ## MCP Config
@@ -412,6 +449,8 @@ See `mcp-config.example.json` for setup.
 | `/learn` | Claude Code best practices & save learnings |
 | `/search` | Search learnings by keyword |
 | `/list` | List all stored learnings |
+| `/commit` | Smart commit with quality gates and code review |
+| `/insights` | Session analytics, learning patterns, correction trends |
 
 ---
 

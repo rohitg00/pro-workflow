@@ -38,14 +38,19 @@ Learn Claude Code best practices and capture lessons into persistent memory.
 ### CLI Shortcuts
 | Shortcut | Action |
 |----------|--------|
-| `Shift+Tab` | Cycle modes |
+| `Shift+Tab` | Cycle modes (Normal/Auto-Accept/Plan/Delegate) |
 | `Ctrl+L` | Clear screen |
 | `Ctrl+C` | Cancel generation |
 | `Ctrl+B` | Run task in background |
+| `Ctrl+T` | Toggle task list (agent teams) |
+| `Shift+Up/Down` | Navigate teammates (agent teams) |
 | `Up/Down` | Prompt history |
 | `/compact` | Compact context |
 | `/context` | Check context usage |
 | `/clear` | Clear conversation |
+| `/agents` | Manage subagents |
+| `/commit` | Smart commit with quality gates |
+| `/insights` | Session analytics and patterns |
 - **Docs:** https://code.claude.com/docs/cli-reference
 
 ### Prompting
@@ -76,13 +81,42 @@ Subagents run in separate context windows for parallel work.
 - Use for: parallel exploration, background tasks, independent research.
 - Avoid for: single-file reads, tasks needing conversation context.
 - Press `Ctrl+B` to send tasks to background.
+- Create custom subagents in `.claude/agents/` (project) or `~/.claude/agents/` (user).
+- Subagents support: custom tools, permission modes, persistent memory, hooks, and skill preloading.
+- Built-in subagents: Explore (fast read-only), Plan (research), general-purpose (multi-step).
+- Use `/agents` to manage subagents interactively.
 - **Docs:** https://code.claude.com/docs/sub-agents
 - **Pattern:** Parallel Worktrees (Pattern 2)
 
+### Agent Teams (Experimental)
+Coordinate multiple Claude Code instances working together as a team.
+- Enable: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json or environment.
+- One lead session coordinates, teammates work independently with their own context windows.
+- Teammates can message each other directly (unlike subagents which only report back).
+- Shared task list with self-coordination and dependency management.
+- Display modes: in-process (Shift+Up/Down to navigate) or split panes (tmux/iTerm2).
+- Delegate mode (Shift+Tab): restricts lead to coordination only.
+- Best for: parallel code review, competing hypotheses debugging, cross-layer changes, research.
+- Avoid for: sequential tasks, same-file edits, simple operations.
+- **Docs:** https://code.claude.com/docs/agent-teams
+
+### Adaptive Thinking
+Claude calibrates reasoning depth to each task automatically.
+- Lightweight tasks get quick responses, complex tasks get deep analysis.
+- No configuration needed - works out of the box with Opus 4.6.
+
+### Context Compaction
+Keeps long-running agents from hitting context limits.
+- Auto-compacts at ~95% capacity (configurable via `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`).
+- Compact manually at task boundaries with `/compact`.
+- Custom subagents support auto-compaction independently.
+- Use PreCompact hooks to save state before compaction.
+
 ### Hooks
 Hooks run scripts on events to automate quality enforcement.
-- Types: PreToolUse, PostToolUse, SessionStart, SessionEnd, Stop, UserPromptSubmit
+- Types: PreToolUse, PostToolUse, SessionStart, SessionEnd, Stop, UserPromptSubmit, PreCompact, SubagentStart, SubagentStop
 - Pro-Workflow ships hooks for edit tracking, quality gates, and learning capture.
+- Subagent hooks: define in frontmatter or settings.json for lifecycle events.
 - **Docs:** https://code.claude.com/docs/hooks
 
 ### Security
