@@ -17,14 +17,26 @@ Read-only analysis. Find every AI pattern. Miss nothing.
    - `skills/ai-pattern-killer/patterns/banned_structures.json`
    - `skills/ai-pattern-killer/patterns/exceptions.json`
 
+   **Error handling for pattern loading:**
+   - Missing file: treat as empty array `[]`, log warning `"[WARN] {filename} not found, using empty pattern set"`
+   - Malformed JSON: fatal error, stop with `"[FATAL] {filename} is not valid JSON: {error}"`
+   - Empty array `[]`: allowed, proceed normally
+   - All files empty: emit `"[NOTICE] No patterns loaded — detection will be minimal"`
+   - Missing exceptions.json specifically: treat as no exceptions, proceed
+   - After loading, validate each file contains expected fields and log: `"Loaded {N} words, {M} phrases, {K} structures, {J} exceptions"`
+
 2. Load sensitivity from `skills/ai-pattern-killer/config.yaml`:
    - strict: flag low + medium + high
    - balanced: flag medium + high
    - relaxed: flag high only
 
 3. Scan the draft line by line:
-   - Check each word against banned_words
-   - Check each sentence against banned_phrases (regex-aware)
+   - Check each word against banned_words (case-insensitive literal match)
+   - Check each sentence against banned_phrases:
+     - Entries with `"type": "literal"` (default): exact substring match, case-insensitive
+     - Entries with `"type": "regex"`: ECMAScript/JavaScript regex, case-insensitive flag set
+     - Regex safety: reject patterns with known catastrophic backtracking (nested quantifiers like `(a+)+`)
+     - Escaping: literal entries need no escaping. Regex entries use standard JS regex syntax.
    - Check paragraph patterns against banned_structures
    - Skip anything in exceptions.json
 

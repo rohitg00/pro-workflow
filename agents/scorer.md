@@ -28,12 +28,23 @@ Score the rewritten draft sentence by sentence. Flag anything below threshold fo
    | 3-4 | Multiple tells. Reads like AI wrote it. |
    | 1-2 | Pure AI slop. Every red flag firing. |
 
-3. Scoring dimensions (equal weight):
-   - **Vocabulary**: Any banned words present? (check banned_words.json)
-   - **Phrasing**: Any banned phrases? (check banned_phrases.json)
-   - **Structure**: Natural paragraph/sentence variation?
-   - **Voice match**: Does it sound like user's writing samples?
-   - **Rhythm**: Sentence length varies? Not monotonous?
+3. Scoring dimensions (weighted, normalized to 10-point scale):
+
+   **Binary checks (20% total):**
+   - **Vocabulary** (10%): Any banned words present? 10 if none found, 0 if any found. (check banned_words.json)
+   - **Phrasing** (10%): Any banned phrases present? 10 if none found, 0 if any found. (check banned_phrases.json)
+
+   **Subjective assessments (80% total):**
+   - **Structure** (30%): Natural paragraph/sentence variation? Score 1-10 based on variety.
+   - **Voice match** (30%): Does it sound like user's writing samples? Score 1-10 based on vocabulary, sentence length, and tone alignment.
+   - **Rhythm** (20%): Sentence length varies? Not monotonous? Score 1-10 based on cadence.
+
+   **Aggregation formula:**
+   `final = (vocabulary * 0.10) + (phrasing * 0.10) + (structure * 0.30) + (voice_match * 0.30) + (rhythm * 0.20)`
+
+   **Example calculation:**
+   Vocabulary=10 (no banned words), Phrasing=0 (one banned phrase found), Structure=8, Voice=7, Rhythm=9
+   `final = (10*0.10) + (0*0.10) + (8*0.30) + (7*0.30) + (9*0.20) = 1.0 + 0 + 2.4 + 2.1 + 1.8 = 7.3`
 
 4. Any sentence scoring below min_pass_score (default 7):
    - Flag for Agent 2 re-pass

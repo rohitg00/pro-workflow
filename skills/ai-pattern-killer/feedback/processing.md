@@ -37,3 +37,19 @@ Users can seed patterns from external sources:
 /flag import path/to/patterns.json
 ```
 Format: array of `{"pattern": "...", "alternative": "...", "type": "word|phrase|structure"}`
+
+### Bulk Import Security Spec
+
+The `handle_flag_import(path)` handler must enforce these checks in order:
+
+1. **Path validation**: resolve with `path.resolve()` and verify the resolved path starts with the project root or `~/.claude/`. Reject paths outside these directories.
+2. **File size limit**: check file size before reading. Reject files > 1MB with `"Import file exceeds 1MB limit"`.
+3. **JSON parsing**: parse as JSON. On failure, reject with `"Invalid JSON: {parse_error}"`.
+4. **Schema validation**: the file must be a JSON array. Each element must have:
+   - `"pattern"` (string, required): max 200 characters, no shell metacharacters (`;`, `|`, `$`, `` ` ``)
+   - `"alternative"` (string, optional): max 200 characters
+   - `"type"` (string, required): must be one of `"word"`, `"phrase"`, `"structure"`
+   - No additional properties allowed
+5. **Regex safety**: if any pattern contains regex syntax (for phrase type), validate it compiles without catastrophic backtracking. Use a safe-regex check or compile with a timeout.
+6. **On any check failure**: reject the entire import with a clear error. Do not partially import.
+7. **On success**: add each entry to the appropriate banned_*.json file, set `flagged_count: 1` and `severity: "low"`, log to feedback_log.json, and report `"Imported {N} patterns ({W} words, {P} phrases, {S} structures)"`.

@@ -83,27 +83,19 @@ Words that scream AI. Updated every time you `/flag` a word.
 ### banned_phrases.json
 Dead giveaway phrases. Full phrases that no human writes.
 
+Phrases use a `type` field to distinguish literal matches from regex patterns:
+- `"type": "literal"` (default): exact case-insensitive substring match
+- `"type": "regex"`: ECMAScript/JavaScript regex, case-insensitive
+
 ```json
 {
   "phrases": [
-    {"phrase": "It's worth noting that", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
-    {"phrase": "In today's rapidly evolving", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
-    {"phrase": "Let's dive in", "alternative": "[cut or be specific]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "At the end of the day", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
-    {"phrase": "In conclusion", "alternative": "[just conclude]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "It goes without saying", "alternative": "[then don't say it]", "severity": "high", "flagged_count": 0},
-    {"phrase": "Here's the thing", "alternative": "[cut, state the thing]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "game-changer", "alternative": "[be specific about what changed]", "severity": "high", "flagged_count": 0},
-    {"phrase": "a]testament to", "alternative": "shows", "severity": "high", "flagged_count": 0},
-    {"phrase": "the power of", "alternative": "[be specific]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "This is where .* comes in", "alternative": "[name the thing directly]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "Whether you're a .* or a", "alternative": "[cut, be direct]", "severity": "high", "flagged_count": 0},
-    {"phrase": "But here's the kicker", "alternative": "[just say it]", "severity": "high", "flagged_count": 0},
-    {"phrase": "In the realm of", "alternative": "in", "severity": "high", "flagged_count": 0},
-    {"phrase": "Not just .* but", "alternative": "[restructure]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "Think of it as", "alternative": "[just explain it]", "severity": "medium", "flagged_count": 0},
-    {"phrase": "takes it to the next level", "alternative": "[be specific]", "severity": "high", "flagged_count": 0},
-    {"phrase": "isn't just .* it's", "alternative": "[restructure]", "severity": "medium", "flagged_count": 0}
+    {"phrase": "It's worth noting that", "type": "literal", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
+    {"phrase": "In today's rapidly evolving", "type": "literal", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
+    {"phrase": "a testament to", "type": "literal", "alternative": "shows", "severity": "high", "flagged_count": 0},
+    {"phrase": "This is where .* comes in", "type": "regex", "alternative": "[name the thing directly]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "Whether you're a .* or a", "type": "regex", "alternative": "[cut, be direct]", "severity": "high", "flagged_count": 0},
+    {"phrase": "isn't just .* it's", "type": "regex", "alternative": "[restructure]", "severity": "medium", "flagged_count": 0}
   ]
 }
 ```
