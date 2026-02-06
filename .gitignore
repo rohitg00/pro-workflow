@@ -5,3 +5,6 @@ dist/
 *.db
 *.db-wal
 *.db-shm
+
+# Voice samples (personal writing data)
+skills/ai-pattern-killer/rewriting/examples.json

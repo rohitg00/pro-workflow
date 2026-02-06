@@ -1,0 +1,29 @@
+{
+  "phrases": [
+    {"phrase": "It's worth noting that", "type": "literal", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
+    {"phrase": "In today's rapidly evolving", "type": "literal", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
+    {"phrase": "Let's dive in", "type": "literal", "alternative": "[cut or be specific]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "At the end of the day", "type": "literal", "alternative": "[cut entirely]", "severity": "high", "flagged_count": 0},
+    {"phrase": "In conclusion", "type": "literal", "alternative": "[just conclude]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "It goes without saying", "type": "literal", "alternative": "[then don't say it]", "severity": "high", "flagged_count": 0},
+    {"phrase": "Here's the thing", "type": "literal", "alternative": "[cut, state the thing]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "game-changer", "type": "literal", "alternative": "[be specific about what changed]", "severity": "high", "flagged_count": 0},
+    {"phrase": "a testament to", "type": "literal", "alternative": "shows", "severity": "high", "flagged_count": 0},
+    {"phrase": "the power of", "type": "literal", "alternative": "[be specific]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "This is where .* comes in", "type": "regex", "alternative": "[name the thing directly]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "Whether you're a .* or a", "type": "regex", "alternative": "[cut, be direct]", "severity": "high", "flagged_count": 0},
+    {"phrase": "But here's the kicker", "type": "literal", "alternative": "[just say it]", "severity": "high", "flagged_count": 0},
+    {"phrase": "In the realm of", "type": "literal", "alternative": "in", "severity": "high", "flagged_count": 0},
+    {"phrase": "Not just .* but", "type": "regex", "alternative": "[restructure]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "Think of it as", "type": "literal", "alternative": "[just explain it]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "takes it to the next level", "type": "literal", "alternative": "[be specific]", "severity": "high", "flagged_count": 0},
+    {"phrase": "isn't just .* it's", "type": "regex", "alternative": "[restructure]", "severity": "medium", "flagged_count": 0},
+    {"phrase": "Let that sink in", "type": "literal", "alternative": "[cut]", "severity": "high", "flagged_count": 0},
+    {"phrase": "The bottom line is", "type": "literal", "alternative": "[just state it]", "severity": "high", "flagged_count": 0},
+    {"phrase": "buckle up", "type": "literal", "alternative": "[cut]", "severity": "high", "flagged_count": 0},
+    {"phrase": "without further ado", "type": "literal", "alternative": "[cut]", "severity": "high", "flagged_count": 0},
+    {"phrase": "In an era where", "type": "literal", "alternative": "[cut, start with the point]", "severity": "high", "flagged_count": 0},
+    {"phrase": "as we stand on the cusp of", "type": "literal", "alternative": "[cut]", "severity": "high", "flagged_count": 0},
+    {"phrase": "So, what does this mean", "type": "literal", "alternative": "[just say what it means]", "severity": "medium", "flagged_count": 0}
+  ]
+}
