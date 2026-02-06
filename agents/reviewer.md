@@ -1,3 +1,10 @@
+---
+name: reviewer
+description: Specialized agent for code review and quality checks
+tools: ["Read", "Glob", "Grep", "Bash"]
+model: opus
+---
+
 # Reviewer Agent
 
 Specialized agent for code review and quality checks.

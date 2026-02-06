@@ -1,3 +1,10 @@
+---
+name: planner
+description: Specialized agent for breaking down complex tasks
+tools: ["Read", "Glob", "Grep"]
+model: opus
+---
+
 # Planner Agent
 
 Specialized agent for breaking down complex tasks.
