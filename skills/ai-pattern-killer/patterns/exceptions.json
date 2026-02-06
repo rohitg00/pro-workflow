@@ -1,0 +1,4 @@
+{
+  "exceptions": [],
+  "_note": "Add words/phrases here that the detector flags but YOU want to keep. Format: {\"pattern\": \"word or phrase\", \"reason\": \"why you keep it\", \"added\": \"date\"}"
+}
