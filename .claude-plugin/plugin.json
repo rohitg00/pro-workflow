@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "0.2.0",
+  "version": "1.2.0",
   "description": "Battle-tested Claude Code workflows with persistent storage and searchable learnings. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.",
   "author": {
     "name": "Rohit Ghumare",
