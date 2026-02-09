@@ -65,6 +65,16 @@
           }
         ],
         "description": "Periodic wrap-up reminder and learning prompt"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/learn-capture.js\""
+          }
+        ],
+        "description": "Auto-capture [LEARN] blocks from responses into database"
       }
     ],
     "SessionStart": [
