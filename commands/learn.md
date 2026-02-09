@@ -145,7 +145,11 @@ Hooks run scripts on events to automate quality enforcement.
 
 ## Saving Learnings
 
-Capture a lesson from this session:
+When the user runs `/learn save`, capture a lesson from this session.
+
+### Step 1: Identify the learning
+
+Ask the user what they learned, or extract it from the conversation. Format it as:
 
 ```
 Category: <category>
@@ -166,6 +170,40 @@ Correction: <how it was fixed>
 - Claude-Code (sessions, modes, CLAUDE.md, skills, subagents, hooks, MCP)
 - Prompting (scope, constraints, acceptance criteria)
 
+### Step 2: Save to database
+
+After the user confirms the learning, write it to the database:
+
+```bash
+sqlite3 ~/.pro-workflow/data.db "INSERT INTO learnings (project, category, rule, mistake, correction) VALUES ('<project>', '<category>', '<rule>', '<mistake>', '<correction>');"
+```
+
+Replace `<project>` with the current project name (from `basename $PWD`), or `NULL` if unknown. Escape single quotes in values by doubling them (`''`).
+
+Alternatively, use the store API:
+
+```bash
+node -e "const p = require('path'); const {createStore} = require(p.join(process.env.HOME, '.claude/plugins/marketplaces/pro-workflow/dist/db/store.js')); const s = createStore(); const l = s.addLearning({project: '<project>', category: '<category>', rule: '<rule>', mistake: '<mistake>', correction: '<correction>'}); console.log('Saved as learning #' + l.id); s.close();"
+```
+
+### Step 3: Confirm to user
+
+After saving, output a confirmation with the learning ID:
+
+```
+Saved as learning #<id>. Use /search <keyword> to find this later.
+```
+
+### Auto-capture via [LEARN] tags
+
+You can also emit `[LEARN]` blocks in your response, which the Stop hook will auto-capture:
+
+```
+[LEARN] Category: Rule text here
+Mistake: What went wrong
+Correction: How it was fixed
+```
+
 ### Example
 
 ```
@@ -173,7 +211,11 @@ Category: Claude-Code
 Rule: Use plan mode before multi-file changes
 Mistake: Started editing 5 files without a plan, had to redo
 Correction: Enter plan mode first, get approval, then execute
+```
 
+After user confirms → run the sqlite3 INSERT → output:
+
+```
 Saved as learning #42. Use /search plan to find this later.
 ```
 
