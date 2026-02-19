@@ -1,0 +1,13 @@
+---
+description: Remove debug statements before committing - console.log, print, debugger
+globs: "**/*.{ts,tsx,js,jsx,py,go,rs}"
+alwaysApply: false
+---
+
+Remove all debug statements before committing:
+- JavaScript/TypeScript: `console.log()`, `console.debug()`, `console.info()`, `debugger`
+- Python: `print()`, `breakpoint()`, `pdb.set_trace()`
+- Go: `fmt.Println()` used for debugging
+- Rust: `dbg!()`, `println!()` used for debugging
+
+Exceptions: Legitimate logging using a logging framework (winston, pino, logging module) is fine.
