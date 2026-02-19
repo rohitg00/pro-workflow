@@ -5,23 +5,6 @@
 
 Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with **Claude Code** and **Cursor**.
 
-**v1.2.0: Scout agent, /replay, /handoff, drift detection, adaptive quality gates, and correction heatmap!**
-
-**If this helps your workflow, please give it a star!**
-
-## What's New in v1.2.0
-
-- **Scout Agent**: Confidence-gated exploration — scores readiness (0-100) before implementation, auto-gathers missing context
-- **`/replay`**: Surface relevant past learnings before starting a task — your SQLite-powered coding muscle memory
-- **`/handoff`**: Generate structured session handoff documents for seamless continuation in the next session
-- **Drift Detection**: Hook that tracks your original intent and warns when you've strayed from the goal
-- **Adaptive Quality Gates**: Gates adjust based on your correction history — high correction rate = tighter gates, low rate = relaxed gates
-- **Correction Heatmap**: `/insights heatmap` shows which categories and projects get corrected most, with hot/cold learning analysis
-
-### Previous: v1.1.0
-
-- Smart `/commit` with quality gates, `/insights` analytics, agent teams, persistent SQLite storage with FTS5
-
 ## The Core Idea
 
 > "80% of my code is written by AI, 20% is spent reviewing and correcting it." — Karpathy
