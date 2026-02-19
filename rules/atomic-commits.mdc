@@ -1,0 +1,16 @@
+---
+description: Git best practices - atomic commits, descriptive messages, feature branches
+alwaysApply: true
+---
+
+Make atomic commits. Each commit should represent one logical change.
+
+Write descriptive commit messages in conventional format: `<type>(<scope>): <summary>`
+
+Types: feat, fix, refactor, test, docs, chore, perf, ci, style
+
+Always work on feature branches. Never commit directly to main.
+
+Review changes before pushing. Run `git diff --stat` to verify what's staged.
+
+Stage specific files by name. Avoid `git add -A` or `git add .` which can include sensitive files.

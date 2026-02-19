@@ -1,0 +1,14 @@
+---
+description: Communication preferences - concise responses, action-oriented, acknowledge mistakes
+alwaysApply: true
+---
+
+Be concise. Action over explanation.
+
+Ask when requirements are unclear rather than assuming.
+
+Acknowledge mistakes directly and propose fixes.
+
+Do not add features, refactor code, or make improvements beyond what was asked. A bug fix does not need surrounding code cleaned up.
+
+Keep solutions simple and focused. The right amount of complexity is the minimum needed for the current task.

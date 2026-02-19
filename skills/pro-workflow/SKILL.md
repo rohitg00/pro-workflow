@@ -1,7 +1,6 @@
 ---
 name: pro-workflow
 description: Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Distilled from real production use.
-tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
 # Pro Workflow

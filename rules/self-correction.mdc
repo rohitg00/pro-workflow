@@ -1,0 +1,15 @@
+---
+description: Self-correction protocol - capture mistakes as learnings, compound improvements over time
+alwaysApply: true
+---
+
+When corrected or when a mistake is identified:
+1. Acknowledge specifically what went wrong
+2. Propose a concise rule: `[LEARN] Category: One-line rule`
+3. Wait for approval before persisting the learning
+
+Categories: Navigation, Editing, Testing, Git, Quality, Context, Architecture, Performance
+
+Learnings compound over time. A correction today prevents the same mistake tomorrow.
+
+Trigger phrases that indicate a correction: "remember this", "add to rules", "don't do that again"

@@ -1,0 +1,16 @@
+---
+description: Manage AI context window efficiently - read before edit, plan before multi-file changes
+alwaysApply: true
+---
+
+Always read a file before editing it. Understand existing code before suggesting modifications.
+
+Use plan mode for changes touching more than 3 files, architecture decisions, or unclear requirements.
+
+Compact context at task boundaries: after planning, after completing a feature, when switching domains.
+
+Keep MCP servers under 10 enabled and total tools under 80.
+
+Use subagents to isolate high-volume output (test runs, log analysis, documentation searches).
+
+Summarize exploration findings before acting on them.
