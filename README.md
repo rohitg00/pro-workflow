@@ -3,7 +3,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/rohitg00/pro-workflow?style=social)](https://github.com/rohitg00/pro-workflow)
 [![npm version](https://img.shields.io/npm/v/pro-workflow)](https://www.npmjs.com/package/pro-workflow)
 
-Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
+Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with **Claude Code** and **Cursor**.
 
 **v1.2.0: Scout agent, /replay, /handoff, drift detection, adaptive quality gates, and correction heatmap!**
 
@@ -43,7 +43,15 @@ This skill optimizes for that ratio. Every pattern reduces correction cycles.
 
 ## Installation
 
-### One-Click Plugin Install (Recommended)
+### Cursor (Recommended)
+
+```bash
+/add-plugin pro-workflow
+```
+
+The plugin includes 9 skills, 3 agents, and 6 rules that load automatically.
+
+### Claude Code — One-Click Plugin Install
 
 ```bash
 # Add marketplace
@@ -60,7 +68,7 @@ claude plugin marketplace add rohitg00/pro-workflow
 claude plugin install pro-workflow@pro-workflow
 ```
 
-### Build with SQLite Support
+### Claude Code — Build with SQLite Support
 
 After installation, build the TypeScript for persistent storage:
 
@@ -103,7 +111,32 @@ After edits: lint, typecheck, test.
 ### LEARNED
 ```
 
-## Commands
+## Skills (Cursor)
+
+| Skill | Description |
+|:------|:------------|
+| `pro-workflow` | Core 8 workflow patterns for AI-assisted coding |
+| `smart-commit` | Quality gates, staged review, and conventional commits |
+| `wrap-up` | End-of-session ritual with change audit and learning capture |
+| `learn-rule` | Capture corrections as persistent learning rules |
+| `parallel-worktrees` | Set up git worktrees for zero dead time |
+| `replay-learnings` | Surface past learnings relevant to the current task |
+| `session-handoff` | Generate handoff documents for session continuity |
+| `insights` | Session analytics, correction trends, and productivity metrics |
+| `deslop` | Remove AI-generated code slop and clean up style |
+
+## Rules (Cursor)
+
+| Rule | Applies To | Description |
+|:-----|:-----------|:------------|
+| `quality-gates` | Always | Lint, typecheck, and test before commits |
+| `atomic-commits` | Always | Conventional format, feature branches, specific staging |
+| `context-discipline` | Always | Read before edit, plan before multi-file changes |
+| `self-correction` | Always | Capture mistakes as compounding learnings |
+| `no-debug-statements` | `*.{ts,tsx,js,jsx,py,go,rs}` | Remove console.log, debugger, print before committing |
+| `communication-style` | Always | Concise, action-oriented, no over-engineering |
+
+## Commands (Claude Code)
 
 After plugin install, commands are namespaced:
 
@@ -211,53 +244,57 @@ Coordinate multiple Claude Code sessions working together:
 
 ```
 pro-workflow/
-├── .claude-plugin/
-│   ├── plugin.json           # Plugin manifest
-│   ├── marketplace.json      # Marketplace config
+├── .claude-plugin/              # Claude Code plugin
+│   ├── plugin.json
+│   ├── marketplace.json
 │   └── README.md
-├── src/                      # TypeScript source
-│   ├── db/
-│   │   ├── index.ts          # Database initialization
-│   │   ├── store.ts          # Stateless store factory
-│   │   └── schema.sql        # SQLite schema with FTS5
-│   ├── search/
-│   │   └── fts.ts            # BM25 search helpers
-│   └── index.ts
-├── dist/                     # Compiled JavaScript
-├── skills/
-│   └── pro-workflow/
-│       └── SKILL.md          # Main skill
-├── agents/
-│   ├── planner.md            # Planner agent
-│   ├── reviewer.md           # Reviewer agent
-│   └── scout.md              # Confidence-gated scout agent
-├── commands/
+├── .cursor-plugin/              # Cursor plugin
+│   └── plugin.json
+├── skills/                      # Shared skills (Cursor + Claude Code)
+│   ├── pro-workflow/SKILL.md
+│   ├── smart-commit/SKILL.md
+│   ├── wrap-up/SKILL.md
+│   ├── learn-rule/SKILL.md
+│   ├── parallel-worktrees/SKILL.md
+│   ├── replay-learnings/SKILL.md
+│   ├── session-handoff/SKILL.md
+│   ├── insights/SKILL.md
+│   └── deslop/SKILL.md
+├── agents/                      # Shared agents (Cursor + Claude Code)
+│   ├── planner.md
+│   ├── reviewer.md
+│   └── scout.md
+├── rules/                       # Rules
+│   ├── core-rules.md            # Claude Code rules
+│   ├── quality-gates.mdc        # Cursor rules
+│   ├── atomic-commits.mdc
+│   ├── context-discipline.mdc
+│   ├── self-correction.mdc
+│   ├── no-debug-statements.mdc
+│   └── communication-style.mdc
+├── commands/                    # Claude Code commands
 │   ├── wrap-up.md
 │   ├── learn-rule.md
-│   ├── parallel.md
-│   ├── learn.md
-│   ├── search.md
-│   ├── list.md
 │   ├── commit.md
 │   ├── insights.md
-│   ├── replay.md             # Surface past learnings
-│   └── handoff.md            # Session handoff document
-├── hooks/
-│   └── hooks.json # Hooks file
-├── scripts/                  # Hook scripts
-├── contexts/
-│   ├── dev.md # Dev context
-│   ├── review.md # Review context
-│   └── research.md # Research context
-├── references/
-│   └── claude-code-resources.md # Claude code resources reference file
-├── rules/
-│   └── core-rules.md # Core rules file
-├── templates/
-│   └── split-claude-md/ # Split claude md template
+│   ├── replay.md
+│   ├── handoff.md
+│   └── ...
+├── hooks/                       # Claude Code hooks
+│   └── hooks.json
+├── scripts/                     # Hook scripts
+├── contexts/                    # Context modes
+│   ├── dev.md
+│   ├── review.md
+│   └── research.md
+├── src/                         # TypeScript source (SQLite)
+│   ├── db/
+│   └── search/
+├── assets/
+│   └── logo.svg                 # Plugin logo
 ├── package.json
-├── tsconfig.json # TypeScript configuration file
-└── README.md # README file
+├── tsconfig.json
+└── README.md
 ```
 
 ## Learn Claude Code
