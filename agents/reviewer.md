@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Code review specialist that checks for logic errors, security issues, and quality problems. Use before committing, for PR reviews, or after major changes.
-model: default
+tools: ["Read", "Glob", "Grep", "Bash"]
 ---
 
 # Reviewer
