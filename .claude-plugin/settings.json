@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm test)",
+      "Bash(npm test -- *)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run typecheck)",
+      "Bash(pnpm test)",
+      "Bash(pnpm test -- *)",
+      "Bash(yarn lint)",
+      "Bash(yarn typecheck)",
+      "Bash(yarn test)",
+      "Bash(yarn test -- *)",
+      "Bash(pytest)",
+      "Bash(pytest *)",
+      "Bash(go test ./...)",
+      "Bash(go test *)",
+      "Bash(git worktree *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)"
+    ]
+  }
+}

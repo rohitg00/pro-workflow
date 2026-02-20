@@ -2,11 +2,15 @@
 name: scout
 description: Confidence-gated exploration that assesses readiness before implementation. Scores 0-100 across five dimensions and gives GO/HOLD verdict.
 tools: ["Read", "Glob", "Grep", "Bash"]
+background: true
+isolation: worktree
 ---
 
 # Scout - Confidence-Gated Exploration
 
 Assess whether there's enough context to implement a task confidently.
+
+Runs in the background so you can continue working while it explores.
 
 ## Trigger
 
@@ -52,3 +56,4 @@ VERDICT: GO / HOLD
 - Never edit files. Read-only exploration.
 - Be honest about gaps. A false GO wastes more time than a HOLD.
 - Re-score after gathering context. If still < 70 after 2 rounds, escalate to user.
+- Runs in isolated worktree to avoid interfering with main session.

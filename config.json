@@ -34,12 +34,14 @@
   },
   "parallel_sessions": {
     "suggest_worktrees": true,
-    "worktree_prefix": "../"
+    "worktree_prefix": "../",
+    "native_worktree": true
   },
   "model_preferences": {
-    "quick_fixes": "sonnet",
+    "quick_fixes": "haiku",
+    "features": "sonnet",
     "refactors": "opus",
-    "architecture": "opus-thinking",
-    "debugging": "opus-thinking"
+    "architecture": "opus",
+    "debugging": "opus"
   }
 }

@@ -1,11 +1,13 @@
 ---
 name: pro-workflow
-description: Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Distilled from real production use.
+description: Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with Claude Code, Cursor, and other agents.
 ---
 
 # Pro Workflow
 
-Real-world Claude Code patterns from power users who ship production code daily. Not theory - workflows that compound over time.
+Real-world AI coding patterns from power users who ship production code daily. Not theory - workflows that compound over time.
+
+**Works with:** Claude Code, Cursor, and other AI coding agents. Sections marked *(Claude Code)* use features specific to Claude Code — Cursor users can skip those or use the noted alternatives.
 
 ## The Core Insight
 
@@ -66,15 +68,23 @@ Should I add this?
 
 ### Setup
 
+**Claude Code:**
 ```bash
-# Create worktrees for parallel work
+claude --worktree    # or claude -w (auto-creates isolated worktree)
+```
+
+**Cursor / Any editor:**
+
+```bash
 git worktree add ../project-feat feature-branch
 git worktree add ../project-fix bugfix-branch
-
-# Each gets its own Claude session
-# Terminal 1: cd ~/project && claude
-# Terminal 2: cd ~/project-feat && claude
 ```
+
+### Background Agent Management *(Claude Code)*
+
+- `Ctrl+F` — Kill all background agents (two-press confirmation)
+- `Ctrl+B` — Send task to background
+- Subagents support `isolation: worktree` in agent frontmatter
 
 ### When to Parallelize
 
@@ -88,7 +98,8 @@ git worktree add ../project-fix bugfix-branch
 
 ```markdown
 ## Parallel Work
-When blocked on long operations, suggest starting a parallel session in a worktree.
+When blocked on long operations, use `claude -w` for instant parallel sessions.
+Subagents with `isolation: worktree` get their own safe working copy.
 ```
 
 ---
@@ -186,26 +197,25 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.6 with adaptive thinking** calibrates reasoning depth automatically.
+**Opus 4.6 and Sonnet 4.6** both support adaptive thinking and 1M-token context. The 1M context is available as a beta option (via the `context-1m-2025-08-07` beta header); the default context window remains 200K. Sonnet 4.5 (200K context) has been retired from the Max plan in favor of Sonnet 4.6.
 
 | Task | Model |
 |------|-------|
-| Quick fixes | Haiku 4.5 |
-| Features | Sonnet 4.5 |
-| Refactors | Opus 4.6 |
-| Architecture | Opus 4.6 + Extended Thinking |
-| Hard bugs | Opus 4.6 + Extended Thinking |
+| Quick fixes, exploration | Haiku 4.5 |
+| Features, balanced work | Sonnet 4.6 |
+| Refactors, architecture | Opus 4.6 |
+| Hard bugs, multi-system | Opus 4.6 |
 
 ### Adaptive Thinking
 
-Opus 4.6 automatically calibrates reasoning depth per task - lightweight for simple operations, deep analysis for complex problems. No configuration needed.
+Opus 4.6 and Sonnet 4.6 automatically calibrate reasoning depth per task — lightweight for simple operations, deep analysis for complex problems. No configuration needed. Extended thinking is built-in.
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Model Hints
-Escalate to Opus+Thinking when: first attempt failed, multi-system coordination, non-obvious bugs.
-Use subagents with Haiku for fast read-only exploration, Sonnet for balanced work.
+Opus 4.6 and Sonnet 4.6 auto-calibrate reasoning depth — no need to toggle thinking mode.
+Use subagents with Haiku for fast read-only exploration, Sonnet 4.6 for balanced work.
 ```
 
 ---
@@ -323,9 +333,9 @@ cp -r /tmp/pw/commands/* ~/.claude/commands/
 
 ---
 
-## Hooks
+## Hooks *(Claude Code)*
 
-Pro-workflow includes automated hooks to enforce the patterns.
+Pro-workflow includes automated hooks to enforce the patterns. Cursor users get equivalent enforcement through `.mdc` rules in the `rules/` directory.
 
 ### PreToolUse Hooks
 
@@ -347,8 +357,9 @@ Pro-workflow includes automated hooks to enforce the patterns.
 | Hook | Action |
 |------|--------|
 | SessionStart | Load LEARNED patterns, show worktree count |
-| Stop | Periodic wrap-up/compact reminders |
+| Stop | Context-aware reminders using `last_assistant_message` |
 | SessionEnd | Check uncommitted changes, prompt for learnings |
+| ConfigChange | Detect when quality gates or hooks are modified mid-session |
 
 ### Install Hooks
 
@@ -403,7 +414,7 @@ Use reviewer agent when:
 - PR reviews
 - Security concerns
 
-### Custom Subagents
+### Custom Subagents *(Claude Code)*
 
 Create project-specific subagents in `.claude/agents/` or user-wide in `~/.claude/agents/`:
 - Define with YAML frontmatter + markdown system prompt
@@ -411,21 +422,21 @@ Create project-specific subagents in `.claude/agents/` or user-wide in `~/.claud
 - Use `/agents` to create, edit, and manage interactively
 - Preload skills into subagents for domain knowledge
 
-### Agent Teams (Experimental)
+### Agent Teams *(Claude Code, Experimental)*
 
 Coordinate multiple Claude Code sessions as a team:
 - Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 - Lead session coordinates, teammates work independently
 - Teammates message each other directly (not just report back)
 - Shared task list with dependency management
-- Display: in-process (Shift+Up/Down) or split panes (tmux/iTerm2)
+- Display: in-process (`Shift+Down` to navigate, wraps around) or split panes (tmux/iTerm2)
 - Delegate mode (Shift+Tab): lead coordinates only, no code edits
 - Best for: parallel reviews, competing hypotheses, cross-layer changes
 - **Docs:** https://code.claude.com/docs/agent-teams
 
 ---
 
-## MCP Config
+## MCP Config *(Claude Code)*
 
 Keep <10 MCPs enabled, <80 tools total.
 
@@ -438,18 +449,20 @@ See `mcp-config.example.json` for setup.
 
 ---
 
-## Commands
+## Commands *(Claude Code)*
 
-| Command | Purpose |
-|---------|---------|
-| `/wrap-up` | End-of-session ritual |
-| `/learn-rule` | Extract correction to memory |
-| `/parallel` | Worktree setup guide |
-| `/learn` | Claude Code best practices & save learnings |
-| `/search` | Search learnings by keyword |
-| `/list` | List all stored learnings |
-| `/commit` | Smart commit with quality gates and code review |
-| `/insights` | Session analytics, learning patterns, correction trends |
+These slash commands are available when using pro-workflow as a Claude Code plugin. Cursor users get the same functionality through the **skills** listed above (wrap-up, smart-commit, parallel-worktrees, etc.).
+
+| Command | Purpose | Cursor Equivalent |
+|---------|---------|-------------------|
+| `/wrap-up` | End-of-session ritual | `wrap-up` skill |
+| `/learn-rule` | Extract correction to memory | `learn-rule` skill |
+| `/parallel` | Worktree setup guide | `parallel-worktrees` skill |
+| `/learn` | Best practices & save learnings | — |
+| `/search` | Search learnings by keyword | — |
+| `/list` | List all stored learnings | — |
+| `/commit` | Smart commit with quality gates | `smart-commit` skill |
+| `/insights` | Session analytics and patterns | `insights` skill |
 
 ---
 
@@ -458,8 +471,8 @@ See `mcp-config.example.json` for setup.
 1. **Compound improvements** - Small corrections → big gains
 2. **Trust but verify** - Let AI work, review at checkpoints
 3. **Zero dead time** - Parallel sessions
-4. **Memory is precious** - Yours and Claude's
+4. **Memory is precious** - Yours and the AI's
 
 ---
 
-*From Claude Code power users and real production use.*
+*From AI coding power users and real production use.*

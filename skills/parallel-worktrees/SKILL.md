@@ -11,11 +11,35 @@ Zero dead time. While one session runs tests, work on something else.
 
 Use when waiting on tests, long builds, exploring approaches, or needing to review and develop simultaneously.
 
+## Quick Start
+
+**Claude Code:**
+```bash
+claude --worktree    # or claude -w (auto-creates isolated worktree)
+```
+
+**Cursor / Any editor:**
+```bash
+git worktree add ../project-feat feature-branch
+# Open the new worktree folder in a second editor window
+```
+
+Both approaches create an isolated working copy where changes don't interfere with your main session.
+
+## Claude Code Extras
+
+These features are Claude Code-specific (skip if using Cursor):
+
+- `claude -w` auto-creates and cleans up worktrees
+- Subagents support `isolation: worktree` in agent frontmatter
+- `Ctrl+F` kills all background agents (two-press confirmation)
+- `Ctrl+B` sends a task to background
+
 ## Workflow
 
-1. Show current worktrees.
+1. Show current worktrees: `git worktree list`
 2. Create a worktree for the parallel task.
-3. Guide the user to open a new session in the worktree.
+3. Open a new editor/terminal session in the worktree.
 4. When done, clean up the worktree.
 
 ## Commands

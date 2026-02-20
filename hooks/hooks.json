@@ -64,7 +64,7 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-check.js\""
           }
         ],
-        "description": "Periodic wrap-up reminder and learning prompt"
+        "description": "Context-aware wrap-up reminders using last_assistant_message"
       },
       {
         "matcher": "*",
@@ -133,6 +133,18 @@
           }
         ],
         "description": "Save context state before compaction"
+      }
+    ],
+    "ConfigChange": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/config-watcher.js\""
+          }
+        ],
+        "description": "Detect when quality gates or hooks are modified mid-session"
       }
     ],
     "Notification": [
