@@ -197,7 +197,7 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.6 with adaptive thinking** calibrates reasoning depth automatically. Sonnet 4.5 with 1M context has been retired — use **Sonnet 4.6** (now with 1M context).
+**Opus 4.6 and Sonnet 4.6** both support adaptive thinking and 1M-token context. The 1M context is available as a beta option (via the `context-1m-2025-08-07` beta header); the default context window remains 200K. Sonnet 4.5 (200K context) has been retired from the Max plan in favor of Sonnet 4.6.
 
 | Task | Model |
 |------|-------|
@@ -208,13 +208,13 @@ Between: proceed with confidence.
 
 ### Adaptive Thinking
 
-Opus 4.6 automatically calibrates reasoning depth per task — lightweight for simple operations, deep analysis for complex problems. No configuration needed. Extended thinking is built-in.
+Opus 4.6 and Sonnet 4.6 automatically calibrate reasoning depth per task — lightweight for simple operations, deep analysis for complex problems. No configuration needed. Extended thinking is built-in.
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Model Hints
-Opus 4.6 auto-calibrates reasoning depth — no need to toggle thinking mode.
+Opus 4.6 and Sonnet 4.6 auto-calibrate reasoning depth — no need to toggle thinking mode.
 Use subagents with Haiku for fast read-only exploration, Sonnet 4.6 for balanced work.
 ```
 
