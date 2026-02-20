@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "date": "2026-02-06",
+      "type": "init",
+      "description": "Initial pattern database created with 30 banned words, 25 banned phrases, 10 banned structures",
+      "version": "1.0.0"
+    }
+  ]
+}

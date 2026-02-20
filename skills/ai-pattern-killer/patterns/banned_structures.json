@@ -1,0 +1,84 @@
+{
+  "structures": [
+    {
+      "name": "triple_bullet_syndrome",
+      "description": "Topic sentence followed by exactly 3 bullets. Every time.",
+      "pattern": "paragraph followed by exactly 3 bullet points",
+      "alternative": "Vary list length. Use 2, 4, or 5. Or skip bullets entirely.",
+      "severity": "high",
+      "flagged_count": 0
+    },
+    {
+      "name": "not_x_but_y",
+      "description": "The 'Not X. But Y.' dramatic contrast.",
+      "pattern": "Not [statement]. But [contrasting statement].",
+      "alternative": "Just state the actual point. Drop the fake drama.",
+      "severity": "high",
+      "flagged_count": 0
+    },
+    {
+      "name": "rhetorical_then_answer",
+      "description": "Rhetorical question immediately answered.",
+      "pattern": "[Question]? [Immediate answer in next sentence]",
+      "alternative": "State the point directly. If you need a question, let it breathe.",
+      "severity": "medium",
+      "flagged_count": 0
+    },
+    {
+      "name": "colon_list_opener",
+      "description": "Every section opens with 'Here's what/why/how:'",
+      "pattern": "Here's [what|why|how|the thing]: [list]",
+      "alternative": "Vary openers. Start with the content, not a preamble.",
+      "severity": "medium",
+      "flagged_count": 0
+    },
+    {
+      "name": "em_dash_addiction",
+      "description": "Overuse of em dashes for parenthetical asides.",
+      "pattern": "More than 2 em dashes per paragraph",
+      "alternative": "Use periods. Use commas. Em dashes are seasoning, not the main dish.",
+      "severity": "low",
+      "flagged_count": 0
+    },
+    {
+      "name": "mirror_intro_conclusion",
+      "description": "Conclusion that restates the intro almost verbatim.",
+      "pattern": "Final paragraph mirrors opening paragraph",
+      "alternative": "End with a new insight or a forward-looking statement. Don't loop back.",
+      "severity": "high",
+      "flagged_count": 0
+    },
+    {
+      "name": "fragment_for_emphasis",
+      "description": "One-word or two-word sentence fragment for dramatic effect.",
+      "pattern": "[Normal sentence]. [Fragment]. [Fragment].",
+      "alternative": "Use sparingly. Once per piece max. Not every paragraph.",
+      "severity": "medium",
+      "flagged_count": 0
+    },
+    {
+      "name": "identical_paragraph_lengths",
+      "description": "Every paragraph is 3-4 sentences. Uniform blocks.",
+      "pattern": "All paragraphs within 1 sentence of same length",
+      "alternative": "Mix it up. One sentence. Then five. Then two. Rhythm matters.",
+      "severity": "medium",
+      "flagged_count": 0
+    },
+    {
+      "name": "listicle_brain",
+      "description": "Everything becomes a numbered or bulleted list.",
+      "pattern": "More than 50% of content is in list format",
+      "alternative": "Write prose. Lists are for reference docs, not blog posts.",
+      "severity": "high",
+      "flagged_count": 0
+    },
+    {
+      "name": "hedge_stack",
+      "description": "Stacking qualifiers: 'It could potentially perhaps...'",
+      "pattern": "Multiple hedging words in same sentence",
+      "alternative": "Pick one hedge or commit to the statement.",
+      "severity": "medium",
+      "flagged_count": 0
+    }
+  ]
+}

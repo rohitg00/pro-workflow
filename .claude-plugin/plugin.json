@@ -10,6 +10,7 @@
   "repository": "https://github.com/rohitg00/pro-workflow",
   "license": "MIT",
   "keywords": [
+    "experimental",
     "claude-code",
     "workflow",
     "productivity",
@@ -26,6 +27,9 @@
   "agents": [
     "./agents/planner.md",
     "./agents/reviewer.md",
-    "./agents/scout.md"
+    "./agents/scout.md",
+    "./agents/detector.md",
+    "./agents/rewriter.md",
+    "./agents/scorer.md"
   ]
 }

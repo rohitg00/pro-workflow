@@ -1,0 +1,11 @@
+{
+  "corrections": [],
+  "_schema": {
+    "pattern": "the flagged text",
+    "alternative": "user's preferred replacement",
+    "type": "word|phrase|structure",
+    "context": "surrounding text where it was found",
+    "timestamp": "ISO 8601 date",
+    "source": "flag|humanize|auto"
+  }
+}
