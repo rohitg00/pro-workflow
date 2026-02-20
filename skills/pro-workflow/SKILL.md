@@ -64,31 +64,50 @@ Should I add this?
 
 **Zero dead time.** While one Claude thinks, work on something else.
 
-### Setup
+### Native Worktree Mode (2.1.49+)
 
 ```bash
-# Create worktrees for parallel work
+claude --worktree    # or claude -w
+```
+
+Creates an isolated git worktree automatically and runs Claude inside it.
+
+Subagents can also use worktree isolation:
+
+```yaml
+# In agent frontmatter
+isolation: worktree
+```
+
+### Manual Setup
+
+```bash
 git worktree add ../project-feat feature-branch
 git worktree add ../project-fix bugfix-branch
-
-# Each gets its own Claude session
-# Terminal 1: cd ~/project && claude
-# Terminal 2: cd ~/project-feat && claude
 ```
+
+### Background Agent Management
+
+- `Ctrl+F` — Kill all background agents (two-press confirmation)
+- `Ctrl+B` — Send task to background
+- ESC cancels main thread only; background agents keep running
 
 ### When to Parallelize
 
 | Scenario | Action |
 |----------|--------|
+| Quick parallel task | `claude -w` (native worktree) |
 | Waiting on tests | Start new feature in worktree |
 | Long build | Debug issue in parallel |
 | Exploring approaches | Try 2-3 simultaneously |
+| Safe exploration | Subagent with `isolation: worktree` |
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Parallel Work
-When blocked on long operations, suggest starting a parallel session in a worktree.
+When blocked on long operations, use `claude -w` for instant parallel sessions.
+Subagents with `isolation: worktree` get their own safe working copy.
 ```
 
 ---
@@ -186,26 +205,25 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.6 with adaptive thinking** calibrates reasoning depth automatically.
+**Opus 4.6 with adaptive thinking** calibrates reasoning depth automatically. Sonnet 4.5 with 1M context has been retired — use **Sonnet 4.6** (now with 1M context).
 
 | Task | Model |
 |------|-------|
-| Quick fixes | Haiku 4.5 |
-| Features | Sonnet 4.5 |
-| Refactors | Opus 4.6 |
-| Architecture | Opus 4.6 + Extended Thinking |
-| Hard bugs | Opus 4.6 + Extended Thinking |
+| Quick fixes, exploration | Haiku 4.5 |
+| Features, balanced work | Sonnet 4.6 |
+| Refactors, architecture | Opus 4.6 |
+| Hard bugs, multi-system | Opus 4.6 |
 
 ### Adaptive Thinking
 
-Opus 4.6 automatically calibrates reasoning depth per task - lightweight for simple operations, deep analysis for complex problems. No configuration needed.
+Opus 4.6 automatically calibrates reasoning depth per task — lightweight for simple operations, deep analysis for complex problems. No configuration needed. Extended thinking is built-in.
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Model Hints
-Escalate to Opus+Thinking when: first attempt failed, multi-system coordination, non-obvious bugs.
-Use subagents with Haiku for fast read-only exploration, Sonnet for balanced work.
+Opus 4.6 auto-calibrates reasoning depth — no need to toggle thinking mode.
+Use subagents with Haiku for fast read-only exploration, Sonnet 4.6 for balanced work.
 ```
 
 ---
@@ -347,8 +365,9 @@ Pro-workflow includes automated hooks to enforce the patterns.
 | Hook | Action |
 |------|--------|
 | SessionStart | Load LEARNED patterns, show worktree count |
-| Stop | Periodic wrap-up/compact reminders |
+| Stop | Context-aware reminders using `last_assistant_message` |
 | SessionEnd | Check uncommitted changes, prompt for learnings |
+| ConfigChange | Detect when quality gates or hooks are modified mid-session |
 
 ### Install Hooks
 
@@ -418,7 +437,7 @@ Coordinate multiple Claude Code sessions as a team:
 - Lead session coordinates, teammates work independently
 - Teammates message each other directly (not just report back)
 - Shared task list with dependency management
-- Display: in-process (Shift+Up/Down) or split panes (tmux/iTerm2)
+- Display: in-process (`Shift+Down` to navigate, wraps around) or split panes (tmux/iTerm2)
 - Delegate mode (Shift+Tab): lead coordinates only, no code edits
 - Best for: parallel reviews, competing hypotheses, cross-layer changes
 - **Docs:** https://code.claude.com/docs/agent-teams

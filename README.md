@@ -16,11 +16,11 @@ This skill optimizes for that ratio. Every pattern reduces correction cycles.
 | Pattern | What It Does |
 |---------|--------------|
 | **Self-Correction Loop** | Claude learns from your corrections automatically |
-| **Parallel Worktrees** | Zero dead time - work while Claude thinks |
+| **Parallel Worktrees** | Zero dead time - native `claude -w` worktrees |
 | **Wrap-Up Ritual** | End sessions with intention, capture learnings |
 | **Split Memory** | Modular CLAUDE.md for complex projects |
 | **80/20 Review** | Batch reviews at checkpoints |
-| **Model Selection** | Opus+Thinking for one-shot accuracy |
+| **Model Selection** | Opus 4.6 adaptive thinking, Sonnet 4.6 (1M context) |
 | **Context Discipline** | Manage your 200k token budget |
 | **Learning Log** | Auto-document insights |
 
@@ -178,10 +178,11 @@ Automated enforcement of workflow patterns.
 | PreToolUse | Before git commit/push | Remind about quality gates, wrap-up |
 | PostToolUse | After code edits | Check for console.log, TODOs, secrets |
 | PostToolUse | After tests | Suggest [LEARN] from failures |
-| UserPromptSubmit | Each prompt |Drift detection — warns when straying from original intent |
+| UserPromptSubmit | Each prompt | Drift detection — warns when straying from original intent |
 | SessionStart | New session | Load learnings from database |
-| Stop | Each response | Periodic wrap-up reminders |
+| Stop | Each response | Context-aware reminders using `last_assistant_message` |
 | SessionEnd | Session close | Save session stats to database |
+| ConfigChange | Settings modified | Detect when quality gates or hooks are changed mid-session |
 
 ### Install Hooks
 
@@ -205,7 +206,7 @@ cp -r /tmp/pw/commands/* ~/.claude/commands/
 |-------|---------|
 | planner | Break down complex tasks |
 | reviewer | Code review, security audit |
-| scout |Confidence-gated exploration before implementation |
+| scout | Background confidence-gated exploration with worktree isolation |
 
 ### Agent Teams (Experimental)
 
@@ -219,7 +220,7 @@ Coordinate multiple Claude Code sessions working together:
 - Lead session coordinates, teammates work independently
 - Teammates message each other directly
 - Shared task list with dependency management
-- Display modes: in-process (`Shift+Up/Down`) or split panes (tmux/iTerm2)
+- Display modes: in-process (`Shift+Down` to navigate, wraps around) or split panes (tmux/iTerm2)
 - Delegate mode (`Shift+Tab`): lead orchestrates only
 - Docs: https://code.claude.com/docs/agent-teams
 
@@ -230,6 +231,7 @@ pro-workflow/
 ├── .claude-plugin/              # Claude Code plugin
 │   ├── plugin.json
 │   ├── marketplace.json
+│   ├── settings.json            # Default permissions for quality gates
 │   └── README.md
 ├── .cursor-plugin/              # Cursor plugin
 │   └── plugin.json
@@ -265,7 +267,7 @@ pro-workflow/
 │   └── ...
 ├── hooks/                       # Claude Code hooks
 │   └── hooks.json
-├── scripts/                     # Hook scripts
+├── scripts/                     # Hook scripts (includes config-watcher.js)
 ├── contexts/                    # Context modes
 │   ├── dev.md
 │   ├── review.md

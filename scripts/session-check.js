@@ -4,7 +4,7 @@
  *
  * Runs at the end of each Claude response.
  * Periodic reminders for wrap-up and learning capture.
- * Based on Twitter thread: "DevOps agent with /wrap-up command"
+ * Uses last_assistant_message (2.1.49+) for smarter context-aware reminders.
  */
 
 const fs = require('fs');
@@ -25,50 +25,91 @@ function log(msg) {
   console.error(msg);
 }
 
+function detectCompletionSignals(message) {
+  if (!message) return false;
+  const signals = [
+    /all (changes|files|tests|updates) (are |have been )?(committed|pushed|complete|done|pass)/i,
+    /successfully (created|merged|deployed|published|released)/i,
+    /PR (created|merged|opened)/i,
+    /implementation is complete/i,
+    /everything (looks good|is working|passes)/i,
+    /all \d+ tests pass/i
+  ];
+  return signals.some(p => p.test(message));
+}
+
+function detectLargeChange(message) {
+  if (!message) return false;
+  const patterns = [
+    /(\d+) files? (changed|modified|updated|created)/i,
+    /across \d+ files/i,
+    /refactored? \d+ (files?|modules?|components?)/i
+  ];
+  return patterns.some(p => p.test(message));
+}
+
 async function main() {
-  const tempDir = getTempDir();
-  ensureDir(tempDir);
+  let data = '';
 
-  const sessionId = process.env.CLAUDE_SESSION_ID || process.ppid || 'default';
-  const responseCountFile = path.join(tempDir, `response-count-${sessionId}`);
-  const lastReminderFile = path.join(tempDir, `last-reminder-${sessionId}`);
+  process.stdin.on('data', chunk => {
+    data += chunk;
+  });
 
-  let count = 1;
+  process.stdin.on('end', () => {
+    try {
+      const input = JSON.parse(data);
+      const lastMessage = (input.last_assistant_message || '').slice(-2000);
 
-  if (fs.existsSync(responseCountFile)) {
-    count = parseInt(fs.readFileSync(responseCountFile, 'utf8').trim(), 10) + 1;
-  }
+      const tempDir = getTempDir();
+      ensureDir(tempDir);
 
-  fs.writeFileSync(responseCountFile, String(count));
+      const sessionId = input.session_id || process.env.CLAUDE_SESSION_ID || process.ppid || 'default';
+      const responseCountFile = path.join(tempDir, `response-count-${sessionId}`);
 
-  // Check if we should show a reminder (every 20 responses)
-  const shouldRemind = count % 20 === 0;
+      let count = 1;
 
-  // Alternate between different reminders
-  if (shouldRemind) {
-    const reminderType = Math.floor(count / 20) % 3;
+      if (fs.existsSync(responseCountFile)) {
+        count = parseInt(fs.readFileSync(responseCountFile, 'utf8').trim(), 10) + 1;
+      }
 
-    switch (reminderType) {
-      case 0:
-        log('[ProWorkflow] Consider /wrap-up if ending session soon');
-        break;
-      case 1:
-        log('[ProWorkflow] Any corrections to capture? Use /learn-rule');
-        break;
-      case 2:
-        log('[ProWorkflow] Good checkpoint for /compact if context is heavy');
-        break;
+      fs.writeFileSync(responseCountFile, String(count));
+
+      if (lastMessage && detectCompletionSignals(lastMessage)) {
+        log('[ProWorkflow] Task looks complete — consider /wrap-up to capture learnings');
+      } else if (lastMessage && detectLargeChange(lastMessage)) {
+        log('[ProWorkflow] Large change detected — good checkpoint for review');
+      } else {
+        const shouldRemind = count % 20 === 0;
+
+        if (shouldRemind) {
+          const reminderType = Math.floor(count / 20) % 3;
+
+          switch (reminderType) {
+            case 0:
+              log('[ProWorkflow] Consider /wrap-up if ending session soon');
+              break;
+            case 1:
+              log('[ProWorkflow] Any corrections to capture? Use /learn-rule');
+              break;
+            case 2:
+              log('[ProWorkflow] Good checkpoint for /compact if context is heavy');
+              break;
+          }
+        }
+      }
+
+      if (count === 50) {
+        log('[ProWorkflow] Long session - strongly consider:');
+        log('[ProWorkflow]   /wrap-up - capture learnings');
+        log('[ProWorkflow]   /compact - preserve context');
+      }
+
+      console.log(data);
+    } catch (err) {
+      console.error('[ProWorkflow] session-check error:', err.message);
+      console.log(data || '{}');
     }
-  }
-
-  // At 50 responses, stronger reminder
-  if (count === 50) {
-    log('[ProWorkflow] Long session - strongly consider:');
-    log('[ProWorkflow]   /wrap-up - capture learnings');
-    log('[ProWorkflow]   /compact - preserve context');
-  }
-
-  process.exit(0);
+  });
 }
 
 main().catch(err => {
