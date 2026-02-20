@@ -11,40 +11,43 @@ Zero dead time. While one session runs tests, work on something else.
 
 Use when waiting on tests, long builds, exploring approaches, or needing to review and develop simultaneously.
 
-## Native Worktree Mode (Claude Code 2.1.49+)
+## Quick Start
 
-Claude Code has built-in worktree support:
-
+**Claude Code:**
 ```bash
-claude --worktree    # or claude -w
+claude --worktree    # or claude -w (auto-creates isolated worktree)
 ```
 
-This creates an isolated git worktree automatically and runs Claude inside it.
-
-### Subagent Worktree Isolation
-
-Subagents can run in isolated worktrees to prevent file conflicts:
-
-```yaml
-# In agent frontmatter
-isolation: worktree
+**Cursor / Any editor:**
+```bash
+git worktree add ../project-feat feature-branch
+# Open the new worktree folder in a second editor window
 ```
+
+Both approaches create an isolated working copy where changes don't interfere with your main session.
+
+## Claude Code Extras
+
+These features are Claude Code-specific (skip if using Cursor):
+
+- `claude -w` auto-creates and cleans up worktrees
+- Subagents support `isolation: worktree` in agent frontmatter
+- `Ctrl+F` kills all background agents (two-press confirmation)
+- `Ctrl+B` sends a task to background
 
 ## Workflow
 
-1. Show current worktrees.
-2. For quick parallel work, use `claude -w` (native worktree).
-3. For manual control, create a worktree with `git worktree add`.
-4. Guide the user to open a new session in the worktree.
-5. When done, clean up the worktree.
+1. Show current worktrees: `git worktree list`
+2. Create a worktree for the parallel task.
+3. Open a new editor/terminal session in the worktree.
+4. When done, clean up the worktree.
 
 ## Commands
 
 ```bash
 git worktree list
 
-claude -w                                      # Auto-create isolated worktree
-git worktree add ../project-feat feature-branch # Manual worktree
+git worktree add ../project-feat feature-branch
 git worktree add ../project-fix bugfix-branch
 git worktree add ../project-exp -b experiment
 
@@ -56,36 +59,27 @@ git worktree prune
 
 ```
 Terminal 1: ~/project          → Main work
-Terminal 2: ~/project-feat     → claude -w (auto-isolated)
-Terminal 3: ~/project-fix      → Feature development
+Terminal 2: ~/project-feat     → Feature development
+Terminal 3: ~/project-fix      → Bug fixes
 ```
 
 Each worktree runs its own AI session independently.
 
-## Background Agent Management
-
-- `Ctrl+F` — Kill all background agents (two-press confirmation)
-- `Ctrl+B` — Send task to background
-- ESC cancels the main thread only; background agents keep running
-
 ## When to Parallelize
 
-| Scenario | Recommended Approach |
-|----------|---------------------|
-| Quick parallel task | `claude -w` (native worktree) |
+| Scenario | Action |
+|----------|--------|
 | Tests running (2+ min) | Start new feature in worktree |
 | Long build | Debug issue in parallel |
 | Exploring approaches | Compare 2-3 simultaneously |
 | Review + new work | Reviewer in one, dev in other |
 | Waiting on CI | Start next task in worktree |
-| Safe exploration | Subagent with `isolation: worktree` |
 
 ## Guardrails
 
 - Each worktree is a full working copy — changes are isolated.
 - Don't forget to clean up worktrees when done (`git worktree prune`).
 - Avoid editing the same files in multiple worktrees simultaneously.
-- Native `claude -w` handles cleanup automatically.
 
 ## Output
 
