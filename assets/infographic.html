@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Pro Workflow — Battle-Tested Claude Code Patterns</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --anthro-coral: #D97757;
+    --anthro-coral-light: #E8926F;
+    --anthro-dark: #1A1A2E;
+    --anthro-navy: #191A23;
+    --anthro-bg: #FAFAF8;
+    --anthro-card: #FFFFFF;
+    --anthro-border: #E5E5E0;
+    --anthro-text: #1A1A2E;
+    --anthro-muted: #6B7280;
+    --anthro-light-coral: #FFF5F0;
+    --anthro-tag-bg: #F3F4F6;
+    --anthro-green: #059669;
+    --anthro-yellow: #D97706;
+    --anthro-red: #DC2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--anthro-bg);
+    color: var(--anthro-text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 48px 56px 40px;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--anthro-coral);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--anthro-coral);
+  }
+  .header-sub {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+  .header-right {
+    text-align: right;
+  }
+  .star-count {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--anthro-dark);
+    line-height: 1;
+  }
+  .star-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--anthro-muted);
+  }
+
+  /* ---- TITLE ---- */
+  .title-block {
+    margin: 20px 0 12px;
+  }
+  .title {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--anthro-dark);
+    letter-spacing: -1.5px;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: var(--anthro-muted);
+    margin-top: 10px;
+    max-width: 780px;
+    line-height: 1.6;
+  }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--anthro-border);
+    margin: 28px 0 28px;
+  }
+
+  /* ---- GRID ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 28px;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .grid-span-2 {
+    grid-column: span 2;
+  }
+
+  /* ---- SECTION ---- */
+  .section-num {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--anthro-muted);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--anthro-dark);
+    margin-bottom: 14px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .section-title-lg {
+    font-size: 28px;
+  }
+
+  /* ---- TABLE ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--anthro-muted);
+    padding: 0 0 8px 0;
+    border-bottom: 1px solid var(--anthro-border);
+  }
+  table td {
+    padding: 7px 8px 7px 0;
+    border-bottom: 1px solid #F0F0EC;
+    vertical-align: top;
+    color: var(--anthro-text);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  table tr:last-child td {
+    border-bottom: none;
+  }
+  td strong {
+    font-weight: 700;
+    color: var(--anthro-dark);
+  }
+
+  /* ---- BULLET LIST ---- */
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+  }
+  .bullet-list li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin-bottom: 6px;
+    color: var(--anthro-text);
+  }
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 5px;
+    height: 5px;
+    background: var(--anthro-coral);
+    border-radius: 1px;
+  }
+
+  /* ---- FLOW DIAGRAM ---- */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 16px;
+    background: var(--anthro-card);
+    border: 1px solid var(--anthro-border);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+  .flow-step {
+    text-align: center;
+    flex: 1;
+  }
+  .flow-step-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--anthro-dark);
+    letter-spacing: -0.3px;
+  }
+  .flow-step-desc {
+    font-size: 10px;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+  .flow-arrow {
+    font-size: 22px;
+    color: var(--anthro-coral);
+    font-weight: 300;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--anthro-card);
+    border: 1px solid var(--anthro-border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .card-coral {
+    border-left: 3px solid var(--anthro-coral);
+  }
+
+  /* ---- QUOTE ---- */
+  .quote-block {
+    background: var(--anthro-light-coral);
+    border-left: 3px solid var(--anthro-coral);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .quote-text {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--anthro-dark);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .quote-attr {
+    font-size: 11px;
+    color: var(--anthro-muted);
+    margin-top: 6px;
+    font-style: normal;
+  }
+
+  /* ---- TAGS ---- */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--anthro-tag-bg);
+    color: var(--anthro-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag-coral {
+    background: var(--anthro-light-coral);
+    color: var(--anthro-coral);
+  }
+
+  /* ---- STAT BOXES ---- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .stat-box {
+    background: var(--anthro-card);
+    border: 1px solid var(--anthro-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--anthro-coral);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--anthro-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+  }
+
+  /* ---- MEMORY DIAGRAM ---- */
+  .memory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .mem-box {
+    border: 1px solid var(--anthro-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .mem-box-coral {
+    border-color: var(--anthro-coral);
+    background: var(--anthro-light-coral);
+  }
+  .mem-title {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--anthro-dark);
+  }
+  .mem-desc {
+    font-size: 10px;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+
+  /* ---- SCORING BAR ---- */
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .score-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--anthro-text);
+    width: 130px;
+    flex-shrink: 0;
+  }
+  .score-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #F0F0EC;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    background: var(--anthro-coral);
+    border-radius: 4px;
+  }
+  .score-pts {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--anthro-muted);
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ---- VERDICT BADGES ---- */
+  .verdict-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .verdict {
+    flex: 1;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .verdict-go {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+  }
+  .verdict-hold {
+    background: #FFF7ED;
+    border: 1px solid #FED7AA;
+  }
+  .verdict-label {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+  .verdict-go .verdict-label { color: var(--anthro-green); }
+  .verdict-hold .verdict-label { color: var(--anthro-yellow); }
+  .verdict-desc {
+    font-size: 10px;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+
+  /* ---- LOOP DIAGRAM ---- */
+  .loop-container {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 12px 0;
+    position: relative;
+  }
+  .loop-step {
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
+    border: 1px solid var(--anthro-border);
+    border-radius: 8px;
+    background: var(--anthro-card);
+    position: relative;
+    z-index: 1;
+  }
+  .loop-step-coral {
+    border-color: var(--anthro-coral);
+    background: var(--anthro-light-coral);
+  }
+  .loop-step-num {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--anthro-coral);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .loop-step-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--anthro-dark);
+    margin-top: 2px;
+  }
+  .loop-step-desc {
+    font-size: 9.5px;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+  .loop-arrow {
+    font-size: 16px;
+    color: var(--anthro-coral);
+    flex-shrink: 0;
+    padding: 0 3px;
+    z-index: 2;
+  }
+
+  /* ---- CONTEXT MODES ---- */
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .mode-card {
+    border: 1px solid var(--anthro-border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .mode-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .mode-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--anthro-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .mode-desc {
+    font-size: 10px;
+    color: var(--anthro-muted);
+    margin-top: 3px;
+  }
+
+  /* ---- INSTALL BOX ---- */
+  .install-box {
+    background: var(--anthro-navy);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 10px;
+  }
+  .install-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--anthro-coral-light);
+    margin-bottom: 6px;
+  }
+  .install-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #E5E7EB;
+    line-height: 1.6;
+  }
+  .install-code .cmd {
+    color: var(--anthro-coral-light);
+  }
+  .install-code .comment {
+    color: #6B7280;
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--anthro-border);
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--anthro-muted);
+  }
+  .footer-right {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--anthro-coral);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ---- HOOK TYPES MINI ---- */
+  .hook-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .hook-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 1px solid var(--anthro-border);
+    border-radius: 6px;
+    background: var(--anthro-card);
+  }
+  .hook-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .hook-dot-pre { background: var(--anthro-coral); }
+  .hook-dot-post { background: var(--anthro-green); }
+  .hook-dot-session { background: #8B5CF6; }
+  .hook-dot-other { background: var(--anthro-yellow); }
+  .hook-name {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--anthro-dark);
+  }
+  .hook-desc {
+    font-size: 9.5px;
+    color: var(--anthro-muted);
+  }
+
+  /* ---- PHASE BADGES ---- */
+  .phase-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .phase {
+    display: flex;
+    align-items: stretch;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--anthro-border);
+  }
+  .phase-badge {
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: white;
+    flex-shrink: 0;
+  }
+  .phase-badge-r { background: var(--anthro-coral); }
+  .phase-badge-p { background: #8B5CF6; }
+  .phase-badge-i { background: var(--anthro-green); }
+  .phase-body {
+    padding: 10px 14px;
+    flex: 1;
+  }
+  .phase-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--anthro-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .phase-desc {
+    font-size: 10.5px;
+    color: var(--anthro-muted);
+    margin-top: 2px;
+  }
+  .phase-note {
+    font-size: 10px;
+    color: var(--anthro-coral);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* ---- COMPONENT COUNT ---- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .comp-item {
+    text-align: center;
+    padding: 12px 4px;
+    border: 1px solid var(--anthro-border);
+    border-radius: 8px;
+    background: var(--anthro-card);
+  }
+  .comp-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--anthro-coral);
+    line-height: 1;
+  }
+  .comp-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--anthro-muted);
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="header-left">
+        <div class="header-dot"></div>
+        <span class="header-label">Claude Code Plugin / Open Source</span>
+      </div>
+      <div class="header-sub" style="margin-left: 18px;">github.com/rohitg00/pro-workflow</div>
+    </div>
+    <div class="header-right">
+      <div class="star-count">v1.3</div>
+      <div class="star-label">Latest Release</div>
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <div class="title">Pro Workflow</div>
+    <div class="subtitle">
+      Battle-tested Claude Code patterns from power users who ship production code daily.
+      Self-correcting memory, parallel worktrees, quality gates, and the 80/20 AI coding ratio &mdash;
+      9 Skills, 3 Agents, 12 Hooks, 10 Commands, 3 Contexts.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 1: Core Architecture + 8 Patterns + Components -->
+  <div class="grid">
+
+    <!-- 01 CORE ARCHITECTURE -->
+    <div>
+      <div class="section-num">01 Core Architecture</div>
+      <div class="section-title">Command &rarr; Agent &rarr; Skill</div>
+      <div class="flow" style="flex-direction: column; gap: 0; padding: 16px;">
+        <div style="display:flex; align-items:center; gap:0; width:100%;">
+          <div class="flow-step">
+            <div class="flow-step-name" style="font-size:16px;">Command</div>
+            <div class="flow-step-desc">User input<br>Slash commands</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-name" style="font-size:16px;">Agent</div>
+            <div class="flow-step-desc">Orchestrate<br>Plan &amp; Review</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-step-name" style="font-size:16px;">Skill</div>
+            <div class="flow-step-desc">Execute<br>Domain logic</div>
+          </div>
+        </div>
+      </div>
+      <ul class="bullet-list" style="margin-top:12px;">
+        <li>Agents <strong>cannot</strong> call each other directly &mdash; use <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">Task(subagent_type=...)</code></li>
+        <li>Progressive skill disclosure: only surface what&rsquo;s needed now</li>
+        <li>Skills use <strong>context: fork</strong> for isolation</li>
+      </ul>
+    </div>
+
+    <!-- 02 THE 8 PATTERNS -->
+    <div>
+      <div class="section-num">02 The 8 Patterns</div>
+      <div class="section-title">Karpathy&rsquo;s 80/20 Ratio</div>
+      <table>
+        <tr><th style="width:35%">Pattern</th><th>What It Does</th></tr>
+        <tr><td><strong>Self-Correction</strong></td><td>Claude learns from corrections automatically</td></tr>
+        <tr><td><strong>Parallel Worktrees</strong></td><td>Zero dead time &mdash; native <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">claude -w</code></td></tr>
+        <tr><td><strong>Wrap-Up Ritual</strong></td><td>End sessions with intention, capture learnings</td></tr>
+        <tr><td><strong>Split Memory</strong></td><td>Modular CLAUDE.md for complex projects</td></tr>
+        <tr><td><strong>80/20 Review</strong></td><td>Batch reviews at checkpoints, not every change</td></tr>
+        <tr><td><strong>Model Selection</strong></td><td>Opus 4.6 &amp; Sonnet 4.6 adaptive thinking</td></tr>
+        <tr><td><strong>Context Discipline</strong></td><td>Manage your 200k token budget</td></tr>
+        <tr><td><strong>Learning Log</strong></td><td>Auto-document insights from sessions</td></tr>
+      </table>
+    </div>
+
+    <!-- 03 COMPONENTS AT A GLANCE -->
+    <div>
+      <div class="section-num">03 Components</div>
+      <div class="section-title">Everything Included</div>
+      <div class="comp-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="comp-item"><div class="comp-num">9</div><div class="comp-label">Skills</div></div>
+        <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Agents</div></div>
+        <div class="comp-item"><div class="comp-num">12</div><div class="comp-label">Hooks</div></div>
+        <div class="comp-item"><div class="comp-num">10</div><div class="comp-label">Commands</div></div>
+        <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
+        <div class="comp-item"><div class="comp-num">6</div><div class="comp-label">Rules</div></div>
+      </div>
+      <div style="margin-top:14px;">
+        <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
+        <div class="tag-row">
+          <span class="tag tag-coral">Claude Code</span>
+          <span class="tag tag-coral">Cursor</span>
+          <span class="tag">SkillKit (32+ agents)</span>
+        </div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px; margin-top:12px;">Database</div>
+        <div class="tag-row">
+          <span class="tag">SQLite + FTS5</span>
+          <span class="tag">10 Categories</span>
+          <span class="tag">Full-Text Search</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 2: Self-Correction + Split Memory + Hooks -->
+  <div class="grid">
+
+    <!-- 04 SELF-CORRECTION LOOP -->
+    <div>
+      <div class="section-num">04 Self-Correction Loop</div>
+      <div class="section-title">Compounding Improvements</div>
+      <div class="loop-container">
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">1</div>
+          <div class="loop-step-text">Correct</div>
+          <div class="loop-step-desc">User fixes mistake</div>
+        </div>
+        <div class="loop-arrow">&rarr;</div>
+        <div class="loop-step">
+          <div class="loop-step-num">2</div>
+          <div class="loop-step-text">Propose</div>
+          <div class="loop-step-desc">[LEARN] rule</div>
+        </div>
+        <div class="loop-arrow">&rarr;</div>
+        <div class="loop-step">
+          <div class="loop-step-num">3</div>
+          <div class="loop-step-text">Approve</div>
+          <div class="loop-step-desc">User confirms</div>
+        </div>
+        <div class="loop-arrow">&rarr;</div>
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">4</div>
+          <div class="loop-step-text">Persist</div>
+          <div class="loop-step-desc">LEARNED.md / DB</div>
+        </div>
+      </div>
+      <div class="quote-block">
+        <div class="quote-text">&ldquo;Small corrections compound into massive accuracy gains over time.&rdquo;</div>
+      </div>
+      <div class="tag-row">
+        <span class="tag">Remember this</span>
+        <span class="tag">Add to rules</span>
+        <span class="tag">Don&rsquo;t do that again</span>
+      </div>
+    </div>
+
+    <!-- 05 SPLIT MEMORY -->
+    <div>
+      <div class="section-num">05 Split Memory</div>
+      <div class="section-title">Modular CLAUDE.md</div>
+      <div class="memory-grid" style="grid-template-columns: 1fr;">
+        <div class="mem-box mem-box-coral">
+          <div class="mem-title">CLAUDE.md</div>
+          <div class="mem-desc">Entry point &mdash; imports all modules</div>
+        </div>
+      </div>
+      <div class="memory-grid" style="margin-top:8px;">
+        <div class="mem-box">
+          <div class="mem-title">AGENTS.md</div>
+          <div class="mem-desc">Workflow rules</div>
+        </div>
+        <div class="mem-box">
+          <div class="mem-title">SOUL.md</div>
+          <div class="mem-desc">Style prefs</div>
+        </div>
+        <div class="mem-box">
+          <div class="mem-title">LEARNED.md</div>
+          <div class="mem-desc">Auto-populated</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="section-num" style="margin-bottom:6px;">Context Discipline</div>
+        <table>
+          <tr><th>Rule</th><th>Why</th></tr>
+          <tr><td><strong>Read before edit</strong></td><td>Understand context</td></tr>
+          <tr><td><strong>Compact at boundaries</strong></td><td>Free token budget</td></tr>
+          <tr><td><strong>&lt;10 MCPs, &lt;80 tools</strong></td><td>Reduce noise</td></tr>
+          <tr><td><strong>Subagents isolate</strong></td><td>Protect main context</td></tr>
+          <tr><td><strong>CLAUDE.md &le; 150 lines</strong></td><td>Avoid instruction drift</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 06 HOOKS & AUTOMATION -->
+    <div>
+      <div class="section-num">06 Hooks &amp; Automation</div>
+      <div class="section-title">12 Automated Hooks</div>
+      <div class="hook-grid">
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-pre"></div>
+          <div><div class="hook-name">PreToolUse</div><div class="hook-desc">Edit tracking, quality gates</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-pre"></div>
+          <div><div class="hook-name">Pre-Commit</div><div class="hook-desc">Lint &amp; typecheck reminder</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-post"></div>
+          <div><div class="hook-name">PostToolUse</div><div class="hook-desc">console.log, secrets scan</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-post"></div>
+          <div><div class="hook-name">Test Failure</div><div class="hook-desc">Auto-learn from failures</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-session"></div>
+          <div><div class="hook-name">SessionStart</div><div class="hook-desc">Load learnings, show stats</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-session"></div>
+          <div><div class="hook-name">SessionEnd</div><div class="hook-desc">Save stats to SQLite</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">PromptSubmit</div><div class="hook-desc">Drift detection at 6+ edits</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">PreCompact</div><div class="hook-desc">Save state before compact</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">Stop</div><div class="hook-desc">Context-aware reminders</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">ConfigChange</div><div class="hook-desc">Detect settings drift</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">Notification</div><div class="hook-desc">Permission logging</div></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-pre" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Pre</span></div>
+        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-post" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Post</span></div>
+        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-session" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Session</span></div>
+        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-other" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Other</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 3: Agents + Scout + Workflow Phases -->
+  <div class="grid">
+
+    <!-- 07 THREE AGENTS -->
+    <div>
+      <div class="section-num">07 Specialized Agents</div>
+      <div class="section-title">3 Purpose-Built Agents</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Planner</div>
+            <span class="tag">Read-Only</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Break down complex tasks into step-by-step plans. Never edits &mdash; only reads and proposes.</div>
+          <div class="tag-row" style="margin-top:8px;">
+            <span class="tag">Multi-file changes</span>
+            <span class="tag">Architecture</span>
+            <span class="tag">&gt;10 tool calls</span>
+          </div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Reviewer</div>
+            <span class="tag">Quality Gate</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Logic, edge cases, error handling, security, performance, and test coverage audit.</div>
+          <div class="tag-row" style="margin-top:8px;">
+            <span class="tag tag-coral">Critical</span>
+            <span class="tag tag-coral">High</span>
+            <span class="tag">Medium</span>
+            <span class="tag">Low</span>
+          </div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Scout</div>
+            <span class="tag">Confidence Gate</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Assess readiness with worktree isolation. Scores 0&ndash;100 across 5 dimensions.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 SCOUT SCORING -->
+    <div>
+      <div class="section-num">08 Scout: Confidence Scoring</div>
+      <div class="section-title">5 Dimensions &times; 20 pts</div>
+      <div style="margin-top:8px;">
+        <div class="score-row">
+          <div class="score-label">Scope Clarity</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+          <div class="score-pts">20</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Pattern Familiarity</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+          <div class="score-pts">20</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Dependency Aware</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+          <div class="score-pts">20</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Edge Case Coverage</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+          <div class="score-pts">20</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">Test Strategy</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
+          <div class="score-pts">20</div>
+        </div>
+      </div>
+      <div class="verdict-row">
+        <div class="verdict verdict-go">
+          <div class="verdict-label">GO</div>
+          <div class="verdict-desc">&ge;70 &mdash; Proceed with confidence</div>
+        </div>
+        <div class="verdict verdict-hold">
+          <div class="verdict-label">HOLD</div>
+          <div class="verdict-desc">&lt;70 &mdash; Identify gaps first</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="section-num" style="margin-bottom:6px;">Context Modes</div>
+        <div class="mode-cards">
+          <div class="mode-card">
+            <div class="mode-name" style="color:var(--anthro-coral);">Dev</div>
+            <div class="mode-desc">Code first<br>Iterate quickly</div>
+          </div>
+          <div class="mode-card">
+            <div class="mode-name" style="color:#8B5CF6;">Review</div>
+            <div class="mode-desc">Security focus<br>Read-only audit</div>
+          </div>
+          <div class="mode-card">
+            <div class="mode-name" style="color:var(--anthro-green);">Research</div>
+            <div class="mode-desc">Explore broadly<br>Summarize findings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 WORKFLOW PHASES -->
+    <div>
+      <div class="section-num">09 Development Workflow</div>
+      <div class="section-title">Research &rarr; Plan &rarr; Implement</div>
+      <div class="phase-row">
+        <div class="phase">
+          <div class="phase-badge phase-badge-r">R</div>
+          <div class="phase-body">
+            <div class="phase-name">Research</div>
+            <div class="phase-desc">Feasibility analysis. Scout scores readiness.<br>Output: GO / HOLD decision</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-badge phase-badge-p">P</div>
+          <div class="phase-body">
+            <div class="phase-name">Plan</div>
+            <div class="phase-desc">Product requirements + architecture.<br>Planner agent breaks down steps</div>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-badge phase-badge-i">I</div>
+          <div class="phase-body">
+            <div class="phase-name">Implement</div>
+            <div class="phase-desc">Phased execution with frequent commits.<br>Reviewer validates at checkpoints</div>
+          </div>
+        </div>
+      </div>
+      <div class="phase-note">Validation gate between each phase &mdash; must pass before proceeding.</div>
+      <div class="quote-block" style="margin-top:14px;">
+        <div class="quote-text">&ldquo;80% of my code is written by AI, 20% is spent reviewing and correcting it.&rdquo;</div>
+        <div class="quote-attr">&mdash; Andrej Karpathy</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 4: Skills + Model Selection + Installation -->
+  <div class="grid">
+
+    <!-- 10 SKILLS -->
+    <div>
+      <div class="section-num">10 Skills Library</div>
+      <div class="section-title">9 Battle-Tested Skills</div>
+      <table>
+        <tr><th>Skill</th><th>What It Does</th></tr>
+        <tr><td><strong>pro-workflow</strong></td><td>Core 8 patterns</td></tr>
+        <tr><td><strong>smart-commit</strong></td><td>Quality gates + conventional commits</td></tr>
+        <tr><td><strong>wrap-up</strong></td><td>Session ritual with learning capture</td></tr>
+        <tr><td><strong>learn-rule</strong></td><td>Persist corrections to memory</td></tr>
+        <tr><td><strong>parallel-worktrees</strong></td><td>Git worktree setup for zero dead time</td></tr>
+        <tr><td><strong>replay-learnings</strong></td><td>Surface relevant past patterns</td></tr>
+        <tr><td><strong>session-handoff</strong></td><td>Resume docs for next session</td></tr>
+        <tr><td><strong>insights</strong></td><td>Analytics, heatmaps, trends</td></tr>
+        <tr><td><strong>deslop</strong></td><td>Remove AI code slop before commit</td></tr>
+      </table>
+    </div>
+
+    <!-- 11 MODEL SELECTION -->
+    <div>
+      <div class="section-num">11 Model Selection</div>
+      <div class="section-title">Right Model, Right Task</div>
+      <table>
+        <tr><th>Task</th><th>Model</th></tr>
+        <tr><td><strong>Quick fixes</strong></td><td>Haiku 4.5</td></tr>
+        <tr><td><strong>Features</strong></td><td>Sonnet 4.6 (adaptive thinking)</td></tr>
+        <tr><td><strong>Refactors</strong></td><td>Opus 4.6 (adaptive thinking)</td></tr>
+        <tr><td><strong>Architecture</strong></td><td>Opus 4.6 (1M context beta)</td></tr>
+        <tr><td><strong>Hard bugs</strong></td><td>Opus 4.6 (1M context beta)</td></tr>
+      </table>
+      <div style="margin-top:16px;">
+        <div class="section-num" style="margin-bottom:6px;">Wrap-Up Ritual (5 Steps)</div>
+        <ol style="list-style:none; padding:0; counter-reset:step;">
+          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
+            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">1</span>
+            <span style="font-size:12px; color:var(--anthro-text);"><strong>Changes audit</strong> &mdash; git status, uncommitted, TODOs</span>
+          </li>
+          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
+            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">2</span>
+            <span style="font-size:12px; color:var(--anthro-text);"><strong>Quality check</strong> &mdash; lint, typecheck, tests</span>
+          </li>
+          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
+            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">3</span>
+            <span style="font-size:12px; color:var(--anthro-text);"><strong>Learning capture</strong> &mdash; mistakes, patterns</span>
+          </li>
+          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
+            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">4</span>
+            <span style="font-size:12px; color:var(--anthro-text);"><strong>Next session</strong> &mdash; blockers, what&rsquo;s next</span>
+          </li>
+          <li style="display:flex; gap:8px; margin-bottom:0; align-items:flex-start;">
+            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">5</span>
+            <span style="font-size:12px; color:var(--anthro-text);"><strong>Summary</strong> &mdash; one paragraph handoff</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 12 INSTALLATION -->
+    <div>
+      <div class="section-num">12 Get Started</div>
+      <div class="section-title">Install in Seconds</div>
+      <div class="install-box">
+        <div class="install-label">Cursor</div>
+        <div class="install-code"><span class="cmd">/add-plugin</span> pro-workflow</div>
+      </div>
+      <div class="install-box" style="margin-top:8px;">
+        <div class="install-label">Claude Code</div>
+        <div class="install-code">
+          <span class="comment"># Add marketplace</span><br>
+          <span class="cmd">/plugin marketplace add</span> rohitg00/pro-workflow<br><br>
+          <span class="comment"># Install plugin</span><br>
+          <span class="cmd">/plugin install</span> pro-workflow@pro-workflow
+        </div>
+      </div>
+      <div class="install-box" style="margin-top:8px;">
+        <div class="install-label">SkillKit (32+ Agents)</div>
+        <div class="install-code">
+          <span class="cmd">npx skillkit install</span> pro-workflow<br>
+          <span class="cmd">npx skillkit translate</span> pro-workflow --agent cursor
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="section-num" style="margin-bottom:6px;">Philosophy</div>
+        <ul class="bullet-list">
+          <li><strong>Compound improvements</strong> &mdash; Small corrections &rarr; big gains</li>
+          <li><strong>Trust but verify</strong> &mdash; Let AI work, review at checkpoints</li>
+          <li><strong>Zero dead time</strong> &mdash; Parallel sessions keep momentum</li>
+          <li><strong>Memory is precious</strong> &mdash; Both yours and Claude&rsquo;s</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; Feb 2026<br>
+      Based on patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
+    </div>
+    <div class="footer-right">Practice Makes Claude Perfect</div>
+  </div>
+
+</div>
+</body>
+</html>
