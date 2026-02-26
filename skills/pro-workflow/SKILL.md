@@ -1,6 +1,6 @@
 ---
 name: pro-workflow
-description: Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with Claude Code, Cursor, and other agents.
+description: Implement self-correcting memory, parallel worktrees, wrap-up rituals, and review checkpoints for AI coding sessions. Configures CLAUDE.md rules, quality gates, and context management. Use when setting up AI coding best practices, optimising agent workflows, or asking about Claude Code or Cursor productivity patterns.
 ---
 
 # Pro Workflow
@@ -266,39 +266,7 @@ Append to .claude/learning-log.md
 
 ## Learn Claude Code
 
-**Master Claude Code through built-in best practices and official documentation.**
-
-Pro-workflow teaches Claude Code concepts directly and links to official docs at **https://code.claude.com/docs/** for deep dives.
-
-### What You'll Learn
-
-| Topic | Pro-Workflow Pattern | Official Docs |
-|-------|---------------------|---------------|
-| Sessions & context management | Pattern 7: Context Discipline | Common Workflows |
-| Modes (Plan/Normal/Auto/Delegate) | Pattern 5: 80/20 Review | Common Workflows |
-| CLAUDE.md & project memory | Pattern 4: Split Memory | Settings |
-| Writing rules & constraints | Pattern 1: Self-Correction Loop | Settings |
-| Effective prompting | Pattern 5: 80/20 Review | — |
-| Skills & automation | Pattern 8: Learning Log | Settings |
-| Custom subagents | Pattern 2: Parallel Worktrees | Sub-agents |
-| Agent teams | Pattern 2: Parallel Worktrees | Agent Teams |
-| Hooks & quality gates | All hooks in hooks.json | Hooks |
-| Context compaction | Pattern 7: Context Discipline | Common Workflows |
-| Adaptive thinking | Pattern 6: Model Selection | — |
-| Security & permissions | — | Security |
-| MCP configuration | Pattern 7: Context Discipline | MCP |
-
-### Learning Path
-
-1. **Start** — CLI shortcuts, context management, modes
-2. **Build** — CLAUDE.md, writing rules, prompting, skills
-3. **Scale** — Custom subagents, agent teams, hooks, MCP, GitHub Actions
-4. **Optimize** — Pro-Workflow patterns 1-8, adaptive thinking, context compaction
-5. **Reference** — Official docs for deep dives on any topic
-
-### Use /learn
-
-Run `/learn` for a topic-by-topic guide with practices and official doc links.
+Run `/learn` for a topic-by-topic guide covering sessions, context, CLAUDE.md, subagents, hooks, and more. Official docs: **https://code.claude.com/docs/**
 
 ---
 
@@ -464,15 +432,3 @@ These slash commands are available when using pro-workflow as a Claude Code plug
 | `/commit` | Smart commit with quality gates | `smart-commit` skill |
 | `/insights` | Session analytics and patterns | `insights` skill |
 
----
-
-## Philosophy
-
-1. **Compound improvements** - Small corrections → big gains
-2. **Trust but verify** - Let AI work, review at checkpoints
-3. **Zero dead time** - Parallel sessions
-4. **Memory is precious** - Yours and the AI's
-
----
-
-*From AI coding power users and real production use.*

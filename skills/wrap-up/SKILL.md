@@ -1,6 +1,6 @@
 ---
 name: wrap-up
-description: End-of-session ritual that audits changes, runs quality checks, captures learnings, and produces a session summary. Use when ending a coding session.
+description: End-of-session ritual that audits changes, runs quality checks, captures learnings, and produces a session summary. Use when saying "wrap up", "done for the day", "finish coding", or ending a coding session.
 ---
 
 # Wrap-Up Ritual

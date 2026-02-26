@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Remove AI-generated code slop, unnecessary comments, and over-engineering from the current branch diff. Use after completing changes and before committing.
+description: Remove AI-generated code slop, unnecessary comments, and over-engineering from the current branch diff. Cleans up boilerplate, simplifies abstractions, and strips defensive code. Use when cleaning up code, simplifying, removing boilerplate, or before committing.
 ---
 
 # Remove AI Code Slop
@@ -18,6 +18,15 @@ git fetch origin main
 git diff origin/main...HEAD --stat
 git diff origin/main...HEAD
 ```
+
+## Workflow
+
+1. Run diff commands to see all changes on the branch.
+2. Identify slop patterns from the focus areas below.
+3. Apply minimal, focused edits to remove slop.
+4. Re-run `git diff origin/main...HEAD` to verify only slop was removed.
+5. Run tests or type-check to confirm behaviour unchanged: `npm test -- --changed --passWithNoTests 2>&1 | tail -10`
+6. Summarise what was cleaned.
 
 ## Focus Areas
 
