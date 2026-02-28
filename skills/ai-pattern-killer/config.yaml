@@ -1,0 +1,24 @@
+sensitivity: balanced
+
+scoring:
+  min_pass_score: 7
+  max_rewrite_passes: 2
+
+agents:
+  detector:
+    model: sonnet
+    description: Reads pattern DB, flags AI tells in draft
+  rewriter:
+    model: opus
+    description: Rewrites flagged sections in user's voice
+  scorer:
+    model: haiku
+    description: Scores each sentence 1-10 on humanization scale
+
+severity_promotion:
+  low_threshold: 1
+  medium_threshold: 3
+  high_threshold: 6
+
+auto_learn: true
+track_changelog: true
