@@ -15,13 +15,13 @@ The most productive teams in 2026 don't choose one tool — they layer them:
 
 ### Common Setup
 
-```
+```text
 Cursor for daily coding (tab completions, inline edits)
   └── Claude Code in Cursor's terminal (hard problems, refactors)
       └── Subagents for parallel exploration
 ```
 
-Cost: ~$40/month combined. The overlap is worth it.
+The overlap in capabilities is worth the combined cost.
 
 ## Configuration Mapping
 

@@ -8,7 +8,7 @@ Talk to Claude Code instead of typing. Rolling out to Pro, Max, Team, and Enterp
 
 ### Setup
 
-```
+```bash
 /voice    # Toggle voice mode on/off
 ```
 
@@ -122,18 +122,20 @@ Claude Code has expanded from 8 to 18+ hook event types.
 
 ### Newly Available
 
-| Event | When | Use Case |
-|-------|------|----------|
-| `SubagentStart` | Subagent spawns | Log agent activity, set up context |
-| `SubagentStop` | Subagent finishes | Collect results, update metrics |
-| `Setup` | Initial setup (30s timeout) | One-time initialization |
-| `PermissionRequest` | Permission dialog | Auto-allow/deny, logging |
-| `TeammateIdle` | Team member goes idle | Force continuation, reassign |
-| `TaskCompleted` | Task marked complete | Quality gate on completion |
-| `ConfigChange` | Settings modified | Detect mid-session changes |
-| `WorktreeCreate` | Worktree created | Set up worktree-specific config |
-| `WorktreeRemove` | Worktree removed | Cleanup |
-| `PostToolUseFailure` | Tool use fails | Error tracking, retry logic |
+| Event | When | Use Case | In hooks.json |
+|-------|------|----------|:-------------:|
+| `SubagentStart` | Subagent spawns | Log agent activity, set up context | Yes |
+| `SubagentStop` | Subagent finishes | Collect results, update metrics | Yes |
+| `TaskCompleted` | Task marked complete | Quality gate on completion | Yes |
+| `PermissionRequest` | Permission dialog | Flag dangerous operations | Yes |
+| `PostToolUseFailure` | Tool use fails | Error tracking, retry logic | Yes |
+| `TeammateIdle` | Team member goes idle | Force continuation, reassign | Yes |
+| `ConfigChange` | Settings modified | Detect mid-session changes | Yes |
+| `Setup` | Initial setup (30s timeout) | One-time initialization | No |
+| `WorktreeCreate` | Worktree created | Set up worktree-specific config | No |
+| `WorktreeRemove` | Worktree removed | Cleanup | No |
+
+Events marked "No" are available in Claude Code but not configured in `hooks.json` by default. Add them to your `hooks.json` or `settings.local.json` as needed.
 
 ### Hook Types
 

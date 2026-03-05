@@ -37,7 +37,7 @@ Design the solution. Present for approval before any code changes.
 
 ### Output
 
-```
+```text
 PLAN: [Feature Name]
 
 Goal: [one sentence]

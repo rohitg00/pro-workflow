@@ -9,7 +9,7 @@ Build features through structured phases with validation gates.
 
 ## The Pattern
 
-```
+```text
 /develop <feature>
   │
   ├── Phase 1: Research (orchestrator agent)

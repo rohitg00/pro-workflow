@@ -1,6 +1,6 @@
 ---
 name: insights
-description: Show session analytics, learning patterns, correction trends, heatmaps, and productivity metrics. Use when wanting to understand your coding patterns over time.
+description: Show session analytics, learning patterns, correction trends, heatmaps, and productivity metrics. Computes stats from project memory and session history. Use when asking for stats, statistics, progress, how am I doing, coding history, or dashboard.
 ---
 
 # Session Insights
@@ -10,6 +10,22 @@ Surface patterns from learnings and session history.
 ## Trigger
 
 Use when asking "show stats", "how am I doing", "analytics", "insights", "heatmap", or "correction rate".
+
+## Data Sources
+
+Gather data from these locations before computing metrics:
+
+```bash
+# Session history and learnings
+cat .claude/LEARNED.md 2>/dev/null || cat CLAUDE.md | grep -A999 "LEARNED"
+cat .claude/learning-log.md 2>/dev/null
+
+# Session activity
+git log --oneline --since="today" --author="$(git config user.name)"
+git diff --stat
+```
+
+A **correction** is any instance where the user redirected, fixed, or overrode agent output during a session. Count `[LEARN]` entries and explicit correction markers in session history.
 
 ## What It Shows
 

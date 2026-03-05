@@ -26,7 +26,7 @@ If hooks aren't firing, check:
 - Scripts have execute permissions
 
 ### 3. Context Health
-```
+```text
 /context
 ```
 - Usage < 70%: Healthy
@@ -74,7 +74,7 @@ cat ~/.claude/settings.json 2>/dev/null | head -3
 ## Report
 
 After running checks, summarize:
-```
+```text
 Pro-Workflow Health Check
   Installation:  OK / NEEDS SETUP
   Hooks:         ACTIVE / INACTIVE

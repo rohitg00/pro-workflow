@@ -8,7 +8,7 @@ Understanding how Claude Code loads memory files is critical for large projects.
 
 When you start Claude Code, it walks UP from your current directory to the root, loading every `CLAUDE.md` it finds.
 
-```
+```text
 /                           ← loaded (if exists)
 ├── CLAUDE.md               ← loaded at startup
 ├── packages/
@@ -30,7 +30,7 @@ Siblings never load each other.
 
 When Claude reads or edits a file in a subdirectory, it lazy-loads that directory's CLAUDE.md.
 
-```
+```bash
 # You start at root. Claude reads packages/web/src/app.tsx
 # → packages/web/CLAUDE.md gets lazy-loaded into context
 ```
@@ -41,7 +41,7 @@ This happens automatically. You don't control it.
 
 ### Good Structure
 
-```
+```text
 monorepo/
 ├── CLAUDE.md                    # Shared: repo conventions, build commands
 ├── packages/
@@ -115,7 +115,7 @@ For personal preferences. Gitignored.
 
 Skills do NOT follow ancestor/descendant loading. They have fixed discovery locations:
 
-```
+```text
 1. Enterprise policies (managed)
 2. ~/.claude/skills/         (user-global)
 3. .claude/skills/           (project)
@@ -134,7 +134,7 @@ If you have many skills, they share a character budget for descriptions. Set `SL
 
 Agents with `memory: user` get their own MEMORY.md:
 
-```
+```text
 ~/.claude/agent-memory/<agent-name>/MEMORY.md
 ```
 

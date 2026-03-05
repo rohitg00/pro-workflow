@@ -4,7 +4,7 @@ Complete reference for configuring Claude Code. Settings control permissions, be
 
 ## Settings Hierarchy (Top Wins)
 
-```
+```text
 1. CLI flags              --permission-mode, --max-budget-usd
 2. .claude/settings.local.json   Project-local (gitignored)
 3. .claude/settings.json         Project-shared (committed)
@@ -171,7 +171,7 @@ Set to empty strings to disable "Co-Authored-By" and PR footers.
 
 ```json
 {
-  "enableAllProjectMcpServers": true,
+  "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": ["context7", "playwright"],
   "disabledMcpjsonServers": ["unused-server"]
 }

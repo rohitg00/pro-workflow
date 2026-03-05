@@ -45,14 +45,13 @@
       "MCP(github:*)",
       "MCP(context7:*)",
       "Task(*)",
-      "Agent(*)",
-      "Skill(*)"
+      "Agent(*)"
     ]
   },
   "outputStyle": "Explanatory",
   "statusLine": "model branch tokens",
   "plansDirectory": ".claude/plans",
-  "enableAllProjectMcpServers": true,
+  "enableAllProjectMcpServers": false,
   "attribution": {
     "commitMessage": "",
     "prDescription": ""

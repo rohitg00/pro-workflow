@@ -4,7 +4,7 @@ How to wire Commands, Agents, and Skills together for complex workflows.
 
 ## The Three Layers
 
-```
+```text
 Command (entry point, user-facing)
   └── Agent (execution, constrained tools)
         └── Skill (domain knowledge, preloaded)
@@ -77,7 +77,7 @@ Research > Plan > Implement with validation gates between phases.
 
 ### Structure
 
-```
+```text
 .claude/
 ├── commands/
 │   └── develop.md          # Entry point
@@ -92,7 +92,7 @@ Research > Plan > Implement with validation gates between phases.
 
 ### The Flow
 
-```
+```text
 /develop "add webhook support"
     │
     ▼

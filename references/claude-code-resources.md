@@ -44,7 +44,7 @@ Essential references and community workflows.
 | How I Use Claude Code (+ My Best Tips) | Builder.io |
 | Best Practices for Coding with Agents | Cursor Blog |
 | My LLM Coding Workflow Going Into 2026 | AddyOsmani.com |
-| Agent Best Practices | cursor.com/blog/agent-best-practices |
+| Agent Best Practices | https://cursor.com/blog/agent-best-practices |
 
 ## Pro-Workflow Reference Guides
 
@@ -70,7 +70,7 @@ Essential references and community workflows.
 ## How to Use These Practices
 
 ### With /learn-rule
-```
+```text
 [LEARN] Claude-Code: <the practice>
 ```
 

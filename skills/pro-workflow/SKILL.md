@@ -51,7 +51,7 @@ When the user corrects me or I make a mistake:
 
 ### Example Flow
 
-```
+```text
 User: You edited the wrong file
 Claude: I edited src/utils.ts when you meant src/lib/utils.ts.
 
@@ -137,7 +137,7 @@ For complex projects, modularize Claude memory.
 
 ### Structure
 
-```
+```text
 .claude/
 ├── CLAUDE.md        # Entry point
 ├── AGENTS.md        # Workflow rules
@@ -266,39 +266,7 @@ Append to .claude/learning-log.md
 
 ## Learn Claude Code
 
-**Master Claude Code through built-in best practices and official documentation.**
-
-Pro-workflow teaches Claude Code concepts directly and links to official docs at **https://code.claude.com/docs/** for deep dives.
-
-### What You'll Learn
-
-| Topic | Pro-Workflow Pattern | Official Docs |
-|-------|---------------------|---------------|
-| Sessions & context management | Pattern 7: Context Discipline | Common Workflows |
-| Modes (Plan/Normal/Auto/Delegate) | Pattern 5: 80/20 Review | Common Workflows |
-| CLAUDE.md & project memory | Pattern 4: Split Memory | Settings |
-| Writing rules & constraints | Pattern 1: Self-Correction Loop | Settings |
-| Effective prompting | Pattern 5: 80/20 Review | — |
-| Skills & automation | Pattern 8: Learning Log | Settings |
-| Custom subagents | Pattern 2: Parallel Worktrees | Sub-agents |
-| Agent teams | Pattern 2: Parallel Worktrees | Agent Teams |
-| Hooks & quality gates | All hooks in hooks.json | Hooks |
-| Context compaction | Pattern 7: Context Discipline | Common Workflows |
-| Adaptive thinking | Pattern 6: Model Selection | — |
-| Security & permissions | — | Security |
-| MCP configuration | Pattern 7: Context Discipline | MCP |
-
-### Learning Path
-
-1. **Start** — CLI shortcuts, context management, modes
-2. **Build** — CLAUDE.md, writing rules, prompting, skills
-3. **Scale** — Custom subagents, agent teams, hooks, MCP, GitHub Actions
-4. **Optimize** — Pro-Workflow patterns 1-8, adaptive thinking, context compaction
-5. **Reference** — Official docs for deep dives on any topic
-
-### Use /learn
-
-Run `/learn` for a topic-by-topic guide with practices and official doc links.
+Run `/learn` for a topic-by-topic guide covering sessions, context, CLAUDE.md, subagents, hooks, and more. Official docs: **https://code.claude.com/docs/**
 
 ---
 
@@ -442,7 +410,7 @@ The most powerful pattern for complex features. Three layers, each with a single
 
 ### The Architecture
 
-```
+```text
 Command (user-facing entry point)
   └── Agent (execution, constrained tools, preloaded skills)
         └── Skill (domain knowledge, injected at startup)

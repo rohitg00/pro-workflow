@@ -98,7 +98,7 @@ If you have voice mode access:
 
 The most productive setup uses multiple tools:
 
-```
+```text
 Primary editor (Cursor/VS Code)
   ├── Tab completions for small edits
   ├── Inline chat for quick questions

@@ -201,7 +201,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const tool=i.tool||'unknown';const dangerous=['rm','docker','deploy','publish','push --force'];const isDangerous=dangerous.some(d=>JSON.stringify(i).includes(d));if(isDangerous){console.error('[ProWorkflow] CAUTION: Dangerous operation requested: '+tool)}console.log(d)})\""
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const tool=i.tool||'unknown';const cmd=(i.tool_input&&i.tool_input.command)||'';const dangerous=['rm -rf','docker','deploy','npm publish','push --force','reset --hard'];const isDangerous=dangerous.some(p=>tool.includes(p)||cmd.includes(p));if(isDangerous){console.error('[ProWorkflow] CAUTION: Dangerous operation requested: '+tool+(cmd?' cmd: '+cmd:''))}console.log(d)})\""
           }
         ],
         "description": "Flag dangerous operations in permission requests"

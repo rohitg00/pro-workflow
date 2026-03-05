@@ -1,6 +1,6 @@
 ---
 name: replay-learnings
-description: Surface past learnings relevant to the current task before starting work. Searches correction history and patterns. Use when starting a task or saying "what do I know about".
+description: Surface past learnings relevant to the current task before starting work. Searches correction history, recalls past mistakes, and applies prior patterns. Use when starting a task, saying "what do I know about", "previous mistakes", "lessons learned", or "remind me about".
 ---
 
 # Replay Learnings
@@ -13,8 +13,13 @@ Use when starting a new task, saying "what do I know about", "before I start", "
 
 ## Workflow
 
-1. Extract keywords from the task description.
-2. Search learnings/memory for matching patterns (corrections, rules, past mistakes).
+1. Extract keywords from the task description (e.g. "auth refactor" → `auth`, `middleware`, `refactor`).
+2. Search learnings/memory for matching patterns:
+   ```bash
+   grep -i "auth\|middleware" .claude/LEARNED.md 2>/dev/null
+   grep -i "auth\|middleware" .claude/learning-log.md 2>/dev/null
+   grep -A2 "\[LEARN\]" CLAUDE.md | grep -i "auth\|middleware"
+   ```
 3. Check session history for similar work — what was the correction rate?
 4. Surface the top learnings ranked by relevance.
 5. If no learnings found, suggest starting with the scout agent to explore first.

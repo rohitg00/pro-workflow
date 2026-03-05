@@ -39,7 +39,7 @@ Set proactive auto-compaction:
 
 Keep <10 MCPs enabled, <80 tools total. Each MCP adds overhead to every request.
 
-```
+```bash
 /mcp          # List active servers
 # Disable what you're not using
 ```

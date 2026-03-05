@@ -301,7 +301,7 @@ See [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) for configu
 
 ## Structure
 
-```
+```text
 pro-workflow/
 ├── .claude-plugin/              # Claude Code plugin
 ├── .cursor-plugin/              # Cursor plugin
@@ -347,12 +347,12 @@ pro-workflow/
 
 Learnings stored in SQLite with FTS5 full-text search:
 
-```
+```text
 ~/.pro-workflow/
 └── data.db    # SQLite database with learnings and sessions
 ```
 
-```
+```bash
 /search testing           # Find all testing-related learnings
 /search "file paths"      # Exact phrase search
 ```

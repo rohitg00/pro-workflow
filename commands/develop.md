@@ -32,7 +32,7 @@ Explore the codebase to understand the scope:
 
 Present a plan for approval:
 
-```
+```text
 PLAN: [Feature Name]
 
 Goal: [one sentence]

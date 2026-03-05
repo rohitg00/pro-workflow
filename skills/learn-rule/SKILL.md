@@ -1,6 +1,6 @@
 ---
 name: learn-rule
-description: Capture a correction or lesson as a persistent learning rule with category, mistake, and correction. Use after mistakes or when the user says "remember this".
+description: Capture a correction or lesson as a persistent learning rule with category, mistake, and correction. Stores, categorises, and retrieves rules for future sessions. Use after mistakes or when the user says "remember this", "don't forget", "note this", or "learn from this".
 ---
 
 # Learn Rule

@@ -22,7 +22,7 @@ Methodical debugging that narrows down root causes before proposing fixes.
 
 Generate 2-3 hypotheses ranked by likelihood:
 
-```
+```text
 Hypothesis 1 (70%): [most likely cause]
   Evidence for: [what supports this]
   Evidence against: [what contradicts]
@@ -48,7 +48,7 @@ Test each hypothesis starting with the most likely:
 
 Present the confirmed root cause:
 
-```
+```text
 ROOT CAUSE: [what's actually wrong]
 WHERE: [file:line]
 WHY: [how it got this way]
@@ -59,7 +59,7 @@ SINCE: [when it was introduced, if knowable]
 
 Propose the minimal fix. Explain why this fix is correct.
 
-```
+```text
 FIX: [description]
 CHANGES:
   - file.ts:42 - [what to change]

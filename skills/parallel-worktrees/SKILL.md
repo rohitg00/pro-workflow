@@ -1,6 +1,6 @@
 ---
 name: parallel-worktrees
-description: Set up parallel coding sessions using git worktrees for zero dead time. Use when blocked on tests, builds, or wanting to explore multiple approaches simultaneously.
+description: Create and manage git worktrees for parallel coding sessions with zero dead time. Use when blocked on tests, builds, wanting to work on multiple branches, context switching, or exploring multiple approaches simultaneously.
 ---
 
 # Parallel Worktrees
@@ -78,6 +78,7 @@ Each worktree runs its own AI session independently.
 ## Guardrails
 
 - Each worktree is a full working copy — changes are isolated.
+- Before removing a worktree, verify changes are committed: `git -C ../project-feat status`
 - Don't forget to clean up worktrees when done (`git worktree prune`).
 - Avoid editing the same files in multiple worktrees simultaneously.
 
