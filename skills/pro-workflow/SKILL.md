@@ -1,13 +1,13 @@
 ---
 name: pro-workflow
-description: Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with Claude Code, Cursor, and other agents.
+description: Complete AI coding workflow system. Orchestration patterns, 18 hooks, 5 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
 ---
 
 # Pro Workflow
 
-Real-world AI coding patterns from power users who ship production code daily. Not theory - workflows that compound over time.
+Complete AI coding workflow system from production use. Orchestration patterns, reference guides, and battle-tested habits that compound over time.
 
-**Works with:** Claude Code, Cursor, and other AI coding agents. Sections marked *(Claude Code)* use features specific to Claude Code — Cursor users can skip those or use the noted alternatives.
+**Works with:** Claude Code, Cursor, Codex, Gemini CLI, and 32+ AI coding agents via SkillKit. Sections marked *(Claude Code)* use features specific to Claude Code — Cursor users can skip those or use the noted alternatives.
 
 ## The Core Insight
 
@@ -436,43 +436,130 @@ Coordinate multiple Claude Code sessions as a team:
 
 ---
 
+## 9. Orchestration: Command > Agent > Skill
+
+The most powerful pattern for complex features. Three layers, each with a single job.
+
+### The Architecture
+
+```
+Command (user-facing entry point)
+  └── Agent (execution, constrained tools, preloaded skills)
+        └── Skill (domain knowledge, injected at startup)
+```
+
+### Multi-Phase Development (/develop)
+
+For features touching >5 files or needing architecture decisions:
+
+1. **Research** → orchestrator agent explores codebase, scores confidence (0-100)
+2. **Plan** → presents approach, files to change, risks. Waits for approval.
+3. **Implement** → executes plan step by step with quality gates every 5 edits
+4. **Review** → reviewer agent checks for security, logic, quality
+
+Never skip phases. Never proceed without approval between phases.
+
+### Agent Skills (Preloaded)
+
+```yaml
+# Agent frontmatter
+skills: ["api-conventions", "project-patterns"]
+```
+
+Full skill content injected at agent startup. Use for knowledge the agent always needs.
+
+### On-Demand Skills (Invoked)
+
+Skills with `user-invocable: true` are called via `/skill-name`. Use `context: fork` for isolated execution that doesn't pollute main context.
+
+### When to Orchestrate
+
+| Scenario | Pattern |
+|----------|---------|
+| Feature > 5 files | `/develop` with orchestrator |
+| Bug investigation | debugger agent |
+| Quick exploration | scout agent (background) |
+| Code review | reviewer agent |
+| Simple task | Just do it directly |
+
+---
+
+## 10. Daily Habits
+
+### Every Session
+- Run `/doctor` if things feel off
+- Manual `/compact` at 50% — don't wait for auto-compact
+- `ultrathink` in prompts for maximum reasoning
+- Name sessions with `/rename` for easy `/resume`
+- End with `/wrap-up` to capture learnings
+
+### Context Management
+- CLAUDE.md: < 60 lines root, < 150 max
+- Use `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50` for proactive compaction
+- Delegate heavy exploration to subagents
+- Keep <10 MCPs, <80 tools
+
+### Cross-Agent Tips
+- Use Cursor for tab completions + Claude Code in terminal for hard problems
+- Same MCP servers work across both (share `.mcp.json` at project root)
+- SkillKit translates skills to any agent: `npx skillkit translate pro-workflow --agent cursor`
+
+---
+
 ## MCP Config *(Claude Code)*
 
-Keep <10 MCPs enabled, <80 tools total.
+Start with 3 MCPs. Add only for concrete needs.
 
 Essential:
-- `github` - PRs, issues
-- `memory` - Persist learnings
-- `filesystem` - File ops
+- `context7` — Live documentation lookup
+- `playwright` — Browser automation (most token-efficient)
+- `github` — PRs, issues, code search
 
-See `mcp-config.example.json` for setup.
+See `mcp-config.example.json` for setup and curated recommendations.
 
 ---
 
 ## Commands *(Claude Code)*
 
-These slash commands are available when using pro-workflow as a Claude Code plugin. Cursor users get the same functionality through the **skills** listed above (wrap-up, smart-commit, parallel-worktrees, etc.).
-
 | Command | Purpose | Cursor Equivalent |
 |---------|---------|-------------------|
 | `/wrap-up` | End-of-session ritual | `wrap-up` skill |
 | `/learn-rule` | Extract correction to memory | `learn-rule` skill |
-| `/parallel` | Worktree setup guide | `parallel-worktrees` skill |
-| `/learn` | Best practices & save learnings | — |
-| `/search` | Search learnings by keyword | — |
-| `/list` | List all stored learnings | — |
+| `/develop` | Multi-phase feature build | `orchestrate` skill |
+| `/doctor` | Health check | — |
 | `/commit` | Smart commit with quality gates | `smart-commit` skill |
 | `/insights` | Session analytics and patterns | `insights` skill |
+| `/replay` | Surface past learnings | `replay-learnings` skill |
+| `/handoff` | Session handoff document | `session-handoff` skill |
+| `/search` | Search learnings by keyword | — |
+| `/list` | List all stored learnings | — |
+
+---
+
+## Reference Guides
+
+Deep dives on configuration and features:
+
+| Guide | Topics |
+|-------|--------|
+| `docs/settings-guide.md` | All settings keys, permission modes, hierarchy, sandbox, env vars |
+| `docs/cli-cheatsheet.md` | Every CLI flag, keyboard shortcut, slash command |
+| `docs/orchestration-patterns.md` | Command > Agent > Skill architecture, frontmatter reference |
+| `docs/context-loading.md` | CLAUDE.md monorepo loading, agent memory, skills discovery |
+| `docs/cross-agent-workflows.md` | Claude Code + Cursor config mapping, background agents |
+| `docs/new-features.md` | Voice mode, agent teams, checkpointing, new hook events |
+| `docs/daily-habits.md` | Session habits, debugging tips, terminal setup, anti-patterns |
 
 ---
 
 ## Philosophy
 
-1. **Compound improvements** - Small corrections → big gains
+1. **Compound improvements** - Small corrections lead to big gains
 2. **Trust but verify** - Let AI work, review at checkpoints
-3. **Zero dead time** - Parallel sessions
+3. **Zero dead time** - Parallel sessions keep momentum
 4. **Memory is precious** - Yours and the AI's
+5. **Orchestrate, don't micromanage** - Wire patterns together, let agents execute
 
 ---
 
-*From AI coding power users and real production use.*
+*Complete AI coding workflow system from production use across Claude Code, Cursor, and beyond.*

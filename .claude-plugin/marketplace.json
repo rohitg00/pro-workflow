@@ -11,7 +11,7 @@
     {
       "name": "pro-workflow",
       "source": "./",
-      "description": "Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Complete hooks, agents, and commands.",
+      "description": "Complete AI coding workflow: orchestration patterns, 18 hooks, 5 agents, cross-agent support, reference guides, and searchable learnings.",
       "author": {
         "name": "Rohit Ghumare"
       },
@@ -24,7 +24,11 @@
         "self-correction",
         "worktrees",
         "hooks",
-        "agents"
+        "agents",
+        "orchestration",
+        "cross-agent",
+        "cursor",
+        "codex"
       ],
       "category": "workflow",
       "tags": [
@@ -33,7 +37,11 @@
         "agents",
         "commands",
         "productivity",
-        "best-practices"
+        "best-practices",
+        "orchestration",
+        "settings-guide",
+        "cli-reference",
+        "cross-agent"
       ]
     }
   ]

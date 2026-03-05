@@ -1,7 +1,7 @@
 {
   "name": "pro-workflow",
-  "version": "1.3.0",
-  "description": "Battle-tested Claude Code workflows with agent teams, smart commit, insights, and searchable learnings",
+  "version": "2.0.0",
+  "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, and searchable learnings",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -57,7 +57,10 @@
     "rules",
     "references",
     "skills",
+    "docs",
     "config.json",
+    "settings.example.json",
+    "mcp-config.example.json",
     "README.md"
   ]
 }

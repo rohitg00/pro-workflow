@@ -1,41 +1,46 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "_comment": "Live documentation lookup. Eliminates outdated API guessing."
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-playwright"],
+      "_comment": "Browser automation and E2E testing. Most token-efficient browser MCP."
+    },
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
-      }
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/server-filesystem"]
+      },
+      "_comment": "PRs, issues, code search. Essential for any GitHub-based project."
     }
   },
-  "projects": {
-    "disabledMcpServers": []
+  "_recommendations": {
+    "daily_use": [
+      "context7 - Live docs. Use instead of guessing API signatures.",
+      "playwright - E2E testing and browser automation. 13.7k tokens avg.",
+      "github - PRs, issues, code search."
+    ],
+    "add_when_needed": [
+      "supabase - Database operations (when using Supabase)",
+      "linear - Issue tracking (when using Linear)",
+      "slack - Team notifications (when using Slack)"
+    ],
+    "wisdom": "Start with 3 MCPs. Add only when you hit a concrete need. Most developers who start with 10+ end up using 3-4 daily."
   },
-  "_comment": [
-    "Pro Workflow MCP Config",
-    "",
-    "RULE: Keep <10 MCPs enabled, <80 tools total",
-    "",
-    "Essential MCPs:",
-    "- github: PR creation, issue tracking",
-    "- memory: Persist learnings across sessions",
-    "- filesystem: File operations",
-    "",
-    "Add as needed:",
-    "- supabase: Database operations",
-    "- vercel: Deployment",
-    "- context7: Live documentation",
-    "",
-    "Disable when not using:",
-    "- Add to projects.disabledMcpServers"
-  ]
+  "_scopes": {
+    "project": ".mcp.json at project root (shared with team)",
+    "user": "~/.claude.json mcpServers section (personal)",
+    "agent": "mcpServers field in agent frontmatter (per-agent)"
+  },
+  "_approval_settings": {
+    "auto_approve_all": "\"enableAllProjectMcpServers\": true in settings.json",
+    "selective": "\"enabledMcpjsonServers\": [\"context7\", \"github\"] in settings.json",
+    "block": "\"disabledMcpjsonServers\": [\"unused-server\"] in settings.json"
+  }
 }

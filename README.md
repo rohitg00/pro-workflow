@@ -3,7 +3,20 @@
 [![GitHub stars](https://img.shields.io/github/stars/rohitg00/pro-workflow?style=social)](https://github.com/rohitg00/pro-workflow)
 [![npm version](https://img.shields.io/npm/v/pro-workflow)](https://www.npmjs.com/package/pro-workflow)
 
-Battle-tested AI coding workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio. Works with **Claude Code** and **Cursor**.
+Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 specialized agents, cross-agent support, reference guides, and searchable learnings. Works with **Claude Code**, **Cursor**, and **32+ agents** via SkillKit.
+
+## What's New in v2.0
+
+- **Orchestration Patterns** — Command > Agent > Skill architecture with multi-phase development
+- **5 Agents** — planner, reviewer, scout, orchestrator (RPI workflow), debugger
+- **18 Hook Events** — Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure
+- **Reference Guides** — Settings, CLI cheatsheet, context loading, cross-agent workflows, new features
+- **Daily Habits Guide** — Structured tips from power users across Claude Code, Cursor, and Codex
+- **Context Optimizer Skill** — Token management and context budget planning
+- **Production Settings Example** — Full `settings.example.json` with permissions, spinner, output style
+- **Curated MCP Config** — Battle-tested server recommendations
+- **Multi-Phase `/develop` Command** — Research > Plan > Implement with validation gates
+- **`/doctor` Command** — Health check for your pro-workflow setup
 
 ## The Core Idea
 
@@ -23,6 +36,8 @@ This skill optimizes for that ratio. Every pattern reduces correction cycles.
 | **Model Selection** | Opus 4.6 adaptive thinking, Sonnet 4.6 (1M context) |
 | **Context Discipline** | Manage your 200k token budget |
 | **Learning Log** | Auto-document insights |
+| **Orchestration** | Command > Agent > Skill wiring for complex features |
+| **Multi-Phase Dev** | Research > Plan > Implement with validation gates |
 
 ## Installation
 
@@ -32,49 +47,26 @@ This skill optimizes for that ratio. Every pattern reduces correction cycles.
 /add-plugin pro-workflow
 ```
 
-The plugin includes 9 skills, 3 agents, and 6 rules that load automatically.
+The plugin includes 11 skills, 5 agents, and 6 rules that load automatically.
 
 ### Claude Code — One-Click Plugin Install
 
 ```bash
-# Add marketplace
 /plugin marketplace add rohitg00/pro-workflow
-
-# Install plugin
 /plugin install pro-workflow@pro-workflow
-```
-
-Or via CLI:
-
-```bash
-claude plugin marketplace add rohitg00/pro-workflow
-claude plugin install pro-workflow@pro-workflow
 ```
 
 ### Claude Code — Build with SQLite Support
 
-After installation, build the TypeScript for persistent storage:
-
 ```bash
-cd ~/.claude/plugins/*/pro-workflow  # Navigate to plugin directory
+cd ~/.claude/plugins/*/pro-workflow
 npm install && npm run build
 ```
-
-This creates the SQLite database at `~/.pro-workflow/data.db`.
 
 ### Or load directly
 
 ```bash
 claude --plugin-dir /path/to/pro-workflow
-```
-
-### Manual Setup
-
-```bash
-git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
-cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
-cp -r /tmp/pw/commands/* ~/.claude/commands/
-cp -r /tmp/pw/hooks/* ~/.claude/
 ```
 
 ### Minimal (Just add to CLAUDE.md)
@@ -83,7 +75,7 @@ cp -r /tmp/pw/hooks/* ~/.claude/
 ## Pro Workflow
 
 ### Self-Correction
-When corrected, propose rule → add to LEARNED after approval.
+When corrected, propose rule -> add to LEARNED after approval.
 
 ### Planning
 Multi-file: plan first, wait for "proceed".
@@ -94,11 +86,23 @@ After edits: lint, typecheck, test.
 ### LEARNED
 ```
 
-## Skills (Cursor)
+## Reference Guides
+
+| Guide | What's Covered |
+|-------|---------------|
+| [`docs/settings-guide.md`](docs/settings-guide.md) | All settings keys, permission modes, hierarchy, sandbox, MCP approval |
+| [`docs/cli-cheatsheet.md`](docs/cli-cheatsheet.md) | Every CLI flag, keyboard shortcut, slash command, scripting patterns |
+| [`docs/orchestration-patterns.md`](docs/orchestration-patterns.md) | Command > Agent > Skill architecture, frontmatter reference, agent teams |
+| [`docs/context-loading.md`](docs/context-loading.md) | CLAUDE.md loading in monorepos, agent memory, skills discovery |
+| [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Using Claude Code + Cursor together, config mapping, SkillKit translation |
+| [`docs/new-features.md`](docs/new-features.md) | Voice mode, agent teams, checkpointing, remote control, new hook events |
+| [`docs/daily-habits.md`](docs/daily-habits.md) | Session habits, debugging tips, terminal setup, anti-patterns |
+
+## Skills
 
 | Skill | Description |
 |:------|:------------|
-| `pro-workflow` | Core 8 workflow patterns for AI-assisted coding |
+| `pro-workflow` | Core workflow patterns for AI-assisted coding |
 | `smart-commit` | Quality gates, staged review, and conventional commits |
 | `wrap-up` | End-of-session ritual with change audit and learning capture |
 | `learn-rule` | Capture corrections as persistent learning rules |
@@ -107,6 +111,55 @@ After edits: lint, typecheck, test.
 | `session-handoff` | Generate handoff documents for session continuity |
 | `insights` | Session analytics, correction trends, and productivity metrics |
 | `deslop` | Remove AI-generated code slop and clean up style |
+| `context-optimizer` | Token management, context budget, MCP audit |
+| `orchestrate` | Wire Commands, Agents, and Skills for multi-phase development |
+
+## Agents
+
+| Agent | Purpose | Key Feature |
+|-------|---------|-------------|
+| **planner** | Break down complex tasks | Read-only, approval-gated |
+| **reviewer** | Code review, security audit | Checklist-based, severity levels |
+| **scout** | Confidence-gated exploration | Background, worktree-isolated |
+| **orchestrator** | Multi-phase feature development | Research > Plan > Implement, memory-enabled |
+| **debugger** | Systematic bug investigation | Hypothesis-driven, root cause analysis |
+
+## Commands (Claude Code)
+
+| Command | Purpose |
+|---------|---------|
+| `/pro-workflow:wrap-up` | End-of-session checklist |
+| `/pro-workflow:learn-rule` | Extract correction to memory |
+| `/pro-workflow:commit` | Smart commit with quality gates |
+| `/pro-workflow:develop` | Multi-phase feature build (Research > Plan > Implement) |
+| `/pro-workflow:doctor` | Health check for setup and configuration |
+| `/pro-workflow:insights` | Session analytics and correction heatmap |
+| `/pro-workflow:replay` | Surface past learnings for current task |
+| `/pro-workflow:handoff` | Generate session handoff document |
+| `/pro-workflow:search` | Search learnings by keyword |
+| `/pro-workflow:list` | List all stored learnings |
+
+## Hooks (18 Events)
+
+| Hook | When | What |
+|------|------|------|
+| PreToolUse | Before edits | Track edit count, quality gate reminders |
+| PreToolUse | Before git commit/push | Remind about quality gates, wrap-up |
+| PostToolUse | After code edits | Check for console.log, TODOs, secrets |
+| PostToolUse | After tests | Suggest [LEARN] from failures |
+| UserPromptSubmit | Each prompt | Drift detection, correction tracking |
+| SessionStart | New session | Load learnings from database |
+| Stop | Each response | Context-aware reminders |
+| SessionEnd | Session close | Save session stats to database |
+| PreCompact | Before compaction | Save context state |
+| ConfigChange | Settings modified | Detect mid-session changes |
+| Notification | System events | Log permission requests |
+| **SubagentStart** | Subagent spawns | Log agent lifecycle |
+| **SubagentStop** | Subagent finishes | Collect results |
+| **TaskCompleted** | Task marked done | Quality gate on completion |
+| **PermissionRequest** | Permission dialog | Flag dangerous operations |
+| **PostToolUseFailure** | Tool fails | Track failures, suggest learnings |
+| **TeammateIdle** | Teammate goes idle | Detect blockers in agent teams |
 
 ## Rules (Cursor)
 
@@ -119,221 +172,114 @@ After edits: lint, typecheck, test.
 | `no-debug-statements` | `*.{ts,tsx,js,jsx,py,go,rs}` | Remove console.log, debugger, print before committing |
 | `communication-style` | Always | Concise, action-oriented, no over-engineering |
 
-## Commands (Claude Code)
+## Configuration
 
-After plugin install, commands are namespaced:
+### Settings Example
 
-| Command | Purpose |
-|---------|---------|
-| `/pro-workflow:wrap-up` | End-of-session checklist |
-| `/pro-workflow:learn-rule` | Extract correction to memory (file-based) |
-| `/pro-workflow:parallel` | Worktree setup guide |
-| `/pro-workflow:learn` |Claude Code best practices & save learnings |
-| `/pro-workflow:search` |Search learnings by keyword |
-| `/pro-workflow:list` |List all stored learnings |
-| `/pro-workflow:commit` | Smart commit with quality gates and code review |
-| `/pro-workflow:insights` | Session analytics, learning patterns, and correction heatmap |
-| `/pro-workflow:replay` |Surface past learnings for current task |
-| `/pro-workflow:handoff` |Generate session handoff document for next session |
+See [`settings.example.json`](settings.example.json) for a production-ready configuration including:
+- Permission rules (allow/deny/ask)
+- Output style and status line
+- Auto-compaction at 80%
+- Custom spinner verbs and tips
+- Attribution disabled
+- Plans directory
 
-## Database Features
+### MCP Config
 
-### Persistent Learnings
+See [`mcp-config.example.json`](mcp-config.example.json) for curated server recommendations:
+- **context7** — Live documentation lookup
+- **playwright** — Browser automation (most token-efficient)
+- **github** — PRs, issues, code search
 
-Learnings are stored in SQLite with FTS5 full-text search:
+Rule: Start with 3 MCPs. Add only for concrete needs.
 
-```
-~/.pro-workflow/
-└── data.db    # SQLite database with learnings and sessions
-```
+## Cross-Agent Support
 
-### Search Examples
-
-```
-/search testing           # Find all testing-related learnings
-/search "file paths"      # Exact phrase search
-/search git commit        # Multiple terms
-```
-
-### Learning Categories
-
-- Navigation (file paths, finding code)
-- Editing (code changes, patterns)
-- Testing (test approaches)
-- Git (commits, branches)
-- Quality (lint, types, style)
-- Context (when to clarify)
-- Architecture (design decisions)
-- Performance (optimization)
-- Claude-Code (sessions, modes, CLAUDE.md, skills, subagents, hooks, MCP)
-- Prompting (scope, constraints, acceptance criteria)
-
-## Hooks
-
-Automated enforcement of workflow patterns.
-
-| Hook | When | What |
-|------|------|------|
-| PreToolUse | Before edits | Track edit count, quality gate reminders |
-| PreToolUse | Before git commit/push | Remind about quality gates, wrap-up |
-| PostToolUse | After code edits | Check for console.log, TODOs, secrets |
-| PostToolUse | After tests | Suggest [LEARN] from failures |
-| UserPromptSubmit | Each prompt | Drift detection — warns when straying from original intent |
-| SessionStart | New session | Load learnings from database |
-| Stop | Each response | Context-aware reminders using `last_assistant_message` |
-| SessionEnd | Session close | Save session stats to database |
-| ConfigChange | Settings modified | Detect when quality gates or hooks are changed mid-session |
-
-### Install Hooks
+Works across 32+ AI coding agents via [SkillKit](https://agenstskills.com):
 
 ```bash
-# Full setup with hooks
-git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
-cp -r /tmp/pw/hooks/* ~/.claude/
-cp -r /tmp/pw/scripts ~/.claude/scripts/pro-workflow/
-cp -r /tmp/pw/commands/* ~/.claude/commands/
+npx skillkit install pro-workflow
+npx skillkit translate pro-workflow --agent cursor
+npx skillkit translate pro-workflow --agent codex
+npx skillkit translate pro-workflow --agent gemini-cli
 ```
 
-## Contexts & Agents
-
-| Context | When | Behavior |
-|---------|------|----------|
-| dev | Building | Code first, iterate |
-| review | PRs | Read-only, security focus |
-| research | Exploring | Summarize, plan |
-
-| Agent | Purpose |
-|-------|---------|
-| planner | Break down complex tasks |
-| reviewer | Code review, security audit |
-| scout | Background confidence-gated exploration with worktree isolation |
-
-### Agent Teams (Experimental)
-
-Coordinate multiple Claude Code sessions working together:
-
-```bash
-# Enable in settings.json
-{ "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }
-```
-
-- Lead session coordinates, teammates work independently
-- Teammates message each other directly
-- Shared task list with dependency management
-- Display modes: in-process (`Shift+Down` to navigate, wraps around) or split panes (tmux/iTerm2)
-- Delegate mode (`Shift+Tab`): lead orchestrates only
-- Docs: https://code.claude.com/docs/agent-teams
+See [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) for configuration mapping between Claude Code, Cursor, Codex, and Gemini CLI.
 
 ## Structure
 
 ```
 pro-workflow/
 ├── .claude-plugin/              # Claude Code plugin
-│   ├── plugin.json
-│   ├── marketplace.json
-│   ├── settings.json            # Default permissions for quality gates
-│   └── README.md
 ├── .cursor-plugin/              # Cursor plugin
-│   └── plugin.json
-├── skills/                      # Shared skills (Cursor + Claude Code)
+├── skills/                      # 11 skills (Cursor + Claude Code)
 │   ├── pro-workflow/SKILL.md
 │   ├── smart-commit/SKILL.md
-│   ├── wrap-up/SKILL.md
-│   ├── learn-rule/SKILL.md
-│   ├── parallel-worktrees/SKILL.md
-│   ├── replay-learnings/SKILL.md
-│   ├── session-handoff/SKILL.md
-│   ├── insights/SKILL.md
-│   └── deslop/SKILL.md
-├── agents/                      # Shared agents (Cursor + Claude Code)
+│   ├── context-optimizer/SKILL.md
+│   ├── orchestrate/SKILL.md
+│   └── ...
+├── agents/                      # 5 agents
 │   ├── planner.md
 │   ├── reviewer.md
-│   └── scout.md
-├── rules/                       # Rules
-│   ├── core-rules.md            # Claude Code rules
-│   ├── quality-gates.mdc        # Cursor rules
-│   ├── atomic-commits.mdc
-│   ├── context-discipline.mdc
-│   ├── self-correction.mdc
-│   ├── no-debug-statements.mdc
-│   └── communication-style.mdc
-├── commands/                    # Claude Code commands
-│   ├── wrap-up.md
-│   ├── learn-rule.md
+│   ├── scout.md
+│   ├── orchestrator.md
+│   └── debugger.md
+├── commands/                    # 10 slash commands
+│   ├── develop.md               # Multi-phase feature build
+│   ├── doctor.md                # Health check
 │   ├── commit.md
-│   ├── insights.md
-│   ├── replay.md
-│   ├── handoff.md
 │   └── ...
-├── hooks/                       # Claude Code hooks
+├── hooks/                       # 18 hook events
 │   └── hooks.json
-├── scripts/                     # Hook scripts (includes config-watcher.js)
-├── contexts/                    # Context modes
-│   ├── dev.md
-│   ├── review.md
-│   └── research.md
+├── docs/                        # Reference guides
+│   ├── settings-guide.md
+│   ├── cli-cheatsheet.md
+│   ├── orchestration-patterns.md
+│   ├── context-loading.md
+│   ├── cross-agent-workflows.md
+│   ├── new-features.md
+│   └── daily-habits.md
+├── rules/                       # 6 Cursor rules
+├── contexts/                    # 3 context modes
+├── templates/                   # Split CLAUDE.md templates
+├── references/                  # Claude Code resources
+├── scripts/                     # Hook scripts
+├── settings.example.json        # Production settings template
+├── mcp-config.example.json      # Curated MCP recommendations
 ├── src/                         # TypeScript source (SQLite)
-│   ├── db/
-│   └── search/
-├── assets/
-│   └── logo.svg                 # Plugin logo
-├── package.json
-├── tsconfig.json
-└── README.md
+└── config.json
 ```
 
-## Learn Claude Code
+## Database Features
 
-Pro-workflow teaches Claude Code best practices directly, with links to official documentation for deep dives.
-
-**Official Docs:** https://code.claude.com/docs/
-
-Topics covered: sessions, context management, modes, CLAUDE.md, prompting, writing rules, skills, subagents, hooks, MCP, security, and IDE integration.
+Learnings stored in SQLite with FTS5 full-text search:
 
 ```
-/pro-workflow:learn                 # Best practices guide & save learnings
-/pro-workflow:learn-rule            # Capture corrections to memory
-/pro-workflow:search claude-code    # Find past Claude Code learnings
+~/.pro-workflow/
+└── data.db    # SQLite database with learnings and sessions
 ```
 
-## SkillKit - Universal AI Skills
-
-**One skill. 32+ AI coding agents.** Install pro-workflow across Claude Code, Cursor, Codex, Gemini CLI, and more with [SkillKit](https://agenstskills.com).
-
-```bash
-# Install this skill
-npx skillkit install pro-workflow
-
-# Translate to any agent format
-npx skillkit translate pro-workflow --agent cursor
-
-# Get AI-powered skill recommendations
-npx skillkit primer
 ```
-
-**Why SkillKit?**
-- Install once, use everywhere
-- 15,000+ skills in the marketplace
-- Works with Claude Code, Cursor, Codex, Gemini CLI, Windsurf, and 27+ more agents
-
-Explore the marketplace at [agenstskills.com](https://agenstskills.com)
+/search testing           # Find all testing-related learnings
+/search "file paths"      # Exact phrase search
+```
 
 ## Philosophy
 
-1. **Compound improvements** - Small corrections → big gains over time
+1. **Compound improvements** - Small corrections lead to big gains over time
 2. **Trust but verify** - Let AI work, review at checkpoints
 3. **Zero dead time** - Parallel sessions keep momentum
 4. **Memory is precious** - Both yours and Claude's
+5. **Orchestrate, don't micromanage** - Wire patterns together, let agents execute
 
 ---
 
 ## Support
 
-If you find this useful:
 - **Star this repo** to help others discover it
 - Check out [SkillKit](https://agenstskills.com) for more AI coding skills
-- [Report issues](https://github.com/rohitg00/pro-workflow/issues) or suggest improvements
+- [Report issues](https://github.com/rohitg00/pro-workflow/issues)
 
 ---
 
-*Distilled from Claude Code power users and real production use.*
+*Complete AI coding workflow system from production use across Claude Code, Cursor, and beyond.*
