@@ -1,28 +1,75 @@
-# Pro Workflow
+<p align="center">
+  <img src="assets/banner.svg" alt="Pro Workflow" width="100%"/>
+</p>
 
-[![GitHub stars](https://img.shields.io/github/stars/rohitg00/pro-workflow?style=social)](https://github.com/rohitg00/pro-workflow)
-[![npm version](https://img.shields.io/npm/v/pro-workflow)](https://www.npmjs.com/package/pro-workflow)
+<p align="center">
+  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=6366f1&labelColor=1e1e2e" alt="Stars"/></a>
+  <a href="https://www.npmjs.com/package/pro-workflow"><img src="https://img.shields.io/npm/v/pro-workflow?style=for-the-badge&logo=npm&color=a78bfa&labelColor=1e1e2e" alt="npm"/></a>
+  <a href="https://github.com/rohitg00/pro-workflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge&labelColor=1e1e2e" alt="License"/></a>
+  <a href="https://agenstskills.com"><img src="https://img.shields.io/badge/SkillKit-32%2B%20agents-f59e0b?style=for-the-badge&labelColor=1e1e2e" alt="SkillKit"/></a>
+</p>
 
-Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 specialized agents, cross-agent support, reference guides, and searchable learnings. Works with **Claude Code**, **Cursor**, and **32+ agents** via SkillKit.
+<p align="center">
+  <b>Complete AI coding workflow system.</b><br/>
+  Orchestration patterns &bull; 18 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
+  Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
+</p>
+
+---
 
 ## What's New in v2.0
 
-- **Orchestration Patterns** — Command > Agent > Skill architecture with multi-phase development
-- **5 Agents** — planner, reviewer, scout, orchestrator (RPI workflow), debugger
-- **18 Hook Events** — Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure
-- **Reference Guides** — Settings, CLI cheatsheet, context loading, cross-agent workflows, new features
-- **Daily Habits Guide** — Structured tips from power users across Claude Code, Cursor, and Codex
-- **Context Optimizer Skill** — Token management and context budget planning
-- **Production Settings Example** — Full `settings.example.json` with permissions, spinner, output style
-- **Curated MCP Config** — Battle-tested server recommendations
-- **Multi-Phase `/develop` Command** — Research > Plan > Implement with validation gates
-- **`/doctor` Command** — Health check for your pro-workflow setup
+<table>
+<tr><td>Orchestration Patterns</td><td>Command > Agent > Skill architecture with multi-phase development</td></tr>
+<tr><td>5 Agents</td><td>planner, reviewer, scout, orchestrator (RPI workflow), debugger</td></tr>
+<tr><td>18 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
+<tr><td>7 Reference Guides</td><td>Settings, CLI cheatsheet, context loading, cross-agent workflows, new features, daily habits</td></tr>
+<tr><td>Context Optimizer</td><td>Token management and context budget planning skill</td></tr>
+<tr><td>Production Settings</td><td>Full <code>settings.example.json</code> with permissions, spinner, output style</td></tr>
+<tr><td>Curated MCP Config</td><td>Battle-tested server recommendations with scope guidance</td></tr>
+<tr><td><code>/develop</code> Command</td><td>Research > Plan > Implement with validation gates</td></tr>
+<tr><td><code>/doctor</code> Command</td><td>Health check for your pro-workflow setup</td></tr>
+</table>
 
-## The Core Idea
+---
+
+## How It Works
 
 > "80% of my code is written by AI, 20% is spent reviewing and correcting it." — Karpathy
 
-This skill optimizes for that ratio. Every pattern reduces correction cycles.
+Pro Workflow optimizes for that ratio. Every pattern reduces correction cycles.
+
+### The Self-Correction Loop
+
+<p align="center">
+  <img src="assets/self-correction-demo.svg" alt="Self-Correction Loop Demo" width="700"/>
+</p>
+
+Corrections compound. Each mistake becomes a rule that prevents future mistakes. After 50 sessions, Claude barely needs correcting.
+
+### The `/develop` Flow
+
+<p align="center">
+  <img src="assets/workflow-flow.svg" alt="Development Flow" width="900"/>
+</p>
+
+Multi-phase development with validation gates. Research before planning, plan before implementing, review before committing.
+
+### The `/develop` Command in Action
+
+<p align="center">
+  <img src="assets/terminal-demo.svg" alt="Terminal Demo" width="700"/>
+</p>
+
+---
+
+## Architecture
+
+<p align="center">
+  <img src="assets/architecture.svg" alt="Architecture Diagram" width="900"/>
+</p>
+
+---
 
 ## Patterns
 
@@ -161,6 +208,32 @@ After edits: lint, typecheck, test.
 | **PostToolUseFailure** | Tool fails | Track failures, suggest learnings |
 | **TeammateIdle** | Teammate goes idle | Detect blockers in agent teams |
 
+### Hook Lifecycle
+
+```mermaid
+graph LR
+    A[SessionStart] --> B[UserPromptSubmit]
+    B --> C[PreToolUse]
+    C --> D{Tool Runs}
+    D -->|Success| E[PostToolUse]
+    D -->|Failure| F[PostToolUseFailure]
+    E --> G[Stop]
+    F --> G
+    G -->|More prompts| B
+    G -->|Session ends| H[SessionEnd]
+
+    C -->|Spawns agent| I[SubagentStart]
+    I --> J[SubagentStop]
+
+    C -->|Needs permission| K[PermissionRequest]
+
+    style A fill:#6366f1,color:#fff,stroke:none
+    style H fill:#ef4444,color:#fff,stroke:none
+    style D fill:#f59e0b,color:#000,stroke:none
+    style E fill:#22c55e,color:#fff,stroke:none
+    style F fill:#ef4444,color:#fff,stroke:none
+```
+
 ## Rules (Cursor)
 
 | Rule | Applies To | Description |
@@ -196,6 +269,26 @@ Rule: Start with 3 MCPs. Add only for concrete needs.
 ## Cross-Agent Support
 
 Works across 32+ AI coding agents via [SkillKit](https://agenstskills.com):
+
+```mermaid
+graph TD
+    PW[Pro Workflow] --> CC[Claude Code]
+    PW --> CU[Cursor]
+    PW --> SK[SkillKit]
+
+    CC --> |"CLAUDE.md + hooks + agents"| CC
+    CU --> |".cursorrules + skills + agents"| CU
+
+    SK --> CO[Codex CLI]
+    SK --> GC[Gemini CLI]
+    SK --> WS[Windsurf]
+    SK --> MORE[27+ more]
+
+    style PW fill:#6366f1,color:#fff,stroke:none
+    style CC fill:#a78bfa,color:#fff,stroke:none
+    style CU fill:#f59e0b,color:#000,stroke:none
+    style SK fill:#22c55e,color:#fff,stroke:none
+```
 
 ```bash
 npx skillkit install pro-workflow
@@ -274,12 +367,37 @@ Learnings stored in SQLite with FTS5 full-text search:
 
 ---
 
-## Support
+## Quick Start (30 seconds)
 
-- **Star this repo** to help others discover it
-- Check out [SkillKit](https://agenstskills.com) for more AI coding skills
-- [Report issues](https://github.com/rohitg00/pro-workflow/issues)
+```bash
+# Option A: Plugin install (Claude Code)
+/plugin marketplace add rohitg00/pro-workflow
+/plugin install pro-workflow@pro-workflow
+
+# Option B: Plugin install (Cursor)
+/add-plugin pro-workflow
+
+# Option C: Manual (any agent)
+git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
+cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
+
+# Then try it:
+/develop add user authentication     # Multi-phase feature build
+/doctor                               # Check your setup
+/wrap-up                              # End session properly
+```
 
 ---
 
-*Complete AI coding workflow system from production use across Claude Code, Cursor, and beyond.*
+<p align="center">
+  <br/>
+  <b>If you find this useful, star the repo to help others discover it.</b>
+  <br/><br/>
+  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=6366f1&labelColor=1e1e2e" alt="Stars"/></a>
+  <br/><br/>
+  <a href="https://agenstskills.com">SkillKit Marketplace</a> &bull;
+  <a href="https://github.com/rohitg00/pro-workflow/issues">Report Issues</a> &bull;
+  <a href="docs/">Reference Guides</a>
+  <br/><br/>
+  <sub>Complete AI coding workflow system from production use across Claude Code, Cursor, and beyond.</sub>
+</p>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 520" width="700" height="520">
+  <defs>
+    <linearGradient id="tbg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#11111b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Terminal window -->
+  <rect width="700" height="520" rx="12" fill="url(#tbg)" stroke="#313244" stroke-width="1"/>
+
+  <!-- Title bar -->
+  <rect width="700" height="36" rx="12" fill="#181825"/>
+  <rect y="24" width="700" height="12" fill="#181825"/>
+  <circle cx="20" cy="18" r="6" fill="#f38ba8"/>
+  <circle cx="40" cy="18" r="6" fill="#f9e2af"/>
+  <circle cx="60" cy="18" r="6" fill="#a6e3a1"/>
+  <text x="350" y="23" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#6c7086">pro-workflow demo</text>
+
+  <!-- Terminal content -->
+  <g font-family="'SF Mono', 'Fira Code', 'Cascadia Code', monospace" font-size="13">
+
+    <!-- Line 1: prompt -->
+    <text x="20" y="65" fill="#89b4fa">$</text>
+    <text x="35" y="65" fill="#cdd6f4"> /develop add webhook support for payment events</text>
+
+    <!-- Phase 1 -->
+    <text x="20" y="95" fill="#a6e3a1">RESEARCH PHASE</text>
+    <text x="20" y="115" fill="#6c7086">  Exploring codebase...</text>
+    <text x="20" y="135" fill="#6c7086">  Found: src/payments/ (4 files), src/events/ (2 files)</text>
+    <text x="20" y="155" fill="#6c7086">  Existing pattern: EventEmitter in src/events/bus.ts</text>
+    <text x="20" y="180" fill="#cdd6f4">  Confidence: </text><text x="140" y="180" fill="#a6e3a1">85/100</text>
+    <text x="20" y="200" fill="#6c7086">    Scope clarity:       </text><text x="260" y="200" fill="#a6e3a1">18</text><text x="280" y="200" fill="#585b70">/20</text>
+    <text x="20" y="218" fill="#6c7086">    Pattern familiarity: </text><text x="260" y="218" fill="#a6e3a1">17</text><text x="280" y="218" fill="#585b70">/20</text>
+    <text x="20" y="236" fill="#6c7086">    Dependencies:        </text><text x="260" y="236" fill="#a6e3a1">18</text><text x="280" y="236" fill="#585b70">/20</text>
+    <text x="20" y="254" fill="#6c7086">    Edge cases:          </text><text x="260" y="254" fill="#f9e2af">16</text><text x="280" y="254" fill="#585b70">/20</text>
+    <text x="20" y="272" fill="#6c7086">    Test strategy:       </text><text x="260" y="272" fill="#f9e2af">16</text><text x="280" y="272" fill="#585b70">/20</text>
+    <text x="20" y="295" fill="#a6e3a1">  VERDICT: GO</text>
+
+    <!-- Phase 2 -->
+    <text x="20" y="325" fill="#f9e2af">PLAN</text>
+    <text x="20" y="345" fill="#6c7086">  1. src/payments/webhook.ts     </text><text x="350" y="345" fill="#585b70">new: webhook handler</text>
+    <text x="20" y="363" fill="#6c7086">  2. src/events/bus.ts           </text><text x="350" y="363" fill="#585b70">add: payment events</text>
+    <text x="20" y="381" fill="#6c7086">  3. src/payments/types.ts       </text><text x="350" y="381" fill="#585b70">add: WebhookEvent type</text>
+    <text x="20" y="399" fill="#6c7086">  4. tests/payments/webhook.test </text><text x="350" y="399" fill="#585b70">new: webhook tests</text>
+
+    <text x="20" y="425" fill="#89b4fa">?</text>
+    <text x="35" y="425" fill="#cdd6f4"> Proceed with plan? </text>
+    <text x="215" y="425" fill="#a6e3a1">approved</text>
+
+    <!-- Phase 3 -->
+    <text x="20" y="455" fill="#a6e3a1">IMPLEMENTING</text>
+    <text x="20" y="475" fill="#6c7086">  [1/4] webhook.ts </text><text x="200" y="475" fill="#a6e3a1">DONE</text><text x="240" y="475" fill="#585b70"> tests: 3/3 pass</text>
+    <text x="20" y="493" fill="#6c7086">  [2/4] bus.ts     </text><text x="200" y="493" fill="#a6e3a1">DONE</text><text x="240" y="493" fill="#585b70"> tests: 8/8 pass</text>
+    <text x="20" y="511" fill="#6c7086">  [3/4] types.ts   </text><text x="200" y="511" fill="#f9e2af">...</text>
+  </g>
+</svg>

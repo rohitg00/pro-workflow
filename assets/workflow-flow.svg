@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a3e;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6366f1"/>
+    </marker>
+    <marker id="arrG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="280" fill="url(#bg3)" rx="12"/>
+
+  <text x="450" y="35" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">The /develop Flow</text>
+  <text x="450" y="52" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#64748b">Multi-phase development with validation gates</text>
+
+  <!-- Phase 1: Research -->
+  <rect x="30" y="75" width="160" height="80" rx="10" fill="#1e1e3f" stroke="#6366f1" stroke-width="2"/>
+  <text x="110" y="100" text-anchor="middle" font-family="'SF Mono', monospace" font-size="13" fill="#a78bfa" font-weight="600">1. Research</text>
+  <text x="110" y="118" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Explore codebase</text>
+  <text x="110" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Score confidence</text>
+  <text x="110" y="146" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#22c55e">GO if >= 70</text>
+
+  <!-- Arrow -->
+  <line x1="190" y1="115" x2="230" y2="115" stroke="#6366f1" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Gate 1 -->
+  <polygon points="240,95 260,115 240,135 220,115" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <text x="240" y="119" text-anchor="middle" font-family="'SF Mono', monospace" font-size="9" fill="#fbbf24">GO?</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="115" x2="295" y2="115" stroke="#6366f1" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Phase 2: Plan -->
+  <rect x="300" y="75" width="160" height="80" rx="10" fill="#1e1e3f" stroke="#f59e0b" stroke-width="2"/>
+  <text x="380" y="100" text-anchor="middle" font-family="'SF Mono', monospace" font-size="13" fill="#fbbf24" font-weight="600">2. Plan</text>
+  <text x="380" y="118" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Design solution</text>
+  <text x="380" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">List all changes</text>
+  <text x="380" y="146" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Identify risks</text>
+
+  <!-- Arrow -->
+  <line x1="460" y1="115" x2="500" y2="115" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Gate 2 -->
+  <polygon points="510,95 530,115 510,135 490,115" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="510" y="119" text-anchor="middle" font-family="'SF Mono', monospace" font-size="8" fill="#4ade80">OK?</text>
+
+  <!-- Arrow -->
+  <line x1="530" y1="115" x2="565" y2="115" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Phase 3: Implement -->
+  <rect x="570" y="75" width="160" height="80" rx="10" fill="#1e1e3f" stroke="#22c55e" stroke-width="2"/>
+  <text x="650" y="100" text-anchor="middle" font-family="'SF Mono', monospace" font-size="13" fill="#4ade80" font-weight="600">3. Implement</text>
+  <text x="650" y="118" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Execute plan</text>
+  <text x="650" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Quality gates / 5 edits</text>
+  <text x="650" y="146" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Run tests</text>
+
+  <!-- Arrow -->
+  <line x1="730" y1="115" x2="770" y2="115" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Phase 4: Review -->
+  <rect x="775" y="75" width="100" height="80" rx="10" fill="#1e1e3f" stroke="#ef4444" stroke-width="2"/>
+  <text x="825" y="100" text-anchor="middle" font-family="'SF Mono', monospace" font-size="13" fill="#f87171" font-weight="600">4. Review</text>
+  <text x="825" y="118" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Security</text>
+  <text x="825" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Quality</text>
+  <text x="825" y="146" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#94a3b8">Commit</text>
+
+  <!-- Bottom: What fires at each step -->
+  <rect x="30" y="185" width="845" height="75" rx="10" fill="#0d0d1f" stroke="#334155" stroke-width="1"/>
+  <text x="450" y="205" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#64748b">Hooks firing throughout:</text>
+
+  <text x="80" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#6366f1">SubagentStart</text>
+  <text x="210" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#f59e0b">UserPromptSubmit</text>
+  <text x="370" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#22c55e">PostToolUse</text>
+  <text x="500" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#ef4444">PreToolUse</text>
+  <text x="620" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#a78bfa">TaskCompleted</text>
+  <text x="770" y="228" font-family="'SF Mono', monospace" font-size="10" fill="#fbbf24">Stop</text>
+
+  <text x="80" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">drift-detector</text>
+  <text x="210" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">quality-gate</text>
+  <text x="370" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">post-edit-check</text>
+  <text x="500" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">learn-capture</text>
+  <text x="620" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">session-check</text>
+  <text x="770" y="248" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">session-end</text>
+</svg>

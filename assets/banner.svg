@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a1a3e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f23;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:0" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="300" fill="url(#bgGrad)" rx="12"/>
+
+  <rect x="0" y="296" width="1200" height="4" fill="url(#accentGrad)"/>
+
+  <g opacity="0.06">
+    <line x1="0" y1="40" x2="1200" y2="40" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="0" y1="80" x2="1200" y2="80" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="0" y1="120" x2="1200" y2="120" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="0" y1="160" x2="1200" y2="160" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="0" y1="200" x2="1200" y2="200" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="0" y1="240" x2="1200" y2="240" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="100" y1="0" x2="100" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="200" y1="0" x2="200" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="300" y1="0" x2="300" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="400" y1="0" x2="400" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="500" y1="0" x2="500" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="700" y1="0" x2="700" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="800" y1="0" x2="800" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="1000" y1="0" x2="1000" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+    <line x1="1100" y1="0" x2="1100" y2="300" stroke="#a78bfa" stroke-width="0.5"/>
+  </g>
+
+  <g transform="translate(80, 90)">
+    <rect width="100" height="100" rx="20" fill="#1e1e3f" stroke="#6366f1" stroke-width="2"/>
+    <g transform="translate(50,50)" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+      <path d="M-22,-15 L-8,-15 L0,-7 L8,-15 L22,-15" />
+      <path d="M-15,-7 L-15,12 Q-15,20 -7,20 L7,20 Q15,20 15,12 L15,-7" />
+      <circle cx="-7" cy="4" r="3" fill="#a78bfa" stroke="none"/>
+      <circle cx="7" cy="4" r="3" fill="#a78bfa" stroke="none"/>
+      <path d="M-5,12 Q0,17 5,12" />
+    </g>
+  </g>
+
+  <g transform="translate(220, 95)">
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white" filter="url(#softGlow)">Pro Workflow</text>
+    <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white">Pro Workflow</text>
+    <text y="38" font-family="'SF Mono', 'Fira Code', monospace" font-size="16" fill="#a78bfa" letter-spacing="3">v2.0</text>
+    <text y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">Complete AI coding workflow system</text>
+  </g>
+
+  <g transform="translate(220, 210)">
+    <rect x="0" y="0" width="130" height="30" rx="15" fill="#1e1e3f" stroke="#6366f1" stroke-width="1"/>
+    <text x="65" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#a78bfa">10 Patterns</text>
+
+    <rect x="145" y="0" width="110" height="30" rx="15" fill="#1e1e3f" stroke="#6366f1" stroke-width="1"/>
+    <text x="200" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#a78bfa">5 Agents</text>
+
+    <rect x="270" y="0" width="120" height="30" rx="15" fill="#1e1e3f" stroke="#6366f1" stroke-width="1"/>
+    <text x="330" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#a78bfa">18 Hooks</text>
+
+    <rect x="405" y="0" width="130" height="30" rx="15" fill="#1e1e3f" stroke="#6366f1" stroke-width="1"/>
+    <text x="470" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#a78bfa">11 Skills</text>
+
+    <rect x="550" y="0" width="130" height="30" rx="15" fill="#1e1e3f" stroke="#6366f1" stroke-width="1"/>
+    <text x="615" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#a78bfa">7 Guides</text>
+  </g>
+
+  <g transform="translate(900, 60)" opacity="0.15">
+    <text font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">
+      <tspan x="0" dy="0">$ claude --worktree</tspan>
+      <tspan x="0" dy="18">$ /develop add auth</tspan>
+      <tspan x="0" dy="18">  Research... GO (85/100)</tspan>
+      <tspan x="0" dy="18">  Plan... approved</tspan>
+      <tspan x="0" dy="18">  Implement... 5 files</tspan>
+      <tspan x="0" dy="18">  Review... PASS</tspan>
+      <tspan x="0" dy="18">$ /wrap-up</tspan>
+      <tspan x="0" dy="18">  3 learnings captured</tspan>
+      <tspan x="0" dy="18">$ /commit</tspan>
+      <tspan x="0" dy="18">  feat(auth): add login</tspan>
+      <tspan x="0" dy="18">  Quality: PASS</tspan>
+    </text>
+  </g>
+
+  <circle cx="950" cy="150" r="80" fill="url(#glowGrad)" opacity="0.3"/>
+</svg>
