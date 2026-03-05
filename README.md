@@ -11,7 +11,7 @@
 
 <p align="center">
   <b>Complete AI coding workflow system.</b><br/>
-  Orchestration patterns &bull; 18 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
+  Orchestration patterns &bull; 15 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -22,12 +22,12 @@
 <table>
 <tr><td>Orchestration Patterns</td><td>Command > Agent > Skill architecture with multi-phase development</td></tr>
 <tr><td>5 Agents</td><td>planner, reviewer, scout, orchestrator (RPI workflow), debugger</td></tr>
-<tr><td>18 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
+<tr><td>15 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
 <tr><td>7 Reference Guides</td><td>Settings, CLI cheatsheet, context loading, cross-agent workflows, new features, daily habits</td></tr>
 <tr><td>Context Optimizer</td><td>Token management and context budget planning skill</td></tr>
 <tr><td>Production Settings</td><td>Full <code>settings.example.json</code> with permissions, spinner, output style</td></tr>
 <tr><td>Curated MCP Config</td><td>Battle-tested server recommendations with scope guidance</td></tr>
-<tr><td><code>/develop</code> Command</td><td>Research > Plan > Implement with validation gates</td></tr>
+<tr><td><code>/develop</code> Command</td><td>Research > Plan > Implement > Review & Commit with validation gates</td></tr>
 <tr><td><code>/doctor</code> Command</td><td>Health check for your pro-workflow setup</td></tr>
 </table>
 
@@ -84,7 +84,7 @@ Multi-phase development with validation gates. Research before planning, plan be
 | **Context Discipline** | Manage your 200k token budget |
 | **Learning Log** | Auto-document insights |
 | **Orchestration** | Command > Agent > Skill wiring for complex features |
-| **Multi-Phase Dev** | Research > Plan > Implement with validation gates |
+| **Multi-Phase Dev** | Research > Plan > Implement > Review & Commit with validation gates |
 
 ## Installation
 
@@ -168,25 +168,27 @@ After edits: lint, typecheck, test.
 | **planner** | Break down complex tasks | Read-only, approval-gated |
 | **reviewer** | Code review, security audit | Checklist-based, severity levels |
 | **scout** | Confidence-gated exploration | Background, worktree-isolated |
-| **orchestrator** | Multi-phase feature development | Research > Plan > Implement, memory-enabled |
+| **orchestrator** | Multi-phase feature development | Research > Plan > Implement > Review, memory-enabled |
 | **debugger** | Systematic bug investigation | Hypothesis-driven, root cause analysis |
 
 ## Commands (Claude Code)
 
-| Command | Purpose |
-|---------|---------|
-| `/pro-workflow:wrap-up` | End-of-session checklist |
-| `/pro-workflow:learn-rule` | Extract correction to memory |
-| `/pro-workflow:commit` | Smart commit with quality gates |
-| `/pro-workflow:develop` | Multi-phase feature build (Research > Plan > Implement) |
-| `/pro-workflow:doctor` | Health check for setup and configuration |
-| `/pro-workflow:insights` | Session analytics and correction heatmap |
-| `/pro-workflow:replay` | Surface past learnings for current task |
-| `/pro-workflow:handoff` | Generate session handoff document |
-| `/pro-workflow:search` | Search learnings by keyword |
-| `/pro-workflow:list` | List all stored learnings |
+When installed as a plugin, commands use the `/pro-workflow:<name>` prefix. Short aliases like `/wrap-up` work when defined in `~/.claude/commands/`.
 
-## Hooks (18 Events)
+| Command | Alias | Purpose |
+|---------|-------|---------|
+| `/pro-workflow:wrap-up` | `/wrap-up` | End-of-session checklist |
+| `/pro-workflow:learn-rule` | `/learn-rule` | Extract correction to memory |
+| `/pro-workflow:commit` | `/commit` | Smart commit with quality gates |
+| `/pro-workflow:develop` | `/develop` | Multi-phase feature build (Research > Plan > Implement > Review) |
+| `/pro-workflow:doctor` | `/doctor` | Health check for setup and configuration |
+| `/pro-workflow:insights` | `/insights` | Session analytics and correction heatmap |
+| `/pro-workflow:replay` | `/replay` | Surface past learnings for current task |
+| `/pro-workflow:handoff` | `/handoff` | Generate session handoff document |
+| `/pro-workflow:search` | `/search` | Search learnings by keyword |
+| `/pro-workflow:list` | `/list` | List all stored learnings |
+
+## Hooks (15 Events)
 
 | Hook | When | What |
 |------|------|------|
@@ -262,7 +264,7 @@ See [`settings.example.json`](settings.example.json) for a production-ready conf
 See [`mcp-config.example.json`](mcp-config.example.json) for curated server recommendations:
 - **context7** — Live documentation lookup
 - **playwright** — Browser automation (most token-efficient)
-- **github** — PRs, issues, code search
+- **GitHub** — PRs, issues, code search
 
 Rule: Start with 3 MCPs. Add only for concrete needs.
 
@@ -322,7 +324,7 @@ pro-workflow/
 │   ├── doctor.md                # Health check
 │   ├── commit.md
 │   └── ...
-├── hooks/                       # 18 hook events
+├── hooks/                       # 15 hook events
 │   └── hooks.json
 ├── docs/                        # Reference guides
 │   ├── settings-guide.md

@@ -1,7 +1,7 @@
 {
   "name": "pro-workflow",
   "version": "2.0.0",
-  "description": "Complete AI coding workflow system. Orchestration patterns, 18 hooks, 5 agents, 7 reference guides, cross-agent support, and searchable learnings.",
+  "description": "Complete AI coding workflow system. Orchestration patterns, 15 hooks, 5 agents, 7 reference guides, cross-agent support, and searchable learnings.",
   "author": {
     "name": "Rohit Ghumare",
     "url": "https://github.com/rohitg00"

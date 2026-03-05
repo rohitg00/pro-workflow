@@ -11,7 +11,7 @@
     {
       "name": "pro-workflow",
       "source": "./",
-      "description": "Complete AI coding workflow: orchestration patterns, 18 hooks, 5 agents, cross-agent support, reference guides, and searchable learnings.",
+      "description": "Complete AI coding workflow: orchestration patterns, 15 hooks, 5 agents, cross-agent support, reference guides, and searchable learnings.",
       "author": {
         "name": "Rohit Ghumare"
       },
