@@ -11,7 +11,7 @@
 
 <p align="center">
   <b>Complete AI coding workflow system.</b><br/>
-  Orchestration patterns &bull; 15 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
+  Orchestration patterns &bull; 18 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -22,8 +22,8 @@
 <table>
 <tr><td>Orchestration Patterns</td><td>Command > Agent > Skill architecture with multi-phase development</td></tr>
 <tr><td>5 Agents</td><td>planner, reviewer, scout, orchestrator (RPI workflow), debugger</td></tr>
-<tr><td>15 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
-<tr><td>7 Reference Guides</td><td>Settings, CLI cheatsheet, context loading, cross-agent workflows, new features, daily habits</td></tr>
+<tr><td>18 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
+<tr><td>7 Reference Guides</td><td>Settings, CLI cheatsheet, orchestration patterns, context loading, cross-agent workflows, new features, daily habits</td></tr>
 <tr><td>Context Optimizer</td><td>Token management and context budget planning skill</td></tr>
 <tr><td>Production Settings</td><td>Full <code>settings.example.json</code> with permissions, spinner, output style</td></tr>
 <tr><td>Curated MCP Config</td><td>Battle-tested server recommendations with scope guidance</td></tr>
@@ -173,14 +173,14 @@ After edits: lint, typecheck, test.
 
 ## Commands (Claude Code)
 
-When installed as a plugin, commands use the `/pro-workflow:<name>` prefix. Short aliases like `/wrap-up` work when defined in `~/.claude/commands/`.
+When installed as a plugin, commands are available as `/pro-workflow:<name>`. Short forms like `/develop` also work directly after plugin install.
 
 | Command | Alias | Purpose |
 |---------|-------|---------|
 | `/pro-workflow:wrap-up` | `/wrap-up` | End-of-session checklist |
 | `/pro-workflow:learn-rule` | `/learn-rule` | Extract correction to memory |
 | `/pro-workflow:commit` | `/commit` | Smart commit with quality gates |
-| `/pro-workflow:develop` | `/develop` | Multi-phase feature build (Research > Plan > Implement > Review) |
+| `/pro-workflow:develop` | `/develop` | Multi-phase feature build (Research > Plan > Implement > Review & Commit) |
 | `/pro-workflow:doctor` | `/doctor` | Health check for setup and configuration |
 | `/pro-workflow:insights` | `/insights` | Session analytics and correction heatmap |
 | `/pro-workflow:replay` | `/replay` | Surface past learnings for current task |
@@ -188,7 +188,7 @@ When installed as a plugin, commands use the `/pro-workflow:<name>` prefix. Shor
 | `/pro-workflow:search` | `/search` | Search learnings by keyword |
 | `/pro-workflow:list` | `/list` | List all stored learnings |
 
-## Hooks (15 Events)
+## Hooks (18 Events)
 
 | Hook | When | What |
 |------|------|------|
@@ -209,6 +209,9 @@ When installed as a plugin, commands use the `/pro-workflow:<name>` prefix. Shor
 | **PermissionRequest** | Permission dialog | Flag dangerous operations |
 | **PostToolUseFailure** | Tool fails | Track failures, suggest learnings |
 | **TeammateIdle** | Teammate goes idle | Detect blockers in agent teams |
+| **Setup** | Initial setup | One-time initialization (available, not configured) |
+| **WorktreeCreate** | Worktree created | Set up worktree config (available, not configured) |
+| **WorktreeRemove** | Worktree removed | Cleanup (available, not configured) |
 
 ### Hook Lifecycle
 
@@ -324,7 +327,7 @@ pro-workflow/
 │   ├── doctor.md                # Health check
 │   ├── commit.md
 │   └── ...
-├── hooks/                       # 15 hook events
+├── hooks/                       # 18 hook events
 │   └── hooks.json
 ├── docs/                        # Reference guides
 │   ├── settings-guide.md
@@ -383,10 +386,10 @@ Learnings stored in SQLite with FTS5 full-text search:
 git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
 cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
 
-# Then try it:
-/develop add user authentication     # Multi-phase feature build
-/doctor                               # Check your setup
-/wrap-up                              # End session properly
+# Then try it (use /pro-workflow:<name> with plugin install):
+/pro-workflow:develop add user authentication   # Multi-phase feature build
+/pro-workflow:doctor                             # Check your setup
+/pro-workflow:wrap-up                            # End session properly
 ```
 
 ---

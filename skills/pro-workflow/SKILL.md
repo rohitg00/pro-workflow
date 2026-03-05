@@ -1,6 +1,6 @@
 ---
 name: pro-workflow
-description: Complete AI coding workflow system. Orchestration patterns, 15 hooks, 5 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
+description: Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
 ---
 
 # Pro Workflow
@@ -197,7 +197,7 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.6 and Sonnet 4.6** both support adaptive thinking and 1M-token context. The 1M context is available as a beta option (via the `context-1m-2025-08-07` beta header); the default context window remains 200K. Sonnet 4.5 (200K context) has been retired from the Max plan in favor of Sonnet 4.6.
+**Opus 4.6 and Sonnet 4.6** both support adaptive thinking and 1M-token context (as of 2025-08). The 1M context is available as a beta option (via the `context-1m-2025-08-07` beta header); the default context window remains 200K. Sonnet 4.5 (200K context) has been retired from the Max plan in favor of Sonnet 4.6. See [Models overview](https://docs.anthropic.com/en/docs/about-claude/models/overview) for current capabilities.
 
 | Task | Model |
 |------|-------|
@@ -213,9 +213,10 @@ Opus 4.6 and Sonnet 4.6 automatically calibrate reasoning depth per task — lig
 ### Add to CLAUDE.md
 
 ```markdown
-## Model Hints
+## Model Hints (as of 2025-08)
 Opus 4.6 and Sonnet 4.6 auto-calibrate reasoning depth — no need to toggle thinking mode.
 Use subagents with Haiku for fast read-only exploration, Sonnet 4.6 for balanced work.
+Docs: https://docs.anthropic.com/en/docs/about-claude/models/overview
 ```
 
 ---
@@ -266,7 +267,7 @@ Append to .claude/learning-log.md
 
 ## Learn Claude Code
 
-Run `/learn` for a topic-by-topic guide covering sessions, context, CLAUDE.md, subagents, hooks, and more. Official docs: **https://code.claude.com/docs/**
+Run `/learn` for a topic-by-topic guide covering sessions, context, CLAUDE.md, subagents, hooks, and more (see `commands/learn.md`). Official docs: **https://code.claude.com/docs/**
 
 ---
 
@@ -501,6 +502,7 @@ See `mcp-config.example.json` for setup and curated recommendations.
 | `/handoff` | Session handoff document | `session-handoff` skill |
 | `/search` | Search learnings by keyword | — |
 | `/list` | List all stored learnings | — |
+| `/learn` | Topic-by-topic Claude Code guide | — |
 
 ---
 
