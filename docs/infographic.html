@@ -680,7 +680,7 @@
       <div class="header-sub" style="margin-left: 18px;">github.com/rohitg00/pro-workflow</div>
     </div>
     <div class="header-right">
-      <div class="star-count">v1.3</div>
+      <div class="star-count">v2.0</div>
       <div class="star-label">Latest Release</div>
     </div>
   </div>
@@ -691,7 +691,7 @@
     <div class="subtitle">
       Battle-tested Claude Code patterns from power users who ship production code daily.
       Self-correcting memory, parallel worktrees, quality gates, and the 80/20 AI coding ratio &mdash;
-      9 Skills, 3 Agents, 12 Hooks, 10 Commands, 3 Contexts.
+      11 Skills, 5 Agents, 18 Hooks, 10 Commands, 3 Contexts, 7 Guides.
     </div>
   </div>
 
@@ -750,13 +750,14 @@
     <div>
       <div class="section-num">03 Components</div>
       <div class="section-title">Everything Included</div>
-      <div class="comp-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="comp-item"><div class="comp-num">9</div><div class="comp-label">Skills</div></div>
-        <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Agents</div></div>
-        <div class="comp-item"><div class="comp-num">12</div><div class="comp-label">Hooks</div></div>
+      <div class="comp-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="comp-item"><div class="comp-num">11</div><div class="comp-label">Skills</div></div>
+        <div class="comp-item"><div class="comp-num">5</div><div class="comp-label">Agents</div></div>
+        <div class="comp-item"><div class="comp-num">18</div><div class="comp-label">Hooks</div></div>
         <div class="comp-item"><div class="comp-num">10</div><div class="comp-label">Commands</div></div>
         <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
         <div class="comp-item"><div class="comp-num">6</div><div class="comp-label">Rules</div></div>
+        <div class="comp-item"><div class="comp-num">7</div><div class="comp-label">Guides</div></div>
       </div>
       <div style="margin-top:14px;">
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
@@ -859,7 +860,7 @@
     <!-- 06 HOOKS & AUTOMATION -->
     <div>
       <div class="section-num">06 Hooks &amp; Automation</div>
-      <div class="section-title">12 Automated Hooks</div>
+      <div class="section-title">18 Hook Events</div>
       <div class="hook-grid">
         <div class="hook-item">
           <div class="hook-dot hook-dot-pre"></div>
@@ -905,6 +906,34 @@
           <div class="hook-dot hook-dot-other"></div>
           <div><div class="hook-name">Notification</div><div class="hook-desc">Permission logging</div></div>
         </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">SubagentStart</div><div class="hook-desc">Agent lifecycle logging</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">SubagentStop</div><div class="hook-desc">Collect agent results</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">TaskCompleted</div><div class="hook-desc">Quality gate on completion</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">PermissionRequest</div><div class="hook-desc">Flag dangerous ops</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">PostToolUseFailure</div><div class="hook-desc">Track failures</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">TeammateIdle</div><div class="hook-desc">Detect blockers</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">Setup</div><div class="hook-desc">One-time initialization</div></div>
+        </div>
       </div>
       <div style="display:flex; gap:8px; margin-top:10px;">
         <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-pre" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Pre</span></div>
@@ -923,7 +952,7 @@
     <!-- 07 THREE AGENTS -->
     <div>
       <div class="section-num">07 Specialized Agents</div>
-      <div class="section-title">3 Purpose-Built Agents</div>
+      <div class="section-title">5 Specialized Agents</div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="card card-coral">
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -956,6 +985,30 @@
             <span class="tag">Confidence Gate</span>
           </div>
           <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Assess readiness with worktree isolation. Scores 0&ndash;100 across 5 dimensions.</div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Orchestrator</div>
+            <span class="tag">Memory-Enabled</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Multi-phase feature development. Research &gt; Plan &gt; Implement &gt; Review workflow.</div>
+          <div class="tag-row" style="margin-top:8px;">
+            <span class="tag">/develop</span>
+            <span class="tag">Multi-Phase</span>
+            <span class="tag">Validation Gates</span>
+          </div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Debugger</div>
+            <span class="tag">Hypothesis-Driven</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Systematic bug investigation with root cause analysis and fix verification.</div>
+          <div class="tag-row" style="margin-top:8px;">
+            <span class="tag">Root Cause</span>
+            <span class="tag">Reproduce</span>
+            <span class="tag">Verify Fix</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1063,7 +1116,7 @@
     <!-- 10 SKILLS -->
     <div>
       <div class="section-num">10 Skills Library</div>
-      <div class="section-title">9 Battle-Tested Skills</div>
+      <div class="section-title">11 Skills</div>
       <table>
         <tr><th>Skill</th><th>What It Does</th></tr>
         <tr><td><strong>pro-workflow</strong></td><td>Core 8 patterns</td></tr>
@@ -1075,6 +1128,8 @@
         <tr><td><strong>session-handoff</strong></td><td>Resume docs for next session</td></tr>
         <tr><td><strong>insights</strong></td><td>Analytics, heatmaps, trends</td></tr>
         <tr><td><strong>deslop</strong></td><td>Remove AI code slop before commit</td></tr>
+        <tr><td><strong>context-optimizer</strong></td><td>Token management and MCP audit</td></tr>
+        <tr><td><strong>orchestrate</strong></td><td>Wire Commands, Agents, Skills for multi-phase dev</td></tr>
       </table>
     </div>
 
@@ -1156,8 +1211,8 @@
   <!-- FOOTER -->
   <div class="footer">
     <div class="footer-left">
-      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; Feb 2026<br>
-      Based on patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
+      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; Mar 2026<br>
+      Pro Workflow v2.0 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
     </div>
     <div class="footer-right">Practice Makes Claude Perfect</div>
   </div>
