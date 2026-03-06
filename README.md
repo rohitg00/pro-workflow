@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=6366f1&labelColor=1e1e2e" alt="Stars"/></a>
-  <a href="https://www.npmjs.com/package/pro-workflow"><img src="https://img.shields.io/npm/v/pro-workflow?style=for-the-badge&logo=npm&color=a78bfa&labelColor=1e1e2e" alt="npm"/></a>
+  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
+  <a href="https://www.npmjs.com/package/pro-workflow"><img src="https://img.shields.io/npm/v/pro-workflow?style=for-the-badge&logo=npm&color=E8926F&labelColor=1e1e2e" alt="npm"/></a>
   <a href="https://github.com/rohitg00/pro-workflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge&labelColor=1e1e2e" alt="License"/></a>
   <a href="https://agenstskills.com"><img src="https://img.shields.io/badge/SkillKit-32%2B%20agents-f59e0b?style=for-the-badge&labelColor=1e1e2e" alt="SkillKit"/></a>
 </p>
@@ -232,7 +232,7 @@ graph LR
 
     C -->|Needs permission| K[PermissionRequest]
 
-    style A fill:#6366f1,color:#fff,stroke:none
+    style A fill:#D97757,color:#fff,stroke:none
     style H fill:#ef4444,color:#fff,stroke:none
     style D fill:#f59e0b,color:#000,stroke:none
     style E fill:#22c55e,color:#fff,stroke:none
@@ -289,8 +289,8 @@ graph TD
     SK --> WS[Windsurf]
     SK --> MORE[27+ more]
 
-    style PW fill:#6366f1,color:#fff,stroke:none
-    style CC fill:#a78bfa,color:#fff,stroke:none
+    style PW fill:#D97757,color:#fff,stroke:none
+    style CC fill:#E8926F,color:#fff,stroke:none
     style CU fill:#f59e0b,color:#000,stroke:none
     style SK fill:#22c55e,color:#fff,stroke:none
 ```
@@ -398,7 +398,7 @@ cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
   <br/>
   <b>If you find this useful, star the repo to help others discover it.</b>
   <br/><br/>
-  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=6366f1&labelColor=1e1e2e" alt="Stars"/></a>
+  <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
   <br/><br/>
   <a href="https://agenstskills.com">SkillKit Marketplace</a> &bull;
   <a href="https://github.com/rohitg00/pro-workflow/issues">Report Issues</a> &bull;

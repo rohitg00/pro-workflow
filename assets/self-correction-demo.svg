@@ -22,7 +22,7 @@
     <text x="60" y="65" fill="#cdd6f4"> No, that's the wrong file. The utils are in src/lib/</text>
 
     <!-- Claude acknowledges -->
-    <text x="20" y="100" fill="#cba6f7">claude:</text>
+    <text x="20" y="100" fill="#D97757">claude:</text>
     <text x="85" y="100" fill="#cdd6f4"> You're right. I edited src/utils.ts but should have</text>
     <text x="85" y="118" fill="#cdd6f4"> edited src/lib/utils.ts.</text>
 

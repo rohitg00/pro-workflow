@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
   <defs>
     <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1a1a3e;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#191A23;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E1F2E;stop-opacity:1" />
     </linearGradient>
     <filter id="glow2">
       <feGaussianBlur stdDeviation="2" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1"/>
+      <polygon points="0 0, 10 3.5, 0 7" fill="#D97757"/>
     </marker>
     <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e"/>
@@ -22,51 +22,51 @@
   <text x="450" y="60" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#64748b">Command &gt; Agent &gt; Skill Orchestration</text>
 
   <!-- Layer 1: Commands -->
-  <rect x="50" y="80" width="800" height="80" rx="10" fill="none" stroke="#6366f1" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
-  <text x="70" y="100" font-family="'SF Mono', monospace" font-size="11" fill="#6366f1" font-weight="600">COMMANDS (User Entry Points)</text>
+  <rect x="50" y="80" width="800" height="80" rx="10" fill="none" stroke="#D97757" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+  <text x="70" y="100" font-family="'SF Mono', monospace" font-size="11" fill="#D97757" font-weight="600">COMMANDS (User Entry Points)</text>
 
-  <rect x="70" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="125" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/develop</text>
+  <rect x="70" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="125" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/develop</text>
 
-  <rect x="200" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="255" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/commit</text>
+  <rect x="200" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="255" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/commit</text>
 
-  <rect x="330" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="385" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/wrap-up</text>
+  <rect x="330" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="385" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/wrap-up</text>
 
-  <rect x="460" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="515" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/doctor</text>
+  <rect x="460" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="515" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/doctor</text>
 
-  <rect x="590" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="645" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/insights</text>
+  <rect x="590" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="645" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/insights</text>
 
-  <rect x="720" y="110" width="110" height="36" rx="8" fill="#1e1e3f" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="775" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">/replay</text>
+  <rect x="720" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
+  <text x="775" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/replay</text>
 
   <!-- Arrow down -->
-  <line x1="125" y1="146" x2="125" y2="195" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="125" y1="146" x2="125" y2="195" stroke="#D97757" stroke-width="2" marker-end="url(#arrow)"/>
 
   <!-- Layer 2: Agents -->
   <rect x="50" y="200" width="800" height="100" rx="10" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
   <text x="70" y="220" font-family="'SF Mono', monospace" font-size="11" fill="#f59e0b" font-weight="600">AGENTS (Execution Layer)</text>
 
-  <rect x="70" y="235" width="130" height="50" rx="8" fill="#1e1e3f" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="70" y="235" width="130" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="135" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">orchestrator</text>
   <text x="135" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Research &gt; Plan &gt; Build</text>
 
-  <rect x="220" y="235" width="120" height="50" rx="8" fill="#1e1e3f" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="220" y="235" width="120" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="280" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">reviewer</text>
   <text x="280" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Security + Quality</text>
 
-  <rect x="360" y="235" width="120" height="50" rx="8" fill="#1e1e3f" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="360" y="235" width="120" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="420" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">planner</text>
   <text x="420" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Read-Only Plans</text>
 
-  <rect x="500" y="235" width="120" height="50" rx="8" fill="#1e1e3f" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="500" y="235" width="120" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="560" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">scout</text>
   <text x="560" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Background Explore</text>
 
-  <rect x="640" y="235" width="120" height="50" rx="8" fill="#1e1e3f" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="640" y="235" width="120" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="700" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">debugger</text>
   <text x="700" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Root Cause Analysis</text>
 
@@ -77,20 +77,20 @@
   <rect x="50" y="330" width="530" height="80" rx="10" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
   <text x="70" y="350" font-family="'SF Mono', monospace" font-size="11" fill="#22c55e" font-weight="600">SKILLS (Domain Knowledge)</text>
 
-  <rect x="70" y="360" width="95" height="36" rx="8" fill="#1e1e3f" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="117" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#4ade80">pro-workflow</text>
+  <rect x="70" y="360" width="95" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="117" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">pro-workflow</text>
 
-  <rect x="175" y="360" width="105" height="36" rx="8" fill="#1e1e3f" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="227" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#4ade80">smart-commit</text>
+  <rect x="175" y="360" width="105" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="227" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">smart-commit</text>
 
-  <rect x="290" y="360" width="85" height="36" rx="8" fill="#1e1e3f" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="332" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#4ade80">wrap-up</text>
+  <rect x="290" y="360" width="85" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="332" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">wrap-up</text>
 
-  <rect x="385" y="360" width="85" height="36" rx="8" fill="#1e1e3f" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="427" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#4ade80">orchestrate</text>
+  <rect x="385" y="360" width="85" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="427" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">orchestrate</text>
 
-  <rect x="480" y="360" width="85" height="36" rx="8" fill="#1e1e3f" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="522" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#4ade80">+6 more</text>
+  <rect x="480" y="360" width="85" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="522" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">+6 more</text>
 
   <!-- Layer 4: Hooks -->
   <rect x="610" y="330" width="240" height="80" rx="10" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
@@ -101,7 +101,7 @@
   <text x="630" y="400" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">TaskCompleted +12 more</text>
 
   <!-- Bottom: Cross-Agent -->
-  <rect x="50" y="430" width="800" height="50" rx="10" fill="#1e1e3f" stroke="#64748b" stroke-width="1"/>
+  <rect x="50" y="430" width="800" height="50" rx="10" fill="#252636" stroke="#64748b" stroke-width="1"/>
   <text x="450" y="455" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#94a3b8">Works with: </text>
-  <text x="450" y="470" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#a78bfa">Claude Code  |  Cursor  |  Codex  |  Gemini CLI  |  32+ agents via SkillKit</text>
+  <text x="450" y="470" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">Claude Code  |  Cursor  |  Codex  |  Gemini CLI  |  32+ agents via SkillKit</text>
 </svg>
