@@ -57,15 +57,19 @@ jobs:
         run: |
           # Get previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          
+
           if [ -z "$PREV_TAG" ]; then
             CHANGES=$(git log --pretty=format:"- %s" HEAD)
           else
             CHANGES=$(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD)
           fi
-          
-          # Write to file for multiline output
-          echo "$CHANGES" > /tmp/changelog.txt
+
+          # Use multiline GITHUB_OUTPUT syntax
+          {
+            echo "CHANGES<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
           echo "Generated changelog with $(echo "$CHANGES" | wc -l) commits"
 
       - name: Create GitHub Release
@@ -74,8 +78,8 @@ jobs:
           name: pro-workflow v${{ steps.version.outputs.VERSION }}
           body: |
             ## What's Changed
-            
-            $(cat /tmp/changelog.txt)
+
+            ${{ steps.changelog.outputs.CHANGES }}
             
             ## Installation
             
