@@ -7,6 +7,7 @@
   <a href="https://www.npmjs.com/package/pro-workflow"><img src="https://img.shields.io/npm/v/pro-workflow?style=for-the-badge&logo=npm&color=E8926F&labelColor=1e1e2e" alt="npm"/></a>
   <a href="https://github.com/rohitg00/pro-workflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge&labelColor=1e1e2e" alt="License"/></a>
   <a href="https://agenstskills.com"><img src="https://img.shields.io/badge/SkillKit-32%2B%20agents-f59e0b?style=for-the-badge&labelColor=1e1e2e" alt="SkillKit"/></a>
+  <a href="https://rohitg00-pro-workflow.mintlify.app/"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373?style=for-the-badge&logo=mintlify&labelColor=1e1e2e" alt="Docs"/></a>
 </p>
 
 <p align="center">
@@ -400,6 +401,7 @@ cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
   <br/><br/>
   <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
   <br/><br/>
+  <a href="https://rohitg00-pro-workflow.mintlify.app/">Documentation</a> &bull;
   <a href="https://agenstskills.com">SkillKit Marketplace</a> &bull;
   <a href="https://github.com/rohitg00/pro-workflow/issues">Report Issues</a> &bull;
   <a href="docs/">Reference Guides</a>
