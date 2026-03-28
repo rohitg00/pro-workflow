@@ -12,24 +12,25 @@
 
 <p align="center">
   <b>Complete AI coding workflow system.</b><br/>
-  Orchestration patterns &bull; 18 hook events &bull; 5 agents &bull; 7 reference guides &bull; Cross-agent support<br/>
+  Context engineering &bull; Agent teams &bull; 18 hook events &bull; 6 agents &bull; 9 reference guides &bull; Cross-agent support<br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
 ---
 
-## What's New in v2.0
+## What's New in v3.0
 
 <table>
-<tr><td>Orchestration Patterns</td><td>Command > Agent > Skill architecture with multi-phase development</td></tr>
-<tr><td>5 Agents</td><td>planner, reviewer, scout, orchestrator (RPI workflow), debugger</td></tr>
-<tr><td>18 Hook Events</td><td>Added SubagentStart/Stop, TaskCompleted, PermissionRequest, TeammateIdle, PostToolUseFailure</td></tr>
-<tr><td>7 Reference Guides</td><td>Settings, CLI cheatsheet, orchestration patterns, context loading, cross-agent workflows, new features, daily habits</td></tr>
-<tr><td>Context Optimizer</td><td>Token management and context budget planning skill</td></tr>
-<tr><td>Production Settings</td><td>Full <code>settings.example.json</code> with permissions, spinner, output style</td></tr>
-<tr><td>Curated MCP Config</td><td>Battle-tested server recommendations with scope guidance</td></tr>
-<tr><td><code>/develop</code> Command</td><td>Research > Plan > Implement > Review & Commit with validation gates</td></tr>
-<tr><td><code>/doctor</code> Command</td><td>Health check for your pro-workflow setup</td></tr>
+<tr><td><b>Context Engineering</b></td><td>New skill teaching Write/Select/Compress/Isolate — the four operations framework</td></tr>
+<tr><td><b>Agent Teams</b></td><td>New skill + guide for multi-instance coordination (lead + teammates, shared task list)</td></tr>
+<tr><td><b>Batch Orchestration</b></td><td>New skill for <code>/batch</code> pattern — decompose into 5-30 parallel worktree agents</td></tr>
+<tr><td><b>6 Agents</b></td><td>Added context-engineer for lightweight context window auditing</td></tr>
+<tr><td><b>3 New Hook Events</b></td><td>PostCompact (re-inject context), StopFailure (API errors), FileChanged (config watch)</td></tr>
+<tr><td><b>23 Hook Scripts</b></td><td>All inline handlers extracted to proper files — zero <code>node -e</code> remaining</td></tr>
+<tr><td><b>AGENTS.md Template</b></td><td>Universal standard that works across 11+ AI coding tools</td></tr>
+<tr><td><b><code>/deslop</code> Command</b></td><td>Remove AI-generated code slop from branch diff</td></tr>
+<tr><td><b><code>/context-optimizer</code> Command</b></td><td>Audit and optimize context window usage</td></tr>
+<tr><td><b>9 Reference Guides</b></td><td>Added context-engineering.md and agent-teams.md</td></tr>
 </table>
 
 ---
@@ -82,7 +83,9 @@ Multi-phase development with validation gates. Research before planning, plan be
 | **Split Memory** | Modular CLAUDE.md for complex projects |
 | **80/20 Review** | Batch reviews at checkpoints |
 | **Model Selection** | Opus 4.6 adaptive thinking, Sonnet 4.6 (1M context) |
-| **Context Discipline** | Manage your 200k token budget |
+| **Context Engineering** | Write/Select/Compress/Isolate framework for token management |
+| **Agent Teams** | Multi-instance coordination with shared task list and messaging |
+| **Batch Orchestration** | Parallel worktree agents for large-scale changes |
 | **Learning Log** | Auto-document insights |
 | **Orchestration** | Command > Agent > Skill wiring for complex features |
 | **Multi-Phase Dev** | Research > Plan > Implement > Review & Commit with validation gates |
@@ -95,7 +98,7 @@ Multi-phase development with validation gates. Research before planning, plan be
 /add-plugin pro-workflow
 ```
 
-The plugin includes 11 skills, 5 agents, and 6 rules that load automatically.
+The plugin includes 14 skills, 6 agents, and 6 rules that load automatically.
 
 ### Claude Code — One-Click Plugin Install
 
@@ -141,6 +144,8 @@ After edits: lint, typecheck, test.
 | [`docs/settings-guide.md`](docs/settings-guide.md) | All settings keys, permission modes, hierarchy, sandbox, MCP approval |
 | [`docs/cli-cheatsheet.md`](docs/cli-cheatsheet.md) | Every CLI flag, keyboard shortcut, slash command, scripting patterns |
 | [`docs/orchestration-patterns.md`](docs/orchestration-patterns.md) | Command > Agent > Skill architecture, frontmatter reference, agent teams |
+| [`docs/context-engineering.md`](docs/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction strategies, key research |
+| [`docs/agent-teams.md`](docs/agent-teams.md) | Setup, architecture, task decomposition, teams vs sub-agents decision table |
 | [`docs/context-loading.md`](docs/context-loading.md) | CLAUDE.md loading in monorepos, agent memory, skills discovery |
 | [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Using Claude Code + Cursor together, config mapping, SkillKit translation |
 | [`docs/new-features.md`](docs/new-features.md) | Voice mode, agent teams, checkpointing, remote control, new hook events |
@@ -160,6 +165,9 @@ After edits: lint, typecheck, test.
 | `insights` | Session analytics, correction trends, and productivity metrics |
 | `deslop` | Remove AI-generated code slop and clean up style |
 | `context-optimizer` | Token management, context budget, MCP audit |
+| `context-engineering` | Write/Select/Compress/Isolate framework for context management |
+| `agent-teams` | Multi-instance coordination patterns with shared task list |
+| `batch-orchestration` | /batch pattern for parallel worktree agent decomposition |
 | `orchestrate` | Wire Commands, Agents, and Skills for multi-phase development |
 
 ## Agents
@@ -171,6 +179,7 @@ After edits: lint, typecheck, test.
 | **scout** | Confidence-gated exploration | Background, worktree-isolated |
 | **orchestrator** | Multi-phase feature development | Research > Plan > Implement > Review, memory-enabled |
 | **debugger** | Systematic bug investigation | Hypothesis-driven, root cause analysis |
+| **context-engineer** | Context window analysis and optimization | Lightweight, read-only audit |
 
 ## Commands (Claude Code)
 
@@ -188,8 +197,12 @@ When installed as a plugin, commands are available as `/pro-workflow:<name>`. Sh
 | `/pro-workflow:handoff` | `/handoff` | Generate session handoff document |
 | `/pro-workflow:search` | `/search` | Search learnings by keyword |
 | `/pro-workflow:list` | `/list` | List all stored learnings |
+| `/pro-workflow:deslop` | `/deslop` | Remove AI-generated code slop from branch diff |
+| `/pro-workflow:context-optimizer` | `/context-optimizer` | Audit and optimize context window usage |
+| `/pro-workflow:parallel` | `/parallel` | Set up git worktrees for parallel sessions |
+| `/pro-workflow:learn` | `/learn` | Interactive Claude Code best practices guide |
 
-## Hooks (18 Events)
+## Hooks (18 Events, 23 Scripts)
 
 | Hook | When | What |
 |------|------|------|
@@ -210,9 +223,9 @@ When installed as a plugin, commands are available as `/pro-workflow:<name>`. Sh
 | **PermissionRequest** | Permission dialog | Flag dangerous operations |
 | **PostToolUseFailure** | Tool fails | Track failures, suggest learnings |
 | **TeammateIdle** | Teammate goes idle | Detect blockers in agent teams |
-| **Setup** | Initial setup | One-time initialization (available, not configured) |
-| **WorktreeCreate** | Worktree created | Set up worktree config (available, not configured) |
-| **WorktreeRemove** | Worktree removed | Cleanup (available, not configured) |
+| **PostCompact** | After compaction | Re-inject critical context summary |
+| **StopFailure** | API error | Log errors with retry advice |
+| **FileChanged** | Config file modified | Watch package.json, .env, CI workflows |
 
 ### Hook Lifecycle
 
@@ -227,6 +240,8 @@ graph LR
     F --> G
     G -->|More prompts| B
     G -->|Session ends| H[SessionEnd]
+    G -->|API error| L[StopFailure]
+    H -.->|Compaction| M[PreCompact] -.-> N[PostCompact]
 
     C -->|Spawns agent| I[SubagentStart]
     I --> J[SubagentStop]
@@ -311,38 +326,46 @@ See [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) for configu
 pro-workflow/
 ├── .claude-plugin/              # Claude Code plugin
 ├── .cursor-plugin/              # Cursor plugin
-├── skills/                      # 11 skills (Cursor + Claude Code)
+├── skills/                      # 14 skills (Cursor + Claude Code)
 │   ├── pro-workflow/SKILL.md
+│   ├── context-engineering/SKILL.md  # NEW: Write/Select/Compress/Isolate
+│   ├── agent-teams/SKILL.md          # NEW: Multi-instance coordination
+│   ├── batch-orchestration/SKILL.md  # NEW: /batch parallel agents
 │   ├── smart-commit/SKILL.md
 │   ├── context-optimizer/SKILL.md
 │   ├── orchestrate/SKILL.md
 │   └── ...
-├── agents/                      # 5 agents
+├── agents/                      # 6 agents
 │   ├── planner.md
 │   ├── reviewer.md
 │   ├── scout.md
 │   ├── orchestrator.md
-│   └── debugger.md
-├── commands/                    # 10 slash commands
+│   ├── debugger.md
+│   └── context-engineer.md      # NEW: Context window auditor
+├── commands/                    # 14 slash commands
 │   ├── develop.md               # Multi-phase feature build
 │   ├── doctor.md                # Health check
+│   ├── deslop.md                # NEW: Remove AI code slop
+│   ├── context-optimizer.md     # NEW: Context audit
 │   ├── commit.md
 │   └── ...
-├── hooks/                       # 18 hook events
+├── hooks/                       # 18 hook events, 23 scripts
 │   └── hooks.json
-├── docs/                        # Reference guides
+├── docs/                        # 9 reference guides
 │   ├── settings-guide.md
 │   ├── cli-cheatsheet.md
 │   ├── orchestration-patterns.md
+│   ├── context-engineering.md   # NEW: Four operations framework
+│   ├── agent-teams.md           # NEW: Teams quick reference
 │   ├── context-loading.md
 │   ├── cross-agent-workflows.md
 │   ├── new-features.md
 │   └── daily-habits.md
-├── rules/                       # 6 Cursor rules
+├── rules/                       # 6 Cursor rules + core-rules.md reference
 ├── contexts/                    # 3 context modes
-├── templates/                   # Split CLAUDE.md templates
+├── templates/                   # Split CLAUDE.md + AGENTS.md templates
 ├── references/                  # Claude Code resources
-├── scripts/                     # Hook scripts
+├── scripts/                     # 23 hook scripts (zero inline handlers)
 ├── settings.example.json        # Production settings template
 ├── mcp-config.example.json      # Curated MCP recommendations
 ├── src/                         # TypeScript source (SQLite)

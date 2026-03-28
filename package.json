@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, and searchable learnings",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
