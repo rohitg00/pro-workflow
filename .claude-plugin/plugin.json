@@ -1,7 +1,7 @@
 {
   "name": "pro-workflow",
-  "version": "2.0.0",
-  "description": "Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 agents, 7 reference guides, cross-agent support, and searchable learnings.",
+  "version": "3.0.0",
+  "description": "Complete AI coding workflow system. Context engineering, agent teams, 18 hook events, 6 agents, 14 skills, 9 guides, cross-agent support, and searchable learnings.",
   "author": {
     "name": "Rohit Ghumare",
     "url": "https://github.com/rohitg00"
@@ -28,6 +28,7 @@
     "./agents/reviewer.md",
     "./agents/scout.md",
     "./agents/orchestrator.md",
-    "./agents/debugger.md"
+    "./agents/debugger.md",
+    "./agents/context-engineer.md"
   ]
 }

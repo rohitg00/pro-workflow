@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"console.error('[ProWorkflow] Before commit: lint, typecheck, test?');console.error('[ProWorkflow] Run quality gates first: npm run lint && npm run typecheck')\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-commit-check.js\""
           }
         ],
         "description": "Remind to run quality gates before commit"
@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"console.error('[ProWorkflow] Pushing to remote...');console.error('[ProWorkflow] Consider /wrap-up to capture learnings from this session')\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-push-check.js\""
           }
         ],
         "description": "Remind about wrap-up before push"
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const out=i.tool_output?.output||'';if(/fail|error|FAIL/i.test(out)){console.error('[ProWorkflow] Tests failed - fix before proceeding');console.error('[ProWorkflow] Consider: [LEARN] Testing: '+out.split('\\n').find(l=>/fail|error/i.test(l))?.slice(0,80))}console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/test-failure-check.js\""
           }
         ],
         "description": "Suggest learning from test failures"
@@ -135,6 +135,18 @@
         "description": "Save context state before compaction"
       }
     ],
+    "PostCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/post-compact.js\""
+          }
+        ],
+        "description": "Re-inject critical context summary after compaction"
+      }
+    ],
     "ConfigChange": [
       {
         "matcher": "*",
@@ -153,7 +165,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);if(i.type==='PermissionRequest'){console.error('[ProWorkflow] Permission requested: '+i.tool)}console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/notification-handler.js\""
           }
         ],
         "description": "Log permission requests"
@@ -165,7 +177,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);console.error('[ProWorkflow] Subagent started: '+(i.agent_name||'unnamed'));console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/subagent-start.js\""
           }
         ],
         "description": "Log subagent lifecycle for observability"
@@ -177,7 +189,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);console.error('[ProWorkflow] Subagent finished: '+(i.agent_name||'unnamed'));console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/subagent-stop.js\""
           }
         ],
         "description": "Log subagent completion and capture results"
@@ -189,7 +201,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);console.error('[ProWorkflow] Task completed: '+(i.task_id||'unknown'));console.error('[ProWorkflow] Run quality gates before marking done');console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/task-completed.js\""
           }
         ],
         "description": "Quality gate check when tasks are marked complete"
@@ -201,7 +213,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const tool=i.tool||'unknown';const cmd=(i.tool_input&&i.tool_input.command)||'';const dangerous=['rm -rf','docker','deploy','npm publish','push --force','reset --hard'];const isDangerous=dangerous.some(p=>tool.includes(p)||cmd.includes(p));if(isDangerous){console.error('[ProWorkflow] CAUTION: Dangerous operation requested: '+tool+(cmd?' cmd: '+cmd:''))}console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/permission-request.js\""
           }
         ],
         "description": "Flag dangerous operations in permission requests"
@@ -213,7 +225,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);console.error('[ProWorkflow] Tool failed: '+(i.tool||'unknown'));console.error('[ProWorkflow] Consider: [LEARN] Debugging: Tool failure in '+(i.tool||'unknown'));console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tool-failure.js\""
           }
         ],
         "description": "Track tool failures and suggest debugging learnings"
@@ -225,10 +237,34 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);console.error('[ProWorkflow] Teammate idle: '+(i.teammate_name||'unnamed'));console.error('[ProWorkflow] Consider reassigning or checking for blockers');console.log(d)})\""
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/teammate-idle.js\""
           }
         ],
         "description": "Detect idle teammates in agent teams"
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/stop-failure.js\""
+          }
+        ],
+        "description": "Log API errors and suggest retry strategies"
+      }
+    ],
+    "FileChanged": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/file-changed.js\""
+          }
+        ],
+        "description": "Watch for important config file changes"
       }
     ]
   }
