@@ -63,7 +63,7 @@
     <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white" filter="url(#softGlow)">Pro Workflow</text>
     <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white">Pro Workflow</text>
     <text y="38" font-family="'SF Mono', 'Fira Code', monospace" font-size="16" fill="#E8926F" letter-spacing="3">v3.0</text>
-    <text y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">Context engineering &bull; Agent teams &bull; AI coding workflows</text>
+    <text y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">Context engineering &#x2022; Agent teams &#x2022; AI coding workflows</text>
   </g>
 
   <g transform="translate(220, 210)">
