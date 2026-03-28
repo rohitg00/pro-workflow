@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+process.stdin.setEncoding('utf8');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -33,7 +34,7 @@ process.stdin.on('end', () => {
 
     console.log(data);
   } catch (err) {
-    console.error('[ProWorkflow] post-compact error: ' + err.message);
+    console.error('[ProWorkflow] JSON parse error:', err.message);
     console.log(data || '{}');
   }
 });

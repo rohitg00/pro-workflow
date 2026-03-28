@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+process.stdin.setEncoding('utf8');
 let data = '';
 process.stdin.on('data', chunk => { data += chunk; });
 process.stdin.on('end', () => {
@@ -47,7 +48,7 @@ process.stdin.on('end', () => {
 
     console.log(data);
   } catch (err) {
-    console.error('[ProWorkflow] file-changed error: ' + err.message);
+    console.error('[ProWorkflow] JSON parse error:', err.message);
     console.log(data || '{}');
   }
 });
