@@ -98,7 +98,7 @@ Multi-phase development with validation gates. Research before planning, plan be
 /add-plugin pro-workflow
 ```
 
-The plugin includes 14 skills, 6 agents, and 7 rules that load automatically.
+The plugin includes 14 skills, 6 agents, and 6 rules that load automatically.
 
 ### Claude Code — One-Click Plugin Install
 
@@ -361,7 +361,7 @@ pro-workflow/
 │   ├── cross-agent-workflows.md
 │   ├── new-features.md
 │   └── daily-habits.md
-├── rules/                       # 7 Cursor rules
+├── rules/                       # 6 Cursor rules + core-rules.md reference
 ├── contexts/                    # 3 context modes
 ├── templates/                   # Split CLAUDE.md + AGENTS.md templates
 ├── references/                  # Claude Code resources

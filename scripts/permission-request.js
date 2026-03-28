@@ -7,8 +7,15 @@ process.stdin.on('end', () => {
     const input = JSON.parse(data);
     const tool = (input.tool || 'unknown').toLowerCase();
     const cmd = ((input.tool_input && input.tool_input.command) || '').toLowerCase();
-    const dangerous = ['rm -rf', 'docker', 'deploy', 'npm publish', 'push --force', 'reset --hard', 'push -f', 'rm -r -f'];
-    const isDangerous = dangerous.some(p => tool.includes(p) || cmd.includes(p));
+    const dangerous = [
+      /\brm\s+(-[rRf]+\s+)*-?[rRf]/,
+      /\bdocker\s+(rm|rmi|system\s+prune|container\s+prune)/,
+      /\bnpm\s+publish\b/,
+      /\bgit\s+push\s+.*--force/,
+      /\bgit\s+push\s+-f\b/,
+      /\bgit\s+reset\s+--hard/,
+    ];
+    const isDangerous = dangerous.some(p => p.test(cmd));
     if (isDangerous) {
       console.error('[ProWorkflow] CAUTION: Dangerous operation requested: ' + tool + (cmd ? ' cmd: ' + cmd : ''));
     }
