@@ -16,7 +16,7 @@
 - [Test file convention: e.g., __tests__/foo.test.ts, foo_test.go]
 
 ## Architecture
-```
+```text
 src/
   [layer]/       # [Purpose]
   [layer]/       # [Purpose]

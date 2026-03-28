@@ -35,10 +35,11 @@ Team Lead (coordinates, delegates, reviews)
 |-----------|----------|
 | 2 | One builds, one reviews |
 | 3-5 | Parallel features across layers (API, UI, tests) |
-| 5-6 tasks per teammate | Sweet spot for task granularity |
-| > 5 teammates | Coordination overhead outweighs parallelism |
+| > 5 | Coordination overhead outweighs parallelism |
 
 3-5 teammates is the productive range. Beyond that, the lead spends more time coordinating than the team saves.
+
+**Task granularity:** Aim for 5-6 tasks per teammate. Fewer means underutilization; more means excessive context switching.
 
 ## Display Modes
 

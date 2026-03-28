@@ -93,7 +93,7 @@ Don't load everything into one context. Split work across independent execution 
 |--------|----------------|----------|
 | Subagents | Forked context | Heavy exploration, test runs, doc generation |
 | Worktrees (`claude -w`) | Full repo copy | Parallel features, competing approaches |
-| `/btw` for side questions | Temporary fork | Quick questions without derailing main task |
+| `/btw` (built-in Claude Code) | Temporary overlay | Quick questions without entering conversation history |
 | Agent teams | Independent sessions | Cross-layer changes, parallel reviews |
 | Fresh session (`/resume`) | Clean slate | Unrelated work, degraded context |
 
@@ -109,7 +109,7 @@ Main context stays clean. Subagents handle the volume.
 
 ## Context Budget Planning
 
-Assume ~200K total window. Baseline overhead for a monorepo is ~20K tokens (CLAUDE.md, tool definitions, MCP schemas). Plan around **180K usable**.
+Example baseline (calibrate with `/context`): ~200K total window, ~20K overhead (CLAUDE.md, tool definitions, MCP schemas). Plan around **~180K usable** — actual budgets vary by model and configuration.
 
 | Allocation | Budget | What Goes Here |
 |------------|--------|----------------|

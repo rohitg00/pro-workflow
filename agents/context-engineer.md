@@ -25,7 +25,7 @@ Use when sessions feel slow, compaction fires too often, token budget seems wast
 ## Audit Checklist
 
 ### CLAUDE.md Size
-- Root CLAUDE.md: target < 150 lines, ideal < 60
+- Root CLAUDE.md: ideal < 60 lines, maximum < 150 lines
 - Total across all CLAUDE.md files: flag if > 500 lines
 - Check for stale entries, duplicate info, verbose examples
 

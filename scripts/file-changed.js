@@ -10,7 +10,7 @@ process.stdin.on('end', () => {
     const importantPatterns = [
       /package\.json$/,
       /tsconfig.*\.json$/,
-      /\.env/,
+      /\/\.env$|^\.env$/,
       /Dockerfile/,
       /docker-compose/,
       /\.github\/workflows\//,
@@ -29,8 +29,10 @@ process.stdin.on('end', () => {
 
       if (/package\.json$/.test(filePath)) {
         console.error('[ProWorkflow]   Run: npm install to sync dependencies');
-      } else if (/\.env/.test(filePath)) {
+      } else if (/\/\.env$|^\.env$/.test(filePath)) {
         console.error('[ProWorkflow]   CAUTION: .env changed — verify no secrets are committed');
+      } else if (/tsconfig.*\.json$/.test(filePath)) {
+        console.error('[ProWorkflow]   Run: tsc --noEmit to verify TypeScript config');
       } else if (/Dockerfile|docker-compose/.test(filePath)) {
         console.error('[ProWorkflow]   Rebuild containers: docker compose up --build');
       } else if (/\.github\/workflows\//.test(filePath)) {
@@ -43,6 +45,10 @@ process.stdin.on('end', () => {
         console.error('[ProWorkflow]   Run: pip install -e . to sync dependencies');
       } else if (/go\.mod$/.test(filePath)) {
         console.error('[ProWorkflow]   Run: go mod tidy to sync dependencies');
+      } else if (/\.claude\//.test(filePath)) {
+        console.error('[ProWorkflow]   .claude/ config changed — context or rules may be affected');
+      } else if (/Makefile$/.test(filePath)) {
+        console.error('[ProWorkflow]   Makefile changed — verify build targets still work');
       }
     }
 

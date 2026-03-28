@@ -58,6 +58,9 @@ Teammates write to agreed-upon file paths. Last-write-wins, so coordinate who wr
 |-------|-----------|---------|
 | `SessionStart` | Teammate spawns | Loading team-specific context |
 | `Stop` | Teammate finishes | Collecting results |
+| `TeammateIdle` | Teammate has no pending work | Reassigning or checking for blockers |
+| `TaskCreated` | New task added to shared list | Logging, auto-assigning teammates |
+| `TaskCompleted` | Teammate marks task done | Running integration tests, triggering next tasks |
 | `Notification` | Message received | Routing messages between teammates |
 
 ## Decision Table

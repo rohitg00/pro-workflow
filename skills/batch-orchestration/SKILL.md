@@ -21,7 +21,7 @@ The `/batch` command pattern for large-scale parallel changes.
 
 ## Syntax
 
-```
+```bash
 /batch Convert all React class components to function components
 /batch Add error boundaries to every page component
 /batch Migrate from moment.js to dayjs across the codebase

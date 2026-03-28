@@ -14,6 +14,13 @@ process.stdin.on('end', () => {
       /\bgit\s+push\s+.*--force/,
       /\bgit\s+push\s+-f\b/,
       /\bgit\s+reset\s+--hard/,
+      /\bsudo\s+rm\b/,
+      /\bchmod\s+777\b/,
+      /\bcurl\s+.*\|\s*(ba)?sh/,
+      /\bwget\s+.*\|\s*(ba)?sh/,
+      /\bdd\s+if=/,
+      /\bmkfs\b/,
+      />\s*\/dev\//,
     ];
     const isDangerous = dangerous.some(p => p.test(cmd));
     if (isDangerous) {
