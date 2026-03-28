@@ -62,25 +62,25 @@
   <g transform="translate(220, 95)">
     <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white" filter="url(#softGlow)">Pro Workflow</text>
     <text font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="white">Pro Workflow</text>
-    <text y="38" font-family="'SF Mono', 'Fira Code', monospace" font-size="16" fill="#E8926F" letter-spacing="3">v2.0</text>
-    <text y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">Complete AI coding workflow system</text>
+    <text y="38" font-family="'SF Mono', 'Fira Code', monospace" font-size="16" fill="#E8926F" letter-spacing="3">v3.0</text>
+    <text y="70" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#94a3b8">Context engineering &bull; Agent teams &bull; AI coding workflows</text>
   </g>
 
   <g transform="translate(220, 210)">
     <rect x="0" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="65" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">10 Patterns</text>
+    <text x="65" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">14 Skills</text>
 
     <rect x="145" y="0" width="110" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="200" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">5 Agents</text>
+    <text x="200" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">6 Agents</text>
 
-    <rect x="270" y="0" width="120" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="330" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">18 Hooks</text>
+    <rect x="270" y="0" width="140" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
+    <text x="340" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">23 Hook Scripts</text>
 
-    <rect x="405" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="470" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">11 Skills</text>
+    <rect x="425" y="0" width="140" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
+    <text x="495" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">14 Commands</text>
 
-    <rect x="550" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="615" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">7 Guides</text>
+    <rect x="580" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
+    <text x="645" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">9 Guides</text>
   </g>
 
   <g transform="translate(900, 60)" opacity="0.15">

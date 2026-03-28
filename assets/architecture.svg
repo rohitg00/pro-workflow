@@ -41,7 +41,7 @@
   <text x="645" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/insights</text>
 
   <rect x="720" y="110" width="110" height="36" rx="8" fill="#252636" stroke="#D97757" stroke-width="1.5"/>
-  <text x="775" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/replay</text>
+  <text x="775" y="133" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">/deslop</text>
 
   <!-- Arrow down -->
   <line x1="125" y1="146" x2="125" y2="195" stroke="#D97757" stroke-width="2" marker-end="url(#arrow)"/>
@@ -70,6 +70,10 @@
   <text x="700" y="255" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#fbbf24" font-weight="600">debugger</text>
   <text x="700" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#64748b">Root Cause Analysis</text>
 
+  <rect x="780" y="235" width="55" height="50" rx="8" fill="#252636" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="807" y="259" text-anchor="middle" font-family="'SF Mono', monospace" font-size="9" fill="#fbbf24" font-weight="600">ctx</text>
+  <text x="807" y="272" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#64748b">Audit</text>
+
   <!-- Arrow down -->
   <line x1="135" y1="285" x2="135" y2="325" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
 
@@ -90,15 +94,15 @@
   <text x="427" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">orchestrate</text>
 
   <rect x="480" y="360" width="85" height="36" rx="8" fill="#252636" stroke="#22c55e" stroke-width="1.5"/>
-  <text x="522" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">+6 more</text>
+  <text x="522" y="383" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#2DD4A8">+9 more</text>
 
   <!-- Layer 4: Hooks -->
   <rect x="610" y="330" width="240" height="80" rx="10" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
-  <text x="630" y="350" font-family="'SF Mono', monospace" font-size="11" fill="#ef4444" font-weight="600">HOOKS (18 Events)</text>
+  <text x="630" y="350" font-family="'SF Mono', monospace" font-size="11" fill="#ef4444" font-weight="600">HOOKS (23 Scripts)</text>
 
   <text x="630" y="372" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">PreToolUse   PostToolUse</text>
-  <text x="630" y="386" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">SessionStart SubagentStart</text>
-  <text x="630" y="400" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">TaskCompleted +12 more</text>
+  <text x="630" y="386" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">PostCompact  FileChanged</text>
+  <text x="630" y="400" font-family="'SF Mono', monospace" font-size="10" fill="#64748b">StopFailure  +15 more</text>
 
   <!-- Bottom: Cross-Agent -->
   <rect x="50" y="430" width="800" height="50" rx="10" fill="#252636" stroke="#64748b" stroke-width="1"/>
