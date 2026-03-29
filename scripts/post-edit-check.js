@@ -32,23 +32,24 @@ async function main() {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
       const issues = [];
+      const isTestFile = /\.(test|spec)\.[jt]sx?$|__tests__\/|\/test\//.test(filePath);
 
       lines.forEach((line, idx) => {
         const lineNum = idx + 1;
 
-        // Check for console.log (JS/TS)
-        if (/console\.(log|debug|info)\(/.test(line) && !/\/\/.*console/.test(line)) {
+        // Check for console.log (JS/TS) — skip in test files
+        if (!isTestFile && /console\.(log|debug|info)\(/.test(line) && !/\/\/.*console/.test(line)) {
           issues.push(`${lineNum}: console.log found`);
         }
 
-        // Check for print statements (Python)
-        if (/\bprint\s*\(/.test(line) && !/^#/.test(line.trim()) && filePath.endsWith('.py')) {
+        // Check for print statements (Python) — skip in test files
+        if (!isTestFile && /\bprint\s*\(/.test(line) && !/^#/.test(line.trim()) && filePath.endsWith('.py')) {
           issues.push(`${lineNum}: print() found`);
         }
 
-        // Check for TODO/FIXME
-        if (/\b(TODO|FIXME|XXX|HACK)\b/i.test(line)) {
-          issues.push(`${lineNum}: ${line.match(/\b(TODO|FIXME|XXX|HACK)\b/i)[0]} found`);
+        // Check for TODO/FIXME — only flag if no ticket reference (e.g., TODO(JIRA-123))
+        if (/\b(TODO|FIXME|XXX|HACK)\b/i.test(line) && !/\b(TODO|FIXME|XXX|HACK)\s*\([A-Z]+-\d+\)/i.test(line)) {
+          issues.push(`${lineNum}: ${line.match(/\b(TODO|FIXME|XXX|HACK)\b/i)[0]} without ticket reference`);
         }
 
         // Check for hardcoded secrets patterns

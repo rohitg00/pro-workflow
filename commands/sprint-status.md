@@ -12,6 +12,7 @@ Report status across all active Claude Code sessions.
    ```bash
    pgrep -af "claude" | grep -v "$$" | head -10
    git worktree list 2>/dev/null
+   ls $TMPDIR/pro-workflow/sessions/ 2>/dev/null | tail -5
    ```
 
 2. **Report current session:**

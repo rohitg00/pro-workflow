@@ -29,7 +29,7 @@ The dividing line: if you can enumerate every caller, it is contained. If you ca
 
 When presenting options, show the cost of each path:
 
-```
+```text
 Option A: Add a migration (manual: 2h, AI-assisted: 15min)
 Option B: Backfill in application code (manual: 4h, AI-assisted: 30min)
 Option C: Do nothing, handle at read time (manual: 30min, AI-assisted: 5min)

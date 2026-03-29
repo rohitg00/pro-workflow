@@ -13,6 +13,8 @@ hooks:
 
 Three levels of protection against destructive operations during AI coding sessions.
 
+> **Note:** These hooks are skill-scoped — they only activate when you invoke `/safe-mode`. The global `permission-request.js` hook in hooks.json provides always-on alerting for dangerous commands. Safe-mode adds opt-in blocking and directory restrictions on top of that.
+
 ## Modes
 
 ### Cautious Mode
@@ -137,10 +139,10 @@ Inside lockdown path → pass through. Outside → block with explanation.
 
 ### State
 
-Mode state lives in a session-scoped environment variable or temp file:
+Mode state lives in a session-scoped temp file (keyed by session ID to avoid cross-session leaks):
 
 ```text
-~/.pro-workflow/safe-mode.json
+$TMPDIR/pro-workflow/safe-mode-<sessionId>.json
 {
   "mode": "lockdown",
   "lockdownPath": "/Users/dev/project/src/api",
@@ -149,7 +151,7 @@ Mode state lives in a session-scoped environment variable or temp file:
 }
 ```
 
-Cleared on session end or `/safe-mode clear`.
+Cleared on session end or `/safe-mode clear`. Each session has its own state file.
 
 ## Combining Modes
 

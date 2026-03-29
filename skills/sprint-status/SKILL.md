@@ -31,10 +31,10 @@ Or check for active worktrees:
 git worktree list 2>/dev/null
 ```
 
-Or look for session markers:
+Or look for session markers (written by session-start.js / session-end.js):
 
 ```bash
-ls ~/.claude/sessions/ 2>/dev/null | tail -5
+ls $TMPDIR/pro-workflow/sessions/ 2>/dev/null | tail -5
 ```
 
 If multiple sessions are detected, always include the session identification header. If only one session is running, include it at task boundaries and before presenting options.

@@ -19,7 +19,7 @@ Never use these in output: delve, crucial, robust, comprehensive, nuanced, multi
 
 ## Concreteness
 
-Always name the file, function, and line number. Never say "consider updating the relevant code." Say `fix the null check in parseConfig() at src/config.ts:42`.
+When providing code-change feedback and concrete anchors are available, name the file, function, and line number. Never say "consider updating the relevant code." Say `fix the null check in parseConfig() at src/config.ts:42`.
 
 ## Format Rules
 
@@ -31,4 +31,4 @@ Always name the file, function, and line number. Never say "consider updating th
 
 ## Customize
 
-Replace the tone line with your project's voice. Add domain-specific banned words. Keep this file in your project root or reference it from CLAUDE.md.
+Replace the tone line with your project's voice. Add domain-specific banned words. Place this file in your project root, under templates/, or reference it from CLAUDE.md with `@templates/VOICE.md`.

@@ -34,9 +34,9 @@ git commit -m "<type>(<scope>): <summary>"
 
 ## Code Review Scan
 
-Before committing, check staged changes for:
-- `console.log` / `debugger` statements
-- TODO/FIXME/HACK comments without ticket references
+Before committing, check staged changes in **production code** (not test files) for:
+- `console.log` / `debugger` statements (suppressed in test files — see Review Suppressions)
+- TODO/FIXME/HACK comments without ticket references (e.g., `TODO(JIRA-123)` is fine)
 - Hardcoded secrets or API keys
 - Leftover test-only code
 
