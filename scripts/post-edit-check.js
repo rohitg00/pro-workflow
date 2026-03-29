@@ -32,7 +32,7 @@ async function main() {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
       const issues = [];
-      const isTestFile = /\.(test|spec)\.[jt]sx?$|__tests__\/|\/test\//.test(filePath);
+      const isTestFile = /\.(test|spec)\.[jt]sx?$|__tests__\/|\/test\/|\/tests\/|^test_.*\.py$|_test\.py$/.test(filePath);
 
       lines.forEach((line, idx) => {
         const lineNum = idx + 1;

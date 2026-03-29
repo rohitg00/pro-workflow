@@ -2,18 +2,20 @@
 
 How to score options, scope work, and communicate status. Use this when planning tasks or deciding whether to ask the user or just fix the problem.
 
-## Thoroughness Rating (1-10)
+## Task Risk Rating (1-10)
 
-Score every task before starting. The score determines how much verification you run.
+Score every task's **risk** before starting. This determines how much verification you run.
 
-| Score | Meaning | Example |
-|-------|---------|---------|
+| Score | Risk Level | Example |
+|-------|------------|---------|
 | 1-3 | Low risk, easily reversible | Rename a variable, fix a typo, update a dependency |
 | 4-6 | Moderate risk, contained blast radius | Refactor a single module, add a new endpoint, change validation logic |
 | 7-8 | High risk, touches shared code | Change auth flow, modify database schema, update a public API |
 | 9-10 | Critical, hard to reverse | Data migration, security fix, breaking change across consumers |
 
 At 1-3, run lint and typecheck. At 4-6, add targeted tests. At 7-10, run the full test suite, review every changed file, and verify in staging if possible.
+
+> **Task Risk vs Solution Thoroughness:** This scale rates the *task* (what could go wrong). The T:1-10 scale in `skills/thoroughness-scoring/SKILL.md` rates the *solution* (how complete is the implementation). A low-risk task (risk: 2) can still warrant a high-thoroughness solution (T:9) if the module is widely used.
 
 ## Contained vs Unbounded Scope
 

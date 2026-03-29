@@ -129,9 +129,10 @@ The hook checks `tool_input.file_path` against the lockdown path:
 
 ```javascript
 function isInsideLockdown(filePath, lockdownPath) {
-  const resolved = path.resolve(filePath);
-  const allowed = path.resolve(lockdownPath);
-  return resolved.startsWith(allowed + path.sep) || resolved === allowed;
+  const resolved = fs.realpathSync(path.resolve(filePath));
+  const allowed = fs.realpathSync(path.resolve(lockdownPath));
+  const rel = path.relative(allowed, resolved);
+  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
 }
 ```
 
@@ -151,7 +152,7 @@ $TMPDIR/pro-workflow/safe-mode-<sessionId>.json
 }
 ```
 
-Cleared on session end or `/safe-mode clear`. Each session has its own state file.
+Cleared by `/safe-mode clear`. State persists until explicitly cleared or the temp file is manually removed. Each session has its own state file.
 
 ## Combining Modes
 
