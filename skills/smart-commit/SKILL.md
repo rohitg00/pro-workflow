@@ -67,3 +67,13 @@ Flag any issues before proceeding.
 - Suggested commit message
 - Commit hash after committing
 - Prompt: any learnings to capture?
+
+## Review Suppressions
+
+Do NOT flag these during the pre-commit scan. They add noise without catching real bugs:
+- Threshold, config value, or feature flag changes (limits, timeouts, retry counts)
+- Import reordering that does not change runtime behavior
+- Whitespace-only or formatting-only changes
+- Adding or removing `console.log` in test files
+- TODO/FIXME comments (tracked separately in issue trackers)
+- Variable or parameter renames that do not change behavior
