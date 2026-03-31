@@ -10,44 +10,183 @@
   <a href="https://rohitg00-pro-workflow.mintlify.app/"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373?style=for-the-badge&logo=mintlify&labelColor=1e1e2e" alt="Docs"/></a>
 </p>
 
+<h3 align="center">Your Claude Code gets smarter every session.</h3>
+
 <p align="center">
-  <b>Complete AI coding workflow system.</b><br/>
-  Context engineering &bull; Agent teams &bull; 18 hook events &bull; 6 agents &bull; 9 reference guides &bull; Cross-agent support<br/>
+  Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again.<br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
 ---
 
-## What's New in v3.0
+## The Problem
 
-<table>
-<tr><td><b>Context Engineering</b></td><td>New skill teaching Write/Select/Compress/Isolate — the four operations framework</td></tr>
-<tr><td><b>Agent Teams</b></td><td>New skill + guide for multi-instance coordination (lead + teammates, shared task list)</td></tr>
-<tr><td><b>Batch Orchestration</b></td><td>New skill for <code>/batch</code> pattern — decompose into 5-30 parallel worktree agents</td></tr>
-<tr><td><b>6 Agents</b></td><td>Added context-engineer for lightweight context window auditing</td></tr>
-<tr><td><b>3 New Hook Events</b></td><td>PostCompact (re-inject context), StopFailure (API errors), FileChanged (config watch)</td></tr>
-<tr><td><b>23 Hook Scripts</b></td><td>All inline handlers extracted to proper files — zero <code>node -e</code> remaining</td></tr>
-<tr><td><b>AGENTS.md Template</b></td><td>Universal standard that works across 11+ AI coding tools</td></tr>
-<tr><td><b><code>/deslop</code> Command</b></td><td>Remove AI-generated code slop from branch diff</td></tr>
-<tr><td><b><code>/context-optimizer</code> Command</b></td><td>Audit and optimize context window usage</td></tr>
-<tr><td><b>9 Reference Guides</b></td><td>Added context-engineering.md and agent-teams.md</td></tr>
-</table>
+You correct Claude the same way 50 times. You tell it "don't mock the database" on Monday and again on Friday. You explain your project conventions every new session. Context compacts, learnings vanish, mistakes repeat.
+
+**Every Claude Code user hits this wall.**
+
+## The Solution
+
+Pro Workflow captures every correction in a persistent SQLite database with full-text search. Corrections compound into rules. Rules load automatically on session start. After 50 sessions, Claude barely needs correcting.
+
+<p align="center">
+  <img src="assets/self-correction-demo.svg" alt="Self-Correction Loop" width="700"/>
+</p>
+
+```
+Session 1:  You → "Don't mock the database in tests"
+            Claude → Proposes rule → You approve → Saved to SQLite
+
+Session 2:  SessionStart hook loads all learnings
+            Claude → Writes integration tests (no mocks)
+            You → Zero corrections needed
+
+Session 50: Claude knows your conventions, style, and preferences
+            Correction rate: near zero
+```
+
+## Install (30 seconds)
+
+```bash
+/plugin marketplace add rohitg00/pro-workflow
+/plugin install pro-workflow@pro-workflow
+```
+
+<details>
+<summary>Other install methods</summary>
+
+```bash
+# Cursor
+/add-plugin pro-workflow
+
+# Any agent via SkillKit
+npx skillkit install pro-workflow
+
+# Manual
+git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
+cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
+
+# Build with SQLite support
+cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
+```
+
+</details>
+
+## Try It
+
+```bash
+/develop add user authentication     # Multi-phase: Research → Plan → Implement → Review
+/wrap-up                             # End session, capture learnings, audit changes
+/doctor                              # Check your setup health
+/learn-rule                          # Extract a correction into persistent memory
+/commit                              # Quality gates → staged review → conventional commit
+```
+
+---
+
+## What's Inside
+
+### 17 Skills
+
+| Skill | What It Does |
+|:------|:------------|
+| **Self-Correction Loop** | Claude learns from your corrections automatically |
+| **Context Engineering** | Write/Select/Compress/Isolate framework for token management |
+| **Agent Teams** | Multi-instance coordination with shared task list and messaging |
+| **Batch Orchestration** | `/batch` pattern for parallel worktree agents |
+| **Parallel Worktrees** | Zero dead time with native `claude -w` worktrees |
+| **Smart Commit** | Quality gates, staged review, and conventional commits |
+| **Wrap-Up Ritual** | End sessions with intention, capture learnings |
+| **Context Optimizer** | Token management, context budget, MCP audit |
+| **Deslop** | Remove AI-generated code slop and clean up style |
+| **Orchestrate** | Wire Commands, Agents, and Skills for multi-phase development |
+| **Session Handoff** | Generate handoff documents for session continuity |
+| **Replay Learnings** | Surface past learnings relevant to the current task |
+| **Insights** | Session analytics, correction trends, productivity metrics |
+| **Safe Mode** | Guardrails for destructive operations |
+| **Sprint Status** | Track progress across sessions |
+| **Thoroughness Scoring** | Rate completeness of implementations |
+| **Learn Rule** | Capture corrections as persistent learning rules |
+
+### 6 Agents
+
+| Agent | Purpose |
+|-------|---------|
+| **planner** | Break down complex tasks (read-only, approval-gated) |
+| **reviewer** | Code review and security audit (checklist-based) |
+| **scout** | Confidence-gated exploration (background, worktree-isolated) |
+| **orchestrator** | Multi-phase feature development (Research > Plan > Implement > Review) |
+| **debugger** | Systematic bug investigation (hypothesis-driven) |
+| **context-engineer** | Context window analysis and optimization (lightweight, read-only) |
+
+### 16 Commands
+
+| Command | What It Does |
+|---------|-------------|
+| `/develop` | Multi-phase feature build with validation gates |
+| `/commit` | Smart commit with quality gates |
+| `/wrap-up` | End-of-session checklist and learning capture |
+| `/learn-rule` | Extract correction to persistent memory |
+| `/doctor` | Health check for setup and configuration |
+| `/insights` | Session analytics and correction heatmap |
+| `/replay` | Surface past learnings for current task |
+| `/handoff` | Generate session handoff document |
+| `/search` | Search learnings by keyword |
+| `/list` | List all stored learnings |
+| `/deslop` | Remove AI-generated code slop from diff |
+| `/context-optimizer` | Audit and optimize context window usage |
+| `/parallel` | Set up git worktrees for parallel sessions |
+| `/learn` | Interactive Claude Code best practices guide |
+| `/safe-mode` | Toggle destructive operation guardrails |
+| `/sprint-status` | Track multi-session progress |
+
+### 23 Hook Scripts (18 Events)
+
+| Hook | When | What |
+|------|------|------|
+| SessionStart | New session | Load learnings from database |
+| UserPromptSubmit | Each prompt | Drift detection, correction tracking |
+| PreToolUse | Before edits | Track edit count, quality gate reminders |
+| PreToolUse | Before git | Remind about quality gates |
+| PostToolUse | After edits | Check for console.log, TODOs, secrets |
+| PostToolUse | After tests | Suggest learning from failures |
+| Stop | Each response | Context-aware reminders |
+| SessionEnd | Session close | Save session stats to database |
+| PreCompact | Before compaction | Save context state |
+| PostCompact | After compaction | Re-inject critical context summary |
+| SubagentStart/Stop | Agent lifecycle | Log and collect results |
+| TaskCompleted | Task done | Quality gate on completion |
+| PermissionRequest | Permission dialog | Flag dangerous operations |
+| PostToolUseFailure | Tool fails | Track failures, suggest learnings |
+| TeammateIdle | Teammate idle | Detect blockers in agent teams |
+| StopFailure | API error | Log errors with retry advice |
+| FileChanged | Config modified | Watch package.json, .env, CI |
+| ConfigChange | Settings change | Detect mid-session changes |
+
+### 10 Reference Guides
+
+| Guide | What's Covered |
+|-------|---------------|
+| [`settings-guide.md`](docs/settings-guide.md) | All settings keys, permission modes, hierarchy |
+| [`cli-cheatsheet.md`](docs/cli-cheatsheet.md) | Every CLI flag, keyboard shortcut, slash command |
+| [`orchestration-patterns.md`](docs/orchestration-patterns.md) | Command > Agent > Skill architecture, agent teams |
+| [`context-engineering.md`](docs/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction |
+| [`agent-teams.md`](docs/agent-teams.md) | Setup, task decomposition, teams vs sub-agents |
+| [`context-loading.md`](docs/context-loading.md) | CLAUDE.md loading, agent memory, skills discovery |
+| [`cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Claude Code + Cursor together, SkillKit translation |
+| [`new-features.md`](docs/new-features.md) | Voice, agent teams, checkpointing, remote control |
+| [`daily-habits.md`](docs/daily-habits.md) | Session habits, debugging tips, anti-patterns |
+| [`core-rules.md`](rules/core-rules.md) | Quality gates, atomic commits, context discipline |
 
 ---
 
 ## How It Works
 
-> "80% of my code is written by AI, 20% is spent reviewing and correcting it." — Karpathy
+> "80% of my code is written by AI, 20% is spent reviewing and correcting it." &mdash; Karpathy
 
-Pro Workflow optimizes for that ratio. Every pattern reduces correction cycles.
+> "The bottleneck was never the model. It was always the workflow." &mdash; @getvibecodes
 
-### The Self-Correction Loop
-
-<p align="center">
-  <img src="assets/self-correction-demo.svg" alt="Self-Correction Loop Demo" width="700"/>
-</p>
-
-Corrections compound. Each mistake becomes a rule that prevents future mistakes. After 50 sessions, Claude barely needs correcting.
+Pro Workflow optimizes for that ratio. Every correction becomes a rule. Every rule prevents future mistakes. The loop compounds.
 
 ### The `/develop` Flow
 
@@ -55,261 +194,47 @@ Corrections compound. Each mistake becomes a rule that prevents future mistakes.
   <img src="assets/workflow-flow.svg" alt="Development Flow" width="900"/>
 </p>
 
-Multi-phase development with validation gates. Research before planning, plan before implementing, review before committing.
+Multi-phase development with validation gates: Research before planning. Plan before implementing. Review before committing.
 
-### The `/develop` Command in Action
-
-<p align="center">
-  <img src="assets/terminal-demo.svg" alt="Terminal Demo" width="700"/>
-</p>
-
----
-
-## Architecture
+### Architecture
 
 <p align="center">
   <img src="assets/architecture.svg" alt="Architecture Diagram" width="900"/>
 </p>
 
+### Database
+
+Learnings stored in SQLite with FTS5 full-text search:
+
+```bash
+/search testing           # Find all testing-related learnings
+/search "file paths"      # Exact phrase search
+/list                     # Show all stored learnings
+```
+
 ---
 
-## Patterns
+## Core Patterns
 
 | Pattern | What It Does |
 |---------|--------------|
 | **Self-Correction Loop** | Claude learns from your corrections automatically |
-| **Parallel Worktrees** | Zero dead time - native `claude -w` worktrees |
+| **Parallel Worktrees** | Zero dead time with native `claude -w` worktrees |
 | **Wrap-Up Ritual** | End sessions with intention, capture learnings |
 | **Split Memory** | Modular CLAUDE.md for complex projects |
 | **80/20 Review** | Batch reviews at checkpoints |
-| **Model Selection** | Opus 4.6 adaptive thinking, Sonnet 4.6 (1M context) |
-| **Context Engineering** | Write/Select/Compress/Isolate framework for token management |
-| **Agent Teams** | Multi-instance coordination with shared task list and messaging |
+| **Context Engineering** | Write/Select/Compress/Isolate for token management |
+| **Agent Teams** | Multi-instance coordination with shared task list |
 | **Batch Orchestration** | Parallel worktree agents for large-scale changes |
+| **Multi-Phase Dev** | Research > Plan > Implement > Review with gates |
 | **Learning Log** | Auto-document insights |
 | **Orchestration** | Command > Agent > Skill wiring for complex features |
-| **Multi-Phase Dev** | Research > Plan > Implement > Review & Commit with validation gates |
 
-## Installation
-
-### Cursor (Recommended)
-
-```bash
-/add-plugin pro-workflow
-```
-
-The plugin includes 14 skills, 6 agents, and 6 rules that load automatically.
-
-### Claude Code — One-Click Plugin Install
-
-```bash
-/plugin marketplace add rohitg00/pro-workflow
-/plugin install pro-workflow@pro-workflow
-```
-
-### Claude Code — Build with SQLite Support
-
-```bash
-cd ~/.claude/plugins/*/pro-workflow
-npm install && npm run build
-```
-
-### Or load directly
-
-```bash
-claude --plugin-dir /path/to/pro-workflow
-```
-
-### Minimal (Just add to CLAUDE.md)
-
-```markdown
-## Pro Workflow
-
-### Self-Correction
-When corrected, propose rule -> add to LEARNED after approval.
-
-### Planning
-Multi-file: plan first, wait for "proceed".
-
-### Quality
-After edits: lint, typecheck, test.
-
-### LEARNED
-```
-
-## Reference Guides
-
-| Guide | What's Covered |
-|-------|---------------|
-| [`docs/settings-guide.md`](docs/settings-guide.md) | All settings keys, permission modes, hierarchy, sandbox, MCP approval |
-| [`docs/cli-cheatsheet.md`](docs/cli-cheatsheet.md) | Every CLI flag, keyboard shortcut, slash command, scripting patterns |
-| [`docs/orchestration-patterns.md`](docs/orchestration-patterns.md) | Command > Agent > Skill architecture, frontmatter reference, agent teams |
-| [`docs/context-engineering.md`](docs/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction strategies, key research |
-| [`docs/agent-teams.md`](docs/agent-teams.md) | Setup, architecture, task decomposition, teams vs sub-agents decision table |
-| [`docs/context-loading.md`](docs/context-loading.md) | CLAUDE.md loading in monorepos, agent memory, skills discovery |
-| [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Using Claude Code + Cursor together, config mapping, SkillKit translation |
-| [`docs/new-features.md`](docs/new-features.md) | Voice mode, agent teams, checkpointing, remote control, new hook events |
-| [`docs/daily-habits.md`](docs/daily-habits.md) | Session habits, debugging tips, terminal setup, anti-patterns |
-
-## Skills
-
-| Skill | Description |
-|:------|:------------|
-| `pro-workflow` | Core workflow patterns for AI-assisted coding |
-| `smart-commit` | Quality gates, staged review, and conventional commits |
-| `wrap-up` | End-of-session ritual with change audit and learning capture |
-| `learn-rule` | Capture corrections as persistent learning rules |
-| `parallel-worktrees` | Set up git worktrees for zero dead time |
-| `replay-learnings` | Surface past learnings relevant to the current task |
-| `session-handoff` | Generate handoff documents for session continuity |
-| `insights` | Session analytics, correction trends, and productivity metrics |
-| `deslop` | Remove AI-generated code slop and clean up style |
-| `context-optimizer` | Token management, context budget, MCP audit |
-| `context-engineering` | Write/Select/Compress/Isolate framework for context management |
-| `agent-teams` | Multi-instance coordination patterns with shared task list |
-| `batch-orchestration` | /batch pattern for parallel worktree agent decomposition |
-| `orchestrate` | Wire Commands, Agents, and Skills for multi-phase development |
-
-## Agents
-
-| Agent | Purpose | Key Feature |
-|-------|---------|-------------|
-| **planner** | Break down complex tasks | Read-only, approval-gated |
-| **reviewer** | Code review, security audit | Checklist-based, severity levels |
-| **scout** | Confidence-gated exploration | Background, worktree-isolated |
-| **orchestrator** | Multi-phase feature development | Research > Plan > Implement > Review, memory-enabled |
-| **debugger** | Systematic bug investigation | Hypothesis-driven, root cause analysis |
-| **context-engineer** | Context window analysis and optimization | Lightweight, read-only audit |
-
-## Commands (Claude Code)
-
-When installed as a plugin, commands are available as `/pro-workflow:<name>`. Short forms like `/develop` also work directly after plugin install.
-
-| Command | Alias | Purpose |
-|---------|-------|---------|
-| `/pro-workflow:wrap-up` | `/wrap-up` | End-of-session checklist |
-| `/pro-workflow:learn-rule` | `/learn-rule` | Extract correction to memory |
-| `/pro-workflow:commit` | `/commit` | Smart commit with quality gates |
-| `/pro-workflow:develop` | `/develop` | Multi-phase feature build (Research > Plan > Implement > Review & Commit) |
-| `/pro-workflow:doctor` | `/doctor` | Health check for setup and configuration |
-| `/pro-workflow:insights` | `/insights` | Session analytics and correction heatmap |
-| `/pro-workflow:replay` | `/replay` | Surface past learnings for current task |
-| `/pro-workflow:handoff` | `/handoff` | Generate session handoff document |
-| `/pro-workflow:search` | `/search` | Search learnings by keyword |
-| `/pro-workflow:list` | `/list` | List all stored learnings |
-| `/pro-workflow:deslop` | `/deslop` | Remove AI-generated code slop from branch diff |
-| `/pro-workflow:context-optimizer` | `/context-optimizer` | Audit and optimize context window usage |
-| `/pro-workflow:parallel` | `/parallel` | Set up git worktrees for parallel sessions |
-| `/pro-workflow:learn` | `/learn` | Interactive Claude Code best practices guide |
-
-## Hooks (18 Events, 23 Scripts)
-
-| Hook | When | What |
-|------|------|------|
-| PreToolUse | Before edits | Track edit count, quality gate reminders |
-| PreToolUse | Before git commit/push | Remind about quality gates, wrap-up |
-| PostToolUse | After code edits | Check for console.log, TODOs, secrets |
-| PostToolUse | After tests | Suggest [LEARN] from failures |
-| UserPromptSubmit | Each prompt | Drift detection, correction tracking |
-| SessionStart | New session | Load learnings from database |
-| Stop | Each response | Context-aware reminders |
-| SessionEnd | Session close | Save session stats to database |
-| PreCompact | Before compaction | Save context state |
-| ConfigChange | Settings modified | Detect mid-session changes |
-| Notification | System events | Log permission requests |
-| **SubagentStart** | Subagent spawns | Log agent lifecycle |
-| **SubagentStop** | Subagent finishes | Collect results |
-| **TaskCompleted** | Task marked done | Quality gate on completion |
-| **PermissionRequest** | Permission dialog | Flag dangerous operations |
-| **PostToolUseFailure** | Tool fails | Track failures, suggest learnings |
-| **TeammateIdle** | Teammate goes idle | Detect blockers in agent teams |
-| **PostCompact** | After compaction | Re-inject critical context summary |
-| **StopFailure** | API error | Log errors with retry advice |
-| **FileChanged** | Config file modified | Watch package.json, .env, CI workflows |
-
-### Hook Lifecycle
-
-```mermaid
-graph LR
-    A[SessionStart] --> B[UserPromptSubmit]
-    B --> C[PreToolUse]
-    C --> D{Tool Runs}
-    D -->|Success| E[PostToolUse]
-    D -->|Failure| F[PostToolUseFailure]
-    E --> G[Stop]
-    F --> G
-    G -->|More prompts| B
-    G -->|Session ends| H[SessionEnd]
-    G -->|API error| L[StopFailure]
-    H -.->|Compaction| M[PreCompact] -.-> N[PostCompact]
-
-    C -->|Spawns agent| I[SubagentStart]
-    I --> J[SubagentStop]
-
-    C -->|Needs permission| K[PermissionRequest]
-
-    style A fill:#D97757,color:#fff,stroke:none
-    style H fill:#ef4444,color:#fff,stroke:none
-    style D fill:#f59e0b,color:#000,stroke:none
-    style E fill:#22c55e,color:#fff,stroke:none
-    style F fill:#ef4444,color:#fff,stroke:none
-```
-
-## Rules (Cursor)
-
-| Rule | Applies To | Description |
-|:-----|:-----------|:------------|
-| `quality-gates` | Always | Lint, typecheck, and test before commits |
-| `atomic-commits` | Always | Conventional format, feature branches, specific staging |
-| `context-discipline` | Always | Read before edit, plan before multi-file changes |
-| `self-correction` | Always | Capture mistakes as compounding learnings |
-| `no-debug-statements` | `*.{ts,tsx,js,jsx,py,go,rs}` | Remove console.log, debugger, print before committing |
-| `communication-style` | Always | Concise, action-oriented, no over-engineering |
-
-## Configuration
-
-### Settings Example
-
-See [`settings.example.json`](settings.example.json) for a production-ready configuration including:
-- Permission rules (allow/deny/ask)
-- Output style and status line
-- Auto-compaction at 80%
-- Custom spinner verbs and tips
-- Attribution disabled
-- Plans directory
-
-### MCP Config
-
-See [`mcp-config.example.json`](mcp-config.example.json) for curated server recommendations:
-- **context7** — Live documentation lookup
-- **playwright** — Browser automation (most token-efficient)
-- **GitHub** — PRs, issues, code search
-
-Rule: Start with 3 MCPs. Add only for concrete needs.
+---
 
 ## Cross-Agent Support
 
 Works across 32+ AI coding agents via [SkillKit](https://agenstskills.com):
-
-```mermaid
-graph TD
-    PW[Pro Workflow] --> CC[Claude Code]
-    PW --> CU[Cursor]
-    PW --> SK[SkillKit]
-
-    CC --> |"CLAUDE.md + hooks + agents"| CC
-    CU --> |".cursorrules + skills + agents"| CU
-
-    SK --> CO[Codex CLI]
-    SK --> GC[Gemini CLI]
-    SK --> WS[Windsurf]
-    SK --> MORE[27+ more]
-
-    style PW fill:#D97757,color:#fff,stroke:none
-    style CC fill:#E8926F,color:#fff,stroke:none
-    style CU fill:#f59e0b,color:#000,stroke:none
-    style SK fill:#22c55e,color:#fff,stroke:none
-```
 
 ```bash
 npx skillkit install pro-workflow
@@ -318,109 +243,69 @@ npx skillkit translate pro-workflow --agent codex
 npx skillkit translate pro-workflow --agent gemini-cli
 ```
 
-See [`docs/cross-agent-workflows.md`](docs/cross-agent-workflows.md) for configuration mapping between Claude Code, Cursor, Codex, and Gemini CLI.
+Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro, Amp, Goose, Roo, and [27 more](https://agenstskills.com).
+
+---
+
+## Configuration
+
+### Settings
+
+See [`settings.example.json`](settings.example.json) for production-ready configuration including permission rules, output style, auto-compaction, and custom spinner verbs.
+
+### MCP Config
+
+See [`mcp-config.example.json`](mcp-config.example.json) for curated server recommendations:
+- **context7** &mdash; Live documentation lookup
+- **playwright** &mdash; Browser automation (most token-efficient)
+- **GitHub** &mdash; PRs, issues, code search
+
+Rule: Start with 3 MCPs. Add only for concrete needs.
+
+---
 
 ## Structure
 
 ```text
 pro-workflow/
-├── .claude-plugin/              # Claude Code plugin
-├── .cursor-plugin/              # Cursor plugin
-├── skills/                      # 14 skills (Cursor + Claude Code)
-│   ├── pro-workflow/SKILL.md
-│   ├── context-engineering/SKILL.md  # NEW: Write/Select/Compress/Isolate
-│   ├── agent-teams/SKILL.md          # NEW: Multi-instance coordination
-│   ├── batch-orchestration/SKILL.md  # NEW: /batch parallel agents
-│   ├── smart-commit/SKILL.md
-│   ├── context-optimizer/SKILL.md
-│   ├── orchestrate/SKILL.md
-│   └── ...
-├── agents/                      # 6 agents
-│   ├── planner.md
-│   ├── reviewer.md
-│   ├── scout.md
-│   ├── orchestrator.md
-│   ├── debugger.md
-│   └── context-engineer.md      # NEW: Context window auditor
-├── commands/                    # 14 slash commands
-│   ├── develop.md               # Multi-phase feature build
-│   ├── doctor.md                # Health check
-│   ├── deslop.md                # NEW: Remove AI code slop
-│   ├── context-optimizer.md     # NEW: Context audit
-│   ├── commit.md
-│   └── ...
-├── hooks/                       # 18 hook events, 23 scripts
-│   └── hooks.json
-├── docs/                        # 9 reference guides
-│   ├── settings-guide.md
-│   ├── cli-cheatsheet.md
-│   ├── orchestration-patterns.md
-│   ├── context-engineering.md   # NEW: Four operations framework
-│   ├── agent-teams.md           # NEW: Teams quick reference
-│   ├── context-loading.md
-│   ├── cross-agent-workflows.md
-│   ├── new-features.md
-│   └── daily-habits.md
-├── rules/                       # 6 Cursor rules + core-rules.md reference
-├── contexts/                    # 3 context modes
-├── templates/                   # Split CLAUDE.md + AGENTS.md templates
-├── references/                  # Claude Code resources
-├── scripts/                     # 23 hook scripts (zero inline handlers)
-├── settings.example.json        # Production settings template
-├── mcp-config.example.json      # Curated MCP recommendations
-├── src/                         # TypeScript source (SQLite)
+├── skills/           # 17 skills
+├── agents/           # 6 agents
+├── commands/         # 16 slash commands
+├── hooks/            # 18 events, 23 scripts
+├── docs/             # 10 reference guides
+├── rules/            # 7 rules (Cursor + universal)
+├── contexts/         # 3 context modes
+├── templates/        # Split CLAUDE.md + AGENTS.md
+├── scripts/          # 23 hook scripts
+├── src/              # TypeScript source (SQLite)
 └── config.json
-```
-
-## Database Features
-
-Learnings stored in SQLite with FTS5 full-text search:
-
-```text
-~/.pro-workflow/
-└── data.db    # SQLite database with learnings and sessions
-```
-
-```bash
-/search testing           # Find all testing-related learnings
-/search "file paths"      # Exact phrase search
 ```
 
 ## Philosophy
 
-1. **Compound improvements** - Small corrections lead to big gains over time
-2. **Trust but verify** - Let AI work, review at checkpoints
-3. **Zero dead time** - Parallel sessions keep momentum
-4. **Memory is precious** - Both yours and Claude's
-5. **Orchestrate, don't micromanage** - Wire patterns together, let agents execute
+1. **Compound improvements** &mdash; Small corrections lead to big gains over time
+2. **Trust but verify** &mdash; Let AI work, review at checkpoints
+3. **Zero dead time** &mdash; Parallel sessions keep momentum
+4. **Memory is precious** &mdash; Both yours and Claude's
+5. **Orchestrate, don't micromanage** &mdash; Wire patterns together, let agents execute
 
 ---
 
-## Quick Start (30 seconds)
+## Star History
 
-```bash
-# Option A: Plugin install (Claude Code)
-/plugin marketplace add rohitg00/pro-workflow
-/plugin install pro-workflow@pro-workflow
-
-# Option B: Plugin install (Cursor)
-/add-plugin pro-workflow
-
-# Option C: Manual (any agent)
-git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
-cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
-
-# Then try it (use /pro-workflow:<name> with plugin install):
-/pro-workflow:develop add user authentication   # Multi-phase feature build
-/pro-workflow:doctor                             # Check your setup
-/pro-workflow:wrap-up                            # End session properly
-```
+<a href="https://star-history.com/#rohitg00/pro-workflow&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=rohitg00/pro-workflow&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=rohitg00/pro-workflow&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=rohitg00/pro-workflow&type=Date" />
+ </picture>
+</a>
 
 ---
 
 <p align="center">
   <br/>
-  <b>If you find this useful, star the repo to help others discover it.</b>
+  <b>If pro-workflow saves you time, star the repo so others can find it.</b>
   <br/><br/>
   <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
   <br/><br/>
@@ -428,6 +313,4 @@ cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
   <a href="https://agenstskills.com">SkillKit Marketplace</a> &bull;
   <a href="https://github.com/rohitg00/pro-workflow/issues">Report Issues</a> &bull;
   <a href="docs/">Reference Guides</a>
-  <br/><br/>
-  <sub>Complete AI coding workflow system from production use across Claude Code, Cursor, and beyond.</sub>
 </p>
