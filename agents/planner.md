@@ -2,6 +2,7 @@
 name: planner
 description: Break down complex tasks into implementation plans before writing code. Use when task touches >5 files, requires architecture decisions, or has unclear requirements.
 tools: ["Read", "Glob", "Grep"]
+omitClaudeMd: true
 ---
 
 # Planner

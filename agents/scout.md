@@ -4,6 +4,7 @@ description: Confidence-gated exploration that assesses readiness before impleme
 tools: ["Read", "Glob", "Grep", "Bash"]
 background: true
 isolation: worktree
+omitClaudeMd: true
 ---
 
 # Scout - Confidence-Gated Exploration

@@ -2,6 +2,7 @@
 name: reviewer
 description: Code review specialist that verifies every finding against actual code before reporting. Use before committing, for PR reviews, or after major changes.
 tools: ["Read", "Glob", "Grep", "Bash"]
+omitClaudeMd: true
 ---
 
 # Reviewer

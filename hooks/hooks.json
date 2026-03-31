@@ -13,24 +13,41 @@
         "description": "Track edits for quality gate checks"
       },
       {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"git commit\"",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
+            "if": "Bash(git commit*)",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-commit-check.js\""
-          }
-        ],
-        "description": "Remind to run quality gates before commit"
-      },
-      {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"git push\"",
-        "hooks": [
+          },
+          {
+            "type": "prompt",
+            "if": "Bash(git commit*)",
+            "prompt": "Check if this git commit message follows conventional commits format: <type>(<scope>): <summary>. Valid types: feat, fix, refactor, test, docs, chore, perf, ci, style. Summary must be under 72 chars. The commit input is: $ARGUMENTS. Return {\"ok\": true} if valid or missing -m flag, {\"ok\": false, \"reason\": \"...\"} if the message format is wrong.",
+            "model": "haiku",
+            "timeout": 15,
+            "statusMessage": "Validating commit message format..."
+          },
           {
             "type": "command",
+            "if": "Bash(git push*)",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-push-check.js\""
           }
         ],
-        "description": "Remind about wrap-up before push"
+        "description": "Git operation guards: quality gates before commit, LLM commit validation, wrap-up before push"
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if this file write contains hardcoded API keys, secrets, passwords, tokens, or private keys. Look for patterns like: AKIA*, sk-*, ghp_*, Bearer tokens, password=, secret=, private_key. The file content is: $ARGUMENTS. Return {\"ok\": true} if clean, {\"ok\": false, \"reason\": \"Found potential secret: [description]\"} if secrets detected.",
+            "model": "haiku",
+            "timeout": 15,
+            "statusMessage": "Scanning for secrets..."
+          }
+        ],
+        "description": "LLM-powered secret detection on file writes"
       }
     ],
     "PostToolUse": [
@@ -45,7 +62,7 @@
         "description": "Check for common issues after code edits"
       },
       {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm test|pnpm test|yarn test|pytest|go test)\"",
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm test|pnpm test|yarn test|pytest|go test|cargo test)\"",
         "hooks": [
           {
             "type": "command",
@@ -207,6 +224,18 @@
         "description": "Quality gate check when tasks are marked complete"
       }
     ],
+    "TaskCreated": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/task-created.js\""
+          }
+        ],
+        "description": "Validate task descriptions for tracking quality"
+      }
+    ],
     "PermissionRequest": [
       {
         "matcher": "*",
@@ -217,6 +246,18 @@
           }
         ],
         "description": "Flag dangerous operations in permission requests"
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/permission-denied.js\""
+          }
+        ],
+        "description": "Track permission denial patterns for optimization"
       }
     ],
     "PostToolUseFailure": [
@@ -257,14 +298,62 @@
     ],
     "FileChanged": [
       {
-        "matcher": "*",
+        "matcher": ".env|.envrc|package.json|tsconfig.json|Cargo.toml|go.mod|pyproject.toml",
         "hooks": [
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/file-changed.js\""
           }
         ],
-        "description": "Watch for important config file changes"
+        "description": "Watch for important config and dependency file changes"
+      }
+    ],
+    "Setup": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/setup-hook.js\""
+          }
+        ],
+        "description": "Auto-detect project type and suggest configuration on init"
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-create.js\""
+          }
+        ],
+        "description": "Log worktree creation for parallel session tracking"
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-remove.js\""
+          }
+        ],
+        "description": "Cleanup worktree tracking on removal"
+      }
+    ],
+    "CwdChanged": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/cwd-changed.js\""
+          }
+        ],
+        "description": "Detect project type and inject env vars on directory change"
       }
     ]
   }
