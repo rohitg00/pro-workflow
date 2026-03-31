@@ -25,7 +25,7 @@ Reads your session's permission patterns and categorizes them:
 
 ## Usage
 
-```
+```text
 /permission-tuner
 ```
 

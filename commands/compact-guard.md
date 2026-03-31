@@ -30,6 +30,6 @@ Claude Code only restores **5 files** after compaction, with **5K tokens per fil
 
 ## Usage
 
-```
+```text
 /compact-guard
 ```

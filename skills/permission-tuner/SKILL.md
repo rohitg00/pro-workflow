@@ -1,6 +1,6 @@
 ---
 name: permission-tuner
-description: Analyze permission denial patterns and generate optimized alwaysAllow rules. Use when permission prompts are slowing you down or after sessions with many denials.
+description: Analyze permission denial patterns and generate optimized alwaysAllow and alwaysDeny rules. Use when permission prompts are slowing you down or after sessions with many denials.
 ---
 
 # Permission Tuner

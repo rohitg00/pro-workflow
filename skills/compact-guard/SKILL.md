@@ -39,7 +39,7 @@ Before full compaction, try microcompact:
 
 After compaction, immediately:
 
-1. Re-read the top priority file (the one you're actively editing)
+1. Re-read the top-priority file (the one you're actively editing)
 2. Check task list for current progress
 3. Review any scratch notes saved pre-compact
 4. Resume from next steps

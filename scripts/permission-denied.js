@@ -15,7 +15,7 @@ process.stdin.on('end', () => {
     const denialsFile = path.join(tempDir, 'permission-denials.json');
     let denials = [];
     if (fs.existsSync(denialsFile)) {
-      try { denials = JSON.parse(fs.readFileSync(denialsFile, 'utf8')); } catch (e) { denials = []; }
+      try { const parsed = JSON.parse(fs.readFileSync(denialsFile, 'utf8')); denials = Array.isArray(parsed) ? parsed : []; } catch (e) { denials = []; }
     }
 
     const entry = {

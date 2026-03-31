@@ -17,7 +17,7 @@ Use when:
 
 ## How File Watching Works
 
-Claude Code's `SessionStart` and `CwdChanged` hooks can return `watchPaths` to register file watchers:
+Claude Code's `SessionStart` and `CwdChanged` hooks support returning `watchPaths` to register file watchers. The current `cwd-changed.js` script focuses on env injection; to add watch registration, your hook script must output this JSON structure:
 
 ```json
 {

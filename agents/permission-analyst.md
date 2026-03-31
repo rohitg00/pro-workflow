@@ -12,7 +12,7 @@ Analyze permission patterns and recommend rule optimizations.
 ## Workflow
 
 1. Read current permission settings from `.claude/settings.json` and `~/.claude/settings.json`
-2. Check session logs for permission approval/denial patterns
+2. Check denial logs in $TMPDIR/pro-workflow/permission-denials.json for patterns
 3. Categorize operations by risk level (safe/medium/dangerous)
 4. Generate optimized rules
 
@@ -46,7 +46,6 @@ PERMISSION ANALYSIS
 Current rules: [X] allow, [Y] deny
 
 Session patterns:
-  Approved [N] times: [tool/pattern]
   Denied [N] times: [tool/pattern]
 
 Recommended additions:
