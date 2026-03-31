@@ -680,7 +680,7 @@
       <div class="header-sub" style="margin-left: 18px;">github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">docs</a></div>
     </div>
     <div class="header-right">
-      <div class="star-count">v2.0</div>
+      <div class="star-count">v3.2</div>
       <div class="star-label">Latest Release</div>
     </div>
   </div>
@@ -691,7 +691,7 @@
     <div class="subtitle">
       Battle-tested Claude Code patterns from power users who ship production code daily.
       Self-correcting memory, parallel worktrees, quality gates, and the 80/20 AI coding ratio &mdash;
-      11 Skills, 5 Agents, 18 Hooks, 10 Commands, 3 Contexts, 7 Guides.
+      24 Skills, 8 Agents, 24 Hooks, 21 Commands, 3 Contexts, 7 Guides.
     </div>
   </div>
 
@@ -751,13 +751,13 @@
       <div class="section-num">03 Components</div>
       <div class="section-title">Everything Included</div>
       <div class="comp-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="comp-item"><div class="comp-num">11</div><div class="comp-label">Skills</div></div>
-        <div class="comp-item"><div class="comp-num">5</div><div class="comp-label">Agents</div></div>
-        <div class="comp-item"><div class="comp-num">18</div><div class="comp-label">Hooks</div></div>
-        <div class="comp-item"><div class="comp-num">10</div><div class="comp-label">Commands</div></div>
+        <div class="comp-item"><div class="comp-num">24</div><div class="comp-label">Skills</div></div>
+        <div class="comp-item"><div class="comp-num">8</div><div class="comp-label">Agents</div></div>
+        <div class="comp-item"><div class="comp-num">24</div><div class="comp-label">Hooks</div></div>
+        <div class="comp-item"><div class="comp-num">21</div><div class="comp-label">Commands</div></div>
         <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
-        <div class="comp-item"><div class="comp-num">6</div><div class="comp-label">Rules</div></div>
-        <div class="comp-item"><div class="comp-num">7</div><div class="comp-label">Guides</div></div>
+        <div class="comp-item"><div class="comp-num">7</div><div class="comp-label">Rules</div></div>
+        <div class="comp-item"><div class="comp-num">29</div><div class="comp-label">Scripts</div></div>
       </div>
       <div style="margin-top:14px;">
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
@@ -860,7 +860,7 @@
     <!-- 06 HOOKS & AUTOMATION -->
     <div>
       <div class="section-num">06 Hooks &amp; Automation</div>
-      <div class="section-title">18 Hook Events</div>
+      <div class="section-title">24 Hook Events</div>
       <div class="hook-grid">
         <div class="hook-item">
           <div class="hook-dot hook-dot-pre"></div>
@@ -932,7 +932,31 @@
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">Setup</div><div class="hook-desc">One-time initialization</div></div>
+          <div><div class="hook-name">Setup</div><div class="hook-desc">Auto-detect project type</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">PermissionDenied</div><div class="hook-desc">Track denial patterns</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">WorktreeCreate</div><div class="hook-desc">Parallel session tracking</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">WorktreeRemove</div><div class="hook-desc">Cleanup on removal</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">CwdChanged</div><div class="hook-desc">Env injection on cd</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-other"></div>
+          <div><div class="hook-name">TaskCreated</div><div class="hook-desc">Validate task quality</div></div>
+        </div>
+        <div class="hook-item">
+          <div class="hook-dot hook-dot-pre"></div>
+          <div><div class="hook-name">LLM Gate</div><div class="hook-desc">AI commit &amp; secret scan</div></div>
         </div>
       </div>
       <div style="display:flex; gap:8px; margin-top:10px;">
@@ -952,7 +976,7 @@
     <!-- 07 THREE AGENTS -->
     <div>
       <div class="section-num">07 Specialized Agents</div>
-      <div class="section-title">5 Specialized Agents</div>
+      <div class="section-title">8 Specialized Agents</div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="card card-coral">
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1009,6 +1033,27 @@
             <span class="tag">Reproduce</span>
             <span class="tag">Verify Fix</span>
           </div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Context Engineer</div>
+            <span class="tag">Token-Aware</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Audit context window: CLAUDE.md size, skill overhead, MCP tool counts.</div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Permission Analyst</div>
+            <span class="tag tag-coral">New in v3.2</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Analyze denial patterns and generate optimized allow/deny rules by risk tier.</div>
+        </div>
+        <div class="card card-coral">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Cost Analyst</div>
+            <span class="tag tag-coral">New in v3.2</span>
+          </div>
+          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Token usage analysis, cache optimization, and model selection recommendations.</div>
         </div>
       </div>
     </div>
@@ -1116,7 +1161,7 @@
     <!-- 10 SKILLS -->
     <div>
       <div class="section-num">10 Skills Library</div>
-      <div class="section-title">11 Skills</div>
+      <div class="section-title">24 Skills</div>
       <table>
         <tr><th>Skill</th><th>What It Does</th></tr>
         <tr><td><strong>pro-workflow</strong></td><td>Core 8 patterns</td></tr>
@@ -1129,8 +1174,16 @@
         <tr><td><strong>insights</strong></td><td>Analytics, heatmaps, trends</td></tr>
         <tr><td><strong>deslop</strong></td><td>Remove AI code slop before commit</td></tr>
         <tr><td><strong>context-optimizer</strong></td><td>Token management and MCP audit</td></tr>
-        <tr><td><strong>orchestrate</strong></td><td>Wire Commands, Agents, Skills for multi-phase dev</td></tr>
+        <tr><td><strong>orchestrate</strong></td><td>Multi-phase dev workflow</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>permission-tuner</strong></td><td>Optimize allow/deny rules</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>compact-guard</strong></td><td>Protect context through compaction</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>cost-tracker</strong></td><td>Session cost awareness + budgets</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>auto-setup</strong></td><td>Auto-configure quality gates</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>mcp-audit</strong></td><td>MCP overhead analysis</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>llm-gate</strong></td><td>AI-powered quality gates</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>file-watcher</strong></td><td>Reactive file change workflows</td></tr>
       </table>
+      <div style="font-size:10px; color:var(--anthro-muted); margin-top:6px;">+ 7 more: context-engineering, batch-orchestration, thoroughness-scoring, sprint-status, agent-teams, safe-mode</div>
     </div>
 
     <!-- 11 MODEL SELECTION -->
