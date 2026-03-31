@@ -66,10 +66,14 @@ Execute the approved plan:
 
 ### Phase 4: Review & Commit
 
-1. Self-review all changes for issues
-2. Check for console.log, TODOs, secrets
-3. Present summary for final approval
-4. Commit with conventional message
+Self-review with verification — every finding must be confirmed by reading the code.
+
+1. **Read every changed file** — re-read each modified file in full
+2. **Verify, don't assume** — for each potential issue, quote the exact line. If you can't quote it, drop the finding.
+3. **Grep for problems** — run `grep` for console.log, TODO, hardcoded secrets, debug statements. Report only what grep finds.
+4. **Never report unverified findings** — don't say "ensure X" or "consider Y". Either it's a confirmed problem with a file:line citation, or it's not worth reporting.
+5. Present verified summary for final approval
+6. Commit with conventional message
 
 ### Learning Capture
 
