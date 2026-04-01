@@ -14,6 +14,7 @@
 
 <p align="center">
   Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again.<br/>
+  <b>24 skills</b> &bull; <b>8 agents</b> &bull; <b>21 commands</b> &bull; <b>29 hook scripts across 24 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -72,21 +73,58 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 </details>
 
+---
+
+## What's New in v3.2
+
+- **LLM Gates** &mdash; First plugin with `type: "prompt"` hooks for AI-powered commit validation and secret detection
+- **Permission Tuner** &mdash; Analyzes denial patterns, generates optimized allow/deny rules
+- **Compact Guard** &mdash; Protects context through compaction (5-file restore limit, 50K budget)
+- **Cost Tracker** &mdash; Session cost awareness with budget benchmarks
+- **MCP Audit** &mdash; Analyzes MCP server token overhead per request
+- **Auto Setup** &mdash; Detects project type, configures quality gates automatically
+- **File Watcher** &mdash; Reactive workflows with `CLAUDE_ENV_FILE` injection
+- **Agent Optimization** &mdash; `omitClaudeMd` on read-only agents saves tokens
+- **6 New Hook Events** &mdash; PermissionDenied, Setup, WorktreeCreate, WorktreeRemove, CwdChanged, TaskCreated
+
+---
+
+## How Pro Workflow Compares
+
+| Feature | Pro Workflow | Superpowers | ECC | gstack | GSD |
+|---------|:-----------:|:-----------:|:---:|:------:|:---:|
+| Self-correcting memory (SQLite + FTS5) | **Yes** | No | No | No | No |
+| LLM-powered hooks (`type: "prompt"`) | **Yes** | No | No | No | No |
+| Permission denial analysis | **Yes** | No | No | No | No |
+| Compaction-aware state preservation | **Yes** | No | No | No | No |
+| Cost tracking and budget alerts | **Yes** | No | No | No | No |
+| MCP overhead auditing | **Yes** | No | No | No | No |
+| Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
+| Skills | 24 | 14 | 143 | 33 | 0 |
+| Agents | 8 | 5 | 36 | 0 | 18 |
+| Commands | 21 | 3 | 71 | 0 | 57 |
+| Hook Events | 24 | 8 | 18 | 0 | 0 |
+
+---
+
 ## Try It
 
 ```bash
-/develop add user authentication     # Multi-phase: Research → Plan → Implement → Review
+/develop add user authentication     # Multi-phase: Research > Plan > Implement > Review
 /wrap-up                             # End session, capture learnings, audit changes
 /doctor                              # Check your setup health
 /learn-rule                          # Extract a correction into persistent memory
-/commit                              # Quality gates → staged review → conventional commit
+/commit                              # Quality gates > staged review > conventional commit
+/permission-tuner                    # Analyze denials, generate allow/deny rules
+/cost-tracker                        # Check session costs and token spend
+/mcp-audit                           # Audit MCP servers for overhead
 ```
 
 ---
 
 ## What's Inside
 
-### 17 Skills
+### 24 Skills
 
 | Skill | What It Does |
 |:------|:------------|
@@ -107,8 +145,15 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 | **Sprint Status** | Track progress across sessions |
 | **Thoroughness Scoring** | Rate completeness of implementations |
 | **Learn Rule** | Capture corrections as persistent learning rules |
+| **LLM Gate** | AI-powered quality gates using `type: "prompt"` hooks |
+| **Permission Tuner** | Analyze denial patterns, generate allow/deny rules |
+| **Compact Guard** | State preservation through compaction cycles |
+| **Cost Tracker** | Session cost awareness with budget benchmarks |
+| **MCP Audit** | Audit MCP servers for token overhead and redundancy |
+| **Auto Setup** | Detect project type, configure quality gates automatically |
+| **File Watcher** | Reactive workflows on config and dependency changes |
 
-### 6 Agents
+### 8 Agents
 
 | Agent | Purpose |
 |-------|---------|
@@ -118,8 +163,10 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 | **orchestrator** | Multi-phase feature development (Research > Plan > Implement > Review) |
 | **debugger** | Systematic bug investigation (hypothesis-driven) |
 | **context-engineer** | Context window analysis and optimization (lightweight, read-only) |
+| **permission-analyst** | Analyze permission denial patterns, recommend rule optimizations |
+| **cost-analyst** | Analyze token usage patterns, identify expensive operations |
 
-### 16 Commands
+### 21 Commands
 
 | Command | What It Does |
 |---------|-------------|
@@ -139,29 +186,43 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 | `/learn` | Interactive Claude Code best practices guide |
 | `/safe-mode` | Toggle destructive operation guardrails |
 | `/sprint-status` | Track multi-session progress |
+| `/auto-setup` | Auto-detect project type and configure quality gates |
+| `/compact-guard` | Protected compaction with state preservation |
+| `/cost-tracker` | Track session costs and optimization tips |
+| `/mcp-audit` | Audit MCP servers for token overhead |
+| `/permission-tuner` | Analyze denial patterns, generate allow/deny rules |
 
-### 23 Hook Scripts (18 Events)
+### 29 Hook Scripts (24 Events)
 
-| Hook | When | What |
-|------|------|------|
-| SessionStart | New session | Load learnings from database |
-| UserPromptSubmit | Each prompt | Drift detection, correction tracking |
-| PreToolUse | Before edits | Track edit count, quality gate reminders |
-| PreToolUse | Before git | Remind about quality gates |
-| PostToolUse | After edits | Check for console.log, TODOs, secrets |
-| PostToolUse | After tests | Suggest learning from failures |
-| Stop | Each response | Context-aware reminders |
-| SessionEnd | Session close | Save session stats to database |
-| PreCompact | Before compaction | Save context state |
-| PostCompact | After compaction | Re-inject critical context summary |
-| SubagentStart/Stop | Agent lifecycle | Log and collect results |
-| TaskCompleted | Task done | Quality gate on completion |
-| PermissionRequest | Permission dialog | Flag dangerous operations |
-| PostToolUseFailure | Tool fails | Track failures, suggest learnings |
-| TeammateIdle | Teammate idle | Detect blockers in agent teams |
-| StopFailure | API error | Log errors with retry advice |
-| FileChanged | Config modified | Watch package.json, .env, CI |
-| ConfigChange | Settings change | Detect mid-session changes |
+| Hook Event | Scripts | What |
+|------------|:-------:|------|
+| SessionStart | 1 | Load learnings from database |
+| SessionEnd | 1 | Save session stats to database |
+| UserPromptSubmit | 2 | Correction tracking, drift detection |
+| PreToolUse (Edit/Write) | 1 | Track edit count, quality gate reminders |
+| PreToolUse (Bash) | 3 | Pre-commit check, LLM commit validation, pre-push check |
+| PreToolUse (Write) | 1 | LLM-powered secret detection |
+| PostToolUse (Edit) | 1 | Check for console.log, TODOs, secrets |
+| PostToolUse (Bash) | 1 | Suggest learning from test failures |
+| Stop | 2 | Context-aware reminders, auto-capture [LEARN] blocks |
+| PreCompact | 1 | Save context state before compaction |
+| PostCompact | 1 | Re-inject critical context summary |
+| SubagentStart | 1 | Log subagent lifecycle for observability |
+| SubagentStop | 1 | Log subagent completion and capture results |
+| TaskCompleted | 1 | Quality gate on completion |
+| TaskCreated | 1 | Validate task descriptions for tracking |
+| PermissionRequest | 1 | Flag dangerous operations |
+| PermissionDenied | 1 | Track denial patterns for optimization |
+| PostToolUseFailure | 1 | Track failures, suggest learnings |
+| TeammateIdle | 1 | Detect blockers in agent teams |
+| StopFailure | 1 | Log errors with retry advice |
+| FileChanged | 1 | Watch package.json, .env, CI configs |
+| ConfigChange | 1 | Detect mid-session settings changes |
+| Notification | 1 | Log permission requests |
+| Setup | 1 | Auto-detect project type on init |
+| WorktreeCreate | 1 | Log worktree creation for parallel tracking |
+| WorktreeRemove | 1 | Cleanup worktree tracking on removal |
+| CwdChanged | 1 | Detect project type on directory change |
 
 ### 10 Reference Guides
 
@@ -182,11 +243,7 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 ## How It Works
 
-> "80% of my code is written by AI, 20% is spent reviewing and correcting it." &mdash; Karpathy
-
-> "The bottleneck was never the model. It was always the workflow." &mdash; @getvibecodes
-
-Pro Workflow optimizes for that ratio. Every correction becomes a rule. Every rule prevents future mistakes. The loop compounds.
+Pro Workflow optimizes for the 80/20 ratio. Every correction becomes a rule. Every rule prevents future mistakes. The loop compounds.
 
 ### The `/develop` Flow
 
@@ -229,6 +286,8 @@ Learnings stored in SQLite with FTS5 full-text search:
 | **Multi-Phase Dev** | Research > Plan > Implement > Review with gates |
 | **Learning Log** | Auto-document insights |
 | **Orchestration** | Command > Agent > Skill wiring for complex features |
+| **LLM Gates** | AI-powered verification before destructive operations |
+| **Permission Tuning** | Reduce prompt fatigue with denial pattern analysis |
 
 ---
 
@@ -268,18 +327,34 @@ Rule: Start with 3 MCPs. Add only for concrete needs.
 
 ```text
 pro-workflow/
-├── skills/           # 17 skills
-├── agents/           # 6 agents
-├── commands/         # 16 slash commands
-├── hooks/            # 18 events, 23 scripts
+├── skills/           # 24 skills
+├── agents/           # 8 agents
+├── commands/         # 21 slash commands
+├── hooks/            # 24 events, 29 scripts
 ├── docs/             # 10 reference guides
 ├── rules/            # 7 rules (Cursor + universal)
 ├── contexts/         # 3 context modes
 ├── templates/        # Split CLAUDE.md + AGENTS.md
-├── scripts/          # 23 hook scripts
+├── scripts/          # 29 hook scripts
 ├── src/              # TypeScript source (SQLite)
 └── config.json
 ```
+
+---
+
+## Tips from the Community
+
+> "80% of my code is written by AI, 20% is spent reviewing and correcting it." &mdash; [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876)
+
+> "Use subagents to throw more compute at a problem &mdash; offload tasks to keep your main context clean." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742755737555434)
+
+> "If you do something more than once a day, turn it into a skill or command." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742748984742078)
+
+> "Write detailed specs and reduce ambiguity before handing work off &mdash; the more specific you are, the better the output." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742752566632544)
+
+> "Skill description field is a trigger, not a summary &mdash; write it for the model." &mdash; [Thariq Shihipar](https://x.com/trq212/status/2033949937936085378)
+
+---
 
 ## Philosophy
 
@@ -288,6 +363,17 @@ pro-workflow/
 3. **Zero dead time** &mdash; Parallel sessions keep momentum
 4. **Memory is precious** &mdash; Both yours and Claude's
 5. **Orchestrate, don't micromanage** &mdash; Wire patterns together, let agents execute
+
+---
+
+## Related Projects
+
+| Project | Description |
+|---------|-------------|
+| [everything-claude-code](https://github.com/anthropics/courses/blob/master/claude-code/everything-claude-code) | 143 skills, 36 agents &mdash; the comprehensive collection |
+| [claude-code-best-practice](https://github.com/anthropics/courses/blob/master/claude-code) | Official Anthropic best practices |
+| [SkillKit](https://github.com/rohitg00/skillkit) | Universal CLI for managing skills across 32+ agents |
+| [awesome-claude-code-toolkit](https://github.com/rohitg00/awesome-claude-code-toolkit) | 850+ files, 135 agents, 176 plugins &mdash; curated directory |
 
 ---
 
