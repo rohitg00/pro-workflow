@@ -91,7 +91,7 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 ## How Pro Workflow Compares
 
-| Feature | Pro Workflow | Superpowers | ECC | gstack | GSD |
+| Feature | Pro Workflow | [Superpowers](https://github.com/obra/superpowers) | [ECC](https://github.com/affaan-m/everything-claude-code) | [gstack](https://github.com/garrytan/gstack) | [GSD](https://github.com/gsd-build/get-shit-done) |
 |---------|:-----------:|:-----------:|:---:|:------:|:---:|
 | Self-correcting memory (SQLite + FTS5) | **Yes** | No | No | No | No |
 | LLM-powered hooks (`type: "prompt"`) | **Yes** | No | No | No | No |
@@ -100,9 +100,9 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 | Cost tracking and budget alerts | **Yes** | No | No | No | No |
 | MCP overhead auditing | **Yes** | No | No | No | No |
 | Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
-| Skills | 24 | 14 | 143 | 33 | 0 |
+| Skills | 24 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
-| Commands | 21 | 3 | 71 | 0 | 57 |
+| Commands | 21 | 3 | 60+ | 5+ | 57 |
 | Hook Events | 24 | 8 | 18 | 0 | 0 |
 
 ---
@@ -370,8 +370,8 @@ pro-workflow/
 
 | Project | Description |
 |---------|-------------|
-| [everything-claude-code](https://github.com/anthropics/courses/blob/master/claude-code/everything-claude-code) | 143 skills, 36 agents &mdash; the comprehensive collection |
-| [claude-code-best-practice](https://github.com/anthropics/courses/blob/master/claude-code) | Official Anthropic best practices |
+| [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 140+ skills, 36 agents &mdash; the comprehensive collection |
+| [claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Curated tips, comparisons, and community best practices |
 | [SkillKit](https://github.com/rohitg00/skillkit) | Universal CLI for managing skills across 32+ agents |
 | [awesome-claude-code-toolkit](https://github.com/rohitg00/awesome-claude-code-toolkit) | 850+ files, 135 agents, 176 plugins &mdash; curated directory |
 
