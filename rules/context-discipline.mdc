@@ -1,9 +1,15 @@
 ---
-description: Manage AI context window efficiently - read before edit, plan before multi-file changes
+description: Manage AI context window efficiently - read before write, no re-reads, tool-call budgets, one-pass discipline
 alwaysApply: true
 ---
 
-Always read a file before editing it. Understand existing code before suggesting modifications.
+Read before write: always read a file before editing or writing it. Never modify a file you have not read in this session.
+
+No re-reads: do not re-read a file already read in this session unless it was modified since the last read.
+
+One-pass coding: for simple-to-medium tasks, write the complete solution in one pass. Run tests once. If tests pass, stop immediately. Do not refactor, improve, or polish passing code. Never iterate more than twice on the same failure.
+
+Tool-call budgets: track tool calls per session. Quick fix: 20 calls. Bug fix: 30. Feature: 50. Large feature: 80. At 80% of budget, wrap up current task.
 
 Use plan mode for changes touching more than 3 files, architecture decisions, or unclear requirements.
 
@@ -14,3 +20,5 @@ Keep MCP servers under 10 enabled and total tools under 80.
 Use subagents to isolate high-volume output (test runs, log analysis, documentation searches).
 
 Summarize exploration findings before acting on them.
+
+Read tests before coding: understand what the tests assert before writing implementation code.
