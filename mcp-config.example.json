@@ -18,6 +18,12 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
       },
       "_comment": "PRs, issues, code search. Essential for any GitHub-based project."
+    },
+    "_protect-mcp": {
+      "command": "npx",
+      "args": ["-y", "protect-mcp", "serve", "--enforce"],
+      "_comment": "Uncomment (remove leading underscore) to enable. Signs Ed25519 receipts for every tool call. Cedar policy enforcement. Zero config — auto-generates policies on first run. See https://www.npmjs.com/package/protect-mcp",
+      "_when": "Compliance requirements, multi-agent orchestration, audit trails, or when agents handle sensitive operations."
     }
   },
   "_recommendations": {
@@ -27,6 +33,7 @@
       "github - PRs, issues, code search."
     ],
     "add_when_needed": [
+      "protect-mcp - Cryptographic receipt signing for tool calls (when you need audit trails, policy enforcement, or compliance evidence)",
       "supabase - Database operations (when using Supabase)",
       "linear - Issue tracking (when using Linear)",
       "slack - Team notifications (when using Slack)"
