@@ -18,11 +18,15 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
       },
       "_comment": "PRs, issues, code search. Essential for any GitHub-based project."
-    },
-    "_protect-mcp": {
+    }
+  },
+  "_optional_servers": {
+    "_note": "Copy into mcpServers above to enable. These are not loaded by default.",
+    "protect-mcp": {
       "command": "npx",
-      "args": ["-y", "protect-mcp", "serve", "--enforce"],
-      "_comment": "Uncomment (remove leading underscore) to enable. Signs Ed25519 receipts for every tool call. Cedar policy enforcement. Zero config — auto-generates policies on first run. See https://www.npmjs.com/package/protect-mcp",
+      "args": ["-y", "protect-mcp@0.5.2", "serve", "--enforce"],
+      "_comment": "Ed25519 receipt signing + Cedar policy enforcement for every tool call. Zero config — auto-generates policies on first run.",
+      "_docs": "https://www.npmjs.com/package/protect-mcp",
       "_when": "Compliance requirements, multi-agent orchestration, audit trails, or when agents handle sensitive operations."
     }
   },
