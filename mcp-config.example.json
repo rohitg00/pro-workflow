@@ -20,6 +20,16 @@
       "_comment": "PRs, issues, code search. Essential for any GitHub-based project."
     }
   },
+  "_optional_servers": {
+    "_note": "Copy into mcpServers above to enable. These are not loaded by default.",
+    "protect-mcp": {
+      "command": "npx",
+      "args": ["-y", "protect-mcp@0.5.2", "serve", "--enforce"],
+      "_comment": "Ed25519 receipt signing + Cedar policy enforcement for every tool call. Zero config — auto-generates policies on first run.",
+      "_docs": "https://www.npmjs.com/package/protect-mcp",
+      "_when": "Compliance requirements, multi-agent orchestration, audit trails, or when agents handle sensitive operations."
+    }
+  },
   "_recommendations": {
     "daily_use": [
       "context7 - Live docs. Use instead of guessing API signatures.",
@@ -27,6 +37,7 @@
       "github - PRs, issues, code search."
     ],
     "add_when_needed": [
+      "protect-mcp - Cryptographic receipt signing for tool calls (when you need audit trails, policy enforcement, or compliance evidence)",
       "supabase - Database operations (when using Supabase)",
       "linear - Issue tracking (when using Linear)",
       "slack - Team notifications (when using Slack)"
