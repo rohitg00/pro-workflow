@@ -62,6 +62,32 @@ Should I add this?
 
 ---
 
+## 1b. Pre-Flight Discipline
+
+**Self-correction catches mistakes after the fact. This catches them before.**
+
+Karpathy's [observations on LLM coding pitfalls](https://x.com/karpathy/status/2015883857489522876) name the upstream failures: silent assumptions, overcomplicated diffs, drive-by edits, vague success criteria. Four rules prevent each one.
+
+| Rule | Prevents |
+|------|----------|
+| **Surface, don't assume** | Wrong interpretation, hidden confusion, missing tradeoffs |
+| **Minimum viable code** | 200-line diffs that should be 50, speculative abstractions |
+| **Stay in your lane** | Drive-by refactors, "improvements" to adjacent code |
+| **Verifiable goals** | Endless re-clarification, "make it work" loops |
+
+Full rules in `rules/pre-flight-discipline.mdc` (`alwaysApply: true`). Pairs with self-correction: pre-flight stops the mistake, self-correction captures the lesson when one slips through.
+
+### Add to CLAUDE.md
+
+```markdown
+## Pre-Flight Discipline
+Before coding: state assumptions, present ambiguity, push back if simpler exists.
+Every changed line traces to the request - no drive-by edits.
+Convert imperatives to verifiable goals: "fix bug" → "failing test → make it pass".
+```
+
+---
+
 ## 2. Parallel Sessions with Worktrees
 
 **Zero dead time.** While one Claude thinks, work on something else.
