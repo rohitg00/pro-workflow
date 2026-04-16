@@ -14,7 +14,9 @@ function ensureDir(dir) {
 }
 
 async function main() {
-  const sessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  const rawSessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  // Sanitize sessionId to prevent path traversal
+  const sessionId = rawSessionId.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
   const tempDir = getTempDir();
   ensureDir(tempDir);
 
@@ -28,15 +30,14 @@ async function main() {
   fs.writeFileSync(budgetFile, String(count));
 
   const thresholds = [
-    { limit: 20, label: 'quick-fix budget (20 calls)' },
-    { limit: 30, label: 'bug-fix budget (30 calls)' },
-    { limit: 50, label: 'feature budget (50 calls)' },
-    { limit: 80, label: 'large-feature budget (80 calls)' }
+    { limit: 20, warn: 15, label: 'quick-fix budget (20 calls)' },
+    { limit: 30, warn: 25, label: 'bug-fix budget (30 calls)' },
+    { limit: 50, warn: 40, label: 'feature budget (50 calls)' },
+    { limit: 80, warn: 65, label: 'large-feature budget (80 calls)' }
   ];
 
   for (const t of thresholds) {
-    const warnAt = Math.floor(t.limit * 0.8);
-    if (count === warnAt) {
+    if (count === t.warn) {
       console.error(`[TokenEfficiency] ${count} tool calls — approaching ${t.label}. Consider wrapping up or compacting.`);
       break;
     }

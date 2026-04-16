@@ -14,7 +14,9 @@ function ensureDir(dir) {
 }
 
 async function main() {
-  const sessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  const rawSessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  // Sanitize sessionId to prevent path traversal
+  const sessionId = rawSessionId.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
   const tempDir = getTempDir();
   ensureDir(tempDir);
 
@@ -22,7 +24,7 @@ async function main() {
 
   let input = '';
   try {
-    input = fs.readFileSync('/dev/stdin', 'utf8');
+    input = fs.readFileSync(0, 'utf8');
   } catch (e) {
     process.exit(0);
   }
@@ -49,7 +51,8 @@ async function main() {
   if (tool === 'Read') {
     const filePath = toolInput.file_path || '';
     if (filePath) {
-      readFiles[filePath] = Date.now();
+      const normalizedPath = path.resolve(filePath);
+      readFiles[normalizedPath] = Date.now();
       fs.writeFileSync(readTrackFile, JSON.stringify(readFiles));
     }
     process.exit(0);
@@ -65,7 +68,8 @@ async function main() {
       process.exit(0);
     }
 
-    if (!readFiles[filePath]) {
+    const normalizedPath = path.resolve(filePath);
+    if (!readFiles[normalizedPath]) {
       console.error(`[TokenEfficiency] Warning: ${tool} on ${path.basename(filePath)} without reading it first. Read the file before modifying.`);
     }
   }

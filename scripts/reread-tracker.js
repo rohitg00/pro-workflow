@@ -14,7 +14,9 @@ function ensureDir(dir) {
 }
 
 async function main() {
-  const sessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  const rawSessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  // Sanitize sessionId to prevent path traversal
+  const sessionId = rawSessionId.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
   const tempDir = getTempDir();
   ensureDir(tempDir);
 
@@ -22,7 +24,7 @@ async function main() {
 
   let input = '';
   try {
-    input = fs.readFileSync('/dev/stdin', 'utf8');
+    input = fs.readFileSync(0, 'utf8');
   } catch (e) {
     process.exit(0);
   }
@@ -65,7 +67,8 @@ async function main() {
       const readCount = (tracked[`${filePath}:count`] || 1) + 1;
       tracked[`${filePath}:count`] = readCount;
       if (readCount >= 2) {
-        console.error(`[TokenEfficiency] Re-reading ${path.basename(filePath)} (${readCount}x) — file unchanged since last read. Consider using cached knowledge.`);
+        console.error(`[TokenEfficiency] Hard rule violation: Re-reading ${path.basename(filePath)} (${readCount}x) — file unchanged since last read. Consider using cached knowledge.`);
+        process.exit(1);
       }
     }
   }
