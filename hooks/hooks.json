@@ -45,16 +45,17 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/git-blast-radius.js\""
+          },
+          {
+            "type": "command",
             "if": "Bash(git commit*)",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-commit-check.js\""
           },
           {
-            "type": "prompt",
+            "type": "command",
             "if": "Bash(git commit*)",
-            "prompt": "Check if this git commit message follows conventional commits format: <type>(<scope>): <summary>. Valid types: feat, fix, refactor, test, docs, chore, perf, ci, style. Summary must be under 72 chars. The commit input is: $ARGUMENTS. Return {\"ok\": true} if valid or missing -m flag, {\"ok\": false, \"reason\": \"...\"} if the message format is wrong.",
-            "model": "haiku",
-            "timeout": 15,
-            "statusMessage": "Validating commit message format..."
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/commit-validate.js\""
           },
           {
             "type": "command",
@@ -65,17 +66,14 @@
         "description": "Git operation guards: quality gates before commit, LLM commit validation, wrap-up before push"
       },
       {
-        "matcher": "Write",
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Check if this file write contains hardcoded API keys, secrets, passwords, tokens, or private keys. Look for patterns like: AKIA*, sk-*, ghp_*, Bearer tokens, password=, secret=, private_key. The file content is: $ARGUMENTS. Return {\"ok\": true} if clean, {\"ok\": false, \"reason\": \"Found potential secret: [description]\"} if secrets detected.",
-            "model": "haiku",
-            "timeout": 15,
-            "statusMessage": "Scanning for secrets..."
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/secret-scan.js\""
           }
         ],
-        "description": "LLM-powered secret detection on file writes"
+        "description": "Deterministic regex-based secret detection on file writes and edits"
       }
     ],
     "PostToolUse": [

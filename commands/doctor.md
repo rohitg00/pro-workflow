@@ -25,6 +25,28 @@ If hooks aren't firing, check:
 - Script paths use `${CLAUDE_PLUGIN_ROOT}` or absolute paths
 - Scripts have execute permissions
 
+### 2a. Deterministic Hook Sanity
+Verify each hook script on both happy and failing inputs:
+```bash
+# commit-validate: valid passes, bad format blocks (exit 2)
+echo '{"tool_input":{"command":"git commit -m \"feat: x\""}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/commit-validate.js" && echo "commit-validate pass: OK"
+echo '{"tool_input":{"command":"git commit -m \"not conventional\""}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/commit-validate.js" 2>&1; test $? -eq 2 && echo "commit-validate block: OK"
+
+# secret-scan: clean passes, hardcoded key blocks
+echo '{"tool_input":{"content":"hello"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/secret-scan.js" && echo "secret-scan pass: OK"
+echo '{"tool_input":{"content":"key=\"AKIAIOSFODNN7EXAMPLE\""}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/secret-scan.js" 2>&1; test $? -eq 2 && echo "secret-scan block: OK"
+
+# git-blast-radius: safe passes, destructive blocks
+echo '{"tool_input":{"command":"git status"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/git-blast-radius.js" && echo "git-blast-radius pass: OK"
+echo '{"tool_input":{"command":"git reset --hard"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/git-blast-radius.js" 2>&1; test $? -eq 2 && echo "git-blast-radius block: OK"
+```
+Every line should print an `OK`. Missing any means the script is silently broken.
+
+### 2b. Git Safety Override
+If you need to run a blocked git operation deliberately (e.g. intentional
+`git reset --hard` during recovery), export `PRO_WORKFLOW_ALLOW_UNSAFE_GIT=1`
+for the shell that will run it. Never set it globally.
+
 ### 3. Context Health
 ```text
 /context
