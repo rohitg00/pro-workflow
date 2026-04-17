@@ -45,6 +45,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/git-blast-radius.js\""
+          },
+          {
+            "type": "command",
             "if": "Bash(git commit*)",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-commit-check.js\""
           },

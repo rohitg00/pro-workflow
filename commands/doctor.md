@@ -26,12 +26,19 @@ If hooks aren't firing, check:
 - Scripts have execute permissions
 
 ### 2a. Deterministic Hook Sanity
-Verify the commit validator and secret scanner run without an LLM:
+Verify the hook scripts run without an LLM:
 ```bash
 echo '{"tool_input":{"command":"git commit -m \"feat: x\""}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/commit-validate.js" && echo "commit-validate: OK"
 echo '{"tool_input":{"content":"hello"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/secret-scan.js" && echo "secret-scan: OK"
+echo '{"tool_input":{"command":"ls"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/git-blast-radius.js" && echo "git-blast-radius: OK"
+echo '{"tool_input":{"command":"git reset --hard"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/git-blast-radius.js" 2>&1 | grep -q blocked && echo "git-blast-radius blocking: OK"
 ```
-Both should exit 0. These hooks used to depend on `"model": "haiku"` (fixed in issue #47).
+All should confirm OK. These hooks used to depend on `"model": "haiku"` (fixed in issue #47).
+
+### 2b. Git Safety Override
+If you need to run a blocked git operation deliberately (e.g. intentional
+`git reset --hard` during recovery), export `PRO_WORKFLOW_ALLOW_UNSAFE_GIT=1`
+for the shell that will run it. Never set it globally.
 
 ### 3. Context Health
 ```text
