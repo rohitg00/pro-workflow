@@ -30,13 +30,20 @@ function readStdin() {
   });
 }
 
+function surroundingLine(content, index) {
+  const start = content.lastIndexOf('\n', index - 1) + 1;
+  const end = content.indexOf('\n', index);
+  return content.slice(start, end === -1 ? content.length : end);
+}
+
 function scan(content) {
   if (!content) return null;
   for (const { name, re } of PATTERNS) {
     const m = content.match(re);
     if (!m) continue;
     const snippet = m[0];
-    if (ALLOWLIST.some(a => a.test(snippet))) continue;
+    const context = surroundingLine(content, m.index);
+    if (ALLOWLIST.some(a => a.test(context))) continue;
     const line = content.slice(0, m.index).split('\n').length;
     return { name, snippet: snippet.slice(0, 40), line };
   }

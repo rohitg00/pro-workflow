@@ -66,14 +66,14 @@
         "description": "Git operation guards: quality gates before commit, LLM commit validation, wrap-up before push"
       },
       {
-        "matcher": "Write",
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
         "hooks": [
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/secret-scan.js\""
           }
         ],
-        "description": "Deterministic regex-based secret detection on file writes"
+        "description": "Deterministic regex-based secret detection on file writes and edits"
       }
     ],
     "PostToolUse": [
