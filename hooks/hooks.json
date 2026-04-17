@@ -8,9 +8,37 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/quality-gate.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/read-before-write.js\""
           }
         ],
-        "description": "Track edits for quality gate checks"
+        "description": "Track edits for quality gate checks and read-before-write enforcement"
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/reread-tracker.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/read-before-write.js\""
+          }
+        ],
+        "description": "Track file reads to detect unnecessary re-reads and enable read-before-write enforcement"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/tool-call-budget.js\""
+          }
+        ],
+        "description": "Track tool call count against budget thresholds"
       },
       {
         "matcher": "Bash",

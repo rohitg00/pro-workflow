@@ -71,6 +71,29 @@ The main session stays clean while subagents handle the volume.
 | Testing | < 80% | Delegate to subagent |
 | Review | < 90% | Start fresh session |
 
+## Token Efficiency
+
+### Output Reduction (40-60% savings)
+- No sycophantic openers ("Sure!", "Great question!")
+- No closing fluff ("Let me know if you need anything!")
+- No prompt restatement before answering
+- Code first, explanation only if non-obvious
+- Structured output (tables, bullets) over prose
+- ASCII only: -- not em dashes, straight quotes not smart quotes
+
+### Behavioral Efficiency
+- One-pass coding: complete solution, test once, stop if green
+- Read before write: never modify unread files
+- No re-reads: don't re-read unchanged files
+- Tool-call budgets: 20 (quick fix) to 80 (large feature)
+- Never iterate more than twice on the same failure
+
+### Task Profiles
+Switch response style based on context:
+- **Coding**: code first, minimal explanation, simplest solution
+- **Agent/Pipeline**: structured output only, no prose, parseable
+- **Analysis**: finding first, tables over paragraphs, sourced numbers
+
 ## CLAUDE.md Optimization
 
 - Root CLAUDE.md: < 60 lines ideal, < 150 max

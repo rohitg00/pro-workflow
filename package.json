@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, and searchable learnings",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,10 @@
     "sqlite",
     "fts5",
     "adaptive-thinking",
-    "context-compaction"
+    "context-compaction",
+    "token-efficiency",
+    "anti-sycophancy",
+    "tool-call-budget"
   ],
   "author": {
     "name": "Rohit Ghumare",
