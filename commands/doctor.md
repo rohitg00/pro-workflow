@@ -25,6 +25,14 @@ If hooks aren't firing, check:
 - Script paths use `${CLAUDE_PLUGIN_ROOT}` or absolute paths
 - Scripts have execute permissions
 
+### 2a. Deterministic Hook Sanity
+Verify the commit validator and secret scanner run without an LLM:
+```bash
+echo '{"tool_input":{"command":"git commit -m \"feat: x\""}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/commit-validate.js" && echo "commit-validate: OK"
+echo '{"tool_input":{"content":"hello"}}' | node "$CLAUDE_PLUGIN_ROOT/scripts/secret-scan.js" && echo "secret-scan: OK"
+```
+Both should exit 0. These hooks used to depend on `"model": "haiku"` (fixed in issue #47).
+
 ### 3. Context Health
 ```text
 /context
