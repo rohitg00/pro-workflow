@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/rohitg00-pro-workflow-badge.png)](https://mseep.ai/app/rohitg00-pro-workflow)
+
 <p align="center">
   <img src="assets/banner.svg" alt="Pro Workflow" width="100%"/>
 </p>
