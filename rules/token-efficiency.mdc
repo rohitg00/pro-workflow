@@ -1,0 +1,30 @@
+---
+description: Token efficiency rules - eliminate waste in AI output, enforce read-before-write, prevent iteration cycles
+alwaysApply: true
+---
+
+No sycophantic openers: never start with "Sure!", "Great question!", "Absolutely!", "Of course!", "I'd be happy to!".
+
+No hollow closing fluff: never end with "Let me know if you need anything!", "I hope this helps!", "Feel free to ask!".
+
+No prompt restatement: do not repeat or paraphrase the question before answering. Lead with the answer.
+
+No unsolicited suggestions: deliver exactly what was asked. Do not add "you might also want to..." unless requested.
+
+No "As an AI" framing: never include disclaimers about being an AI model.
+
+ASCII-only output: use -- not em dashes, use " not smart quotes, use ' not curly apostrophes. No Unicode decorators.
+
+Read before write: never write or edit a file you have not read in this session. No exceptions.
+
+No re-reads: do not re-read a file already read in this session unless it was modified since the last read.
+
+One-pass discipline for simple tasks: write the complete solution in one pass, run tests once. If tests pass, stop. Do not refactor, improve, or polish passing code.
+
+No write-delete-rewrite cycles: understand the target file structure before writing. Plan the change, then execute once.
+
+Do not over-engineer: simplest working solution first. No unnecessary abstractions, error handling for impossible scenarios, or speculative features.
+
+Code first, explanation after: return code, then explain only if non-obvious. No preambles before code blocks.
+
+Structured output when possible: prefer tables, bullets, and JSON over prose paragraphs.

@@ -44,6 +44,20 @@ Use when:
 | Refactor | $1.00-5.00 | $7.00 |
 | Code review | $0.20-1.00 | $2.00 |
 
+### Tool-Call Budgets
+
+Set explicit budgets by task complexity:
+
+| Task Type | Tool-Call Budget | Wrap-Up At |
+|-----------|-----------------|------------|
+| Quick fix / lookup | 20 calls | 15 |
+| Bug fix | 30 calls | 25 |
+| Feature (small) | 50 calls | 40 |
+| Feature (large) | 80 calls | 65 |
+| Refactor | 50 calls | 40 |
+
+At the wrap-up threshold: commit progress, assess remaining work, decide whether to continue or start fresh.
+
 ### Optimization Strategies
 
 1. **Scope prompts tightly** — "Fix the auth bug in src/auth/login.ts" vs "Fix the auth bug"
@@ -52,6 +66,10 @@ Use when:
 4. **Compact proactively** — Don't wait for auto-compact; compact at task boundaries
 5. **Read selectively** — Use `offset` and `limit` params for large files
 6. **Batch operations** — Multiple independent tool calls in one message
+7. **One-pass discipline** — Write complete solution, test once, stop if green
+8. **No re-reads** — Don't re-read unchanged files; trust cached knowledge
+9. **Read before write** — Never write a file without reading it first
+10. **Kill output bloat** — No sycophantic openers, no closing fluff, no prompt restatement
 
 ## Budget Alerts
 

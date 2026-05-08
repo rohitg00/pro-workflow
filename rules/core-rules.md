@@ -15,10 +15,13 @@ Universal rules for any project. Add to CLAUDE.md or use as reference.
 - Review before push
 
 ## Context
-- Read before edit
+- Read before edit — never write a file you haven't read
+- No re-reads — don't re-read unchanged files
 - Plan before multi-file
 - Compact at milestones
 - <10 MCPs enabled
+- One-pass discipline: write complete solution, test, stop if green
+- Tool-call budgets: 20 (quick fix), 30 (bug fix), 50 (feature), 80 (large)
 
 ## Learning
 - Capture corrections: [LEARN] Category: Rule
@@ -30,6 +33,11 @@ Universal rules for any project. Add to CLAUDE.md or use as reference.
 - Action > explanation
 - Ask when unclear
 - Acknowledge mistakes
+- No sycophantic openers ("Sure!", "Great question!")
+- No closing fluff ("Let me know if you need anything!")
+- No prompt restatement before answering
+- Code first, explanation after (only if non-obvious)
+- ASCII only: -- not em dashes, " not smart quotes
 
 ## Performance
 - Haiku for quick tasks

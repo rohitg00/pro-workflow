@@ -24,7 +24,10 @@
     "sqlite",
     "fts5",
     "adaptive-thinking",
-    "context-compaction"
+    "context-compaction",
+    "token-efficiency",
+    "anti-sycophancy",
+    "tool-call-budget"
   ],
   "author": {
     "name": "Rohit Ghumare",
