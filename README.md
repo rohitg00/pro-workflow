@@ -13,8 +13,8 @@
 <h3 align="center">Your Claude Code gets smarter every session.</h3>
 
 <p align="center">
-  Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again.<br/>
-  <b>24 skills</b> &bull; <b>8 agents</b> &bull; <b>21 commands</b> &bull; <b>29 hook scripts across 24 events</b><br/>
+  Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again. Persistent research wikis indexed in FTS5 surface relevant prior work the moment you ask. Auto-research loop grows the knowledge base while you sleep.<br/>
+  <b>29 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>31 hook scripts across 24 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -75,6 +75,20 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 ---
 
+## What's New in v3.3
+
+Persistent knowledge plane on top of the self-correction memory.
+
+- **Wiki Builder** &mdash; Persistent research wikis on disk + SQLite FTS5 shadow index. 9 flavors: research, paper, domain, product, person, organization, project, codebase, incident. `/wiki init`, `/wiki page`, `/wiki reindex`.
+- **Wiki Query** &mdash; BM25 retrieval across wiki pages. `/wiki ask "<query>"` returns top-K with citations. `related` and `show` subcommands. Auto-loads top-3 hits on UserPromptSubmit when prompt mentions indexed topics.
+- **Wiki-scoped learnings** &mdash; `[LEARN] ... Wiki: <slug>` binds a rule to one wiki, no cross-project pollution.
+- **Auto-research loop** &mdash; Budget-capped BFS driver. Pluggable source fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, depth caps. `/wiki seed`, `/wiki research`, `/wiki seeds`, `/wiki cancel`, `/wiki status`.
+- **Hybrid retrieval (optional)** &mdash; sqlite-vec compatible embeddings via OpenAI or Voyage. RRF fusion of BM25 + vector. `/wiki embed`, `/wiki hybrid`. Degrades cleanly to BM25-only when no embedding key set.
+- **LLM Council** &mdash; Provider-agnostic 3-phase deliberation (Anthropic/OpenAI/OpenRouter/Fireworks/custom OpenAI-compat). Persists transcript as a wiki page when `--wiki` is passed. `/wiki council`.
+- **Survey Generator** &mdash; Provider-agnostic literature survey artifact. Output target = wiki markdown page (not standalone HTML). Bibliography rows append to `sources.md` deduped. `/wiki survey`.
+- **Reactive triggers** &mdash; Edits inside a wiki tree auto-enqueue verify-seeds. Cron-tick script (`scripts/research-tick.js`) runs one iteration of the oldest opted-in wiki with pending seeds.
+- **Schema additions** &mdash; `wikis`, `wiki_pages` (+ FTS5), `wiki_sources`, `wiki_claims`, `wiki_seeds`, `wiki_embeddings`, `learnings_wiki`.
+
 ## What's New in v3.2
 
 - **LLM Gates** &mdash; First plugin with `type: "prompt"` hooks for AI-powered commit validation and secret detection
@@ -94,15 +108,19 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 | Feature | Pro Workflow | [Superpowers](https://github.com/obra/superpowers) | [ECC](https://github.com/affaan-m/everything-claude-code) | [gstack](https://github.com/garrytan/gstack) | [GSD](https://github.com/gsd-build/get-shit-done) |
 |---------|:-----------:|:-----------:|:---:|:------:|:---:|
 | Self-correcting memory (SQLite + FTS5) | **Yes** | No | No | No | No |
+| Persistent research wikis (FTS5-indexed) | **Yes** | No | No | No | No |
+| Auto-research loop (budget-capped BFS) | **Yes** | No | No | No | No |
+| Hybrid retrieval (BM25 + vector + RRF) | **Yes** | No | No | No | No |
+| Multi-provider LLM council | **Yes** | No | No | No | No |
 | LLM-powered hooks (`type: "prompt"`) | **Yes** | No | No | No | No |
 | Permission denial analysis | **Yes** | No | No | No | No |
 | Compaction-aware state preservation | **Yes** | No | No | No | No |
 | Cost tracking and budget alerts | **Yes** | No | No | No | No |
 | MCP overhead auditing | **Yes** | No | No | No | No |
 | Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
-| Skills | 24 | 14 | 140+ | 18+ | 0 |
+| Skills | 29 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
-| Commands | 21 | 3 | 60+ | 5+ | 57 |
+| Commands | 22 | 3 | 60+ | 5+ | 57 |
 | Hook Events | 24 | 8 | 18 | 0 | 0 |
 
 ---

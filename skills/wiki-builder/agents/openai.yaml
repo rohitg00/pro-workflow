@@ -1,0 +1,5 @@
+interface:
+  display_name: "Wiki Builder"
+  short_description: "Persistent research wikis indexed in pro-workflow's SQLite FTS5 store"
+  brand_color: "#1e1e2e"
+  default_prompt: "Use $wiki-builder to start a new persistent research wiki. Pages auto-index for FTS5 retrieval."

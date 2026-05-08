@@ -25,7 +25,7 @@ async function main() {
         return;
       }
 
-      const regex = /\[LEARN\]\s*([\w][\w\s-]*?)\s*:\s*(.+?)(?:\nMistake:\s*(.+?))?(?:\nCorrection:\s*(.+?))?(?=\n\[LEARN\]|\n\n|$)/gim;
+      const regex = /\[LEARN\]\s*([\w][\w\s-]*?)\s*:\s*(.+?)(?:\nMistake:\s*(.+?))?(?:\nCorrection:\s*(.+?))?(?:\nWiki:\s*([A-Za-z0-9_-]+))?(?=\n\[LEARN\]|\n\n|$)/gim;
 
       let match;
       let store = null;
@@ -40,13 +40,14 @@ async function main() {
         if (!store) break;
 
         const projectDir = process.env.CLAUDE_PROJECT_DIR || '';
+        const wikiSlug = match[5]?.trim() || undefined;
         store.addLearning({
           project: projectDir ? path.basename(projectDir) : null,
           category: match[1].trim(),
           rule: match[2].trim(),
           mistake: match[3]?.trim() || null,
           correction: match[4]?.trim() || null,
-        });
+        }, wikiSlug);
         count++;
       }
 

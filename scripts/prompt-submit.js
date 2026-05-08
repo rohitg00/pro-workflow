@@ -86,6 +86,17 @@ async function main() {
             store.updateSessionCounts(sessionId, 0, isCorrection ? 1 : 0, 1);
             sessionUpdated = true;
           }
+
+          if (typeof store.searchWiki === 'function' && prompt.split(/\s+/).length >= 3) {
+            const hits = store.searchWiki(prompt, { limit: 3, loose: true });
+            if (hits.length > 0) {
+              log(`[ProWorkflow] ${hits.length} relevant wiki page(s):`);
+              for (const h of hits) {
+                log(`  - ${h.wiki_slug} · ${h.rel_path} — ${h.title}`);
+              }
+              log('  (use /wiki ask "<query>" --wiki <slug> for full retrieval)');
+            }
+          }
         } catch (e) {
           // DB error, fall back to file-based
         } finally {

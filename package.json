@@ -1,11 +1,11 @@
 {
   "name": "pro-workflow",
-  "version": "3.1.0",
-  "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, and searchable learnings",
+  "version": "3.3.0",
+  "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, searchable learnings, and persistent research wikis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "db:init": "node dist/db/index.js"

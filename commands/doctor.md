@@ -60,6 +60,22 @@ cat ~/.claude/settings.json 2>/dev/null | head -3
 - Check for conflicting settings between project and user level
 - Verify permission rules are correct
 
+### 8. Wiki Knowledge Base
+```bash
+node $PRO_WORKFLOW_ROOT/skills/wiki-builder/scripts/wiki-cli.js list 2>/dev/null
+node $PRO_WORKFLOW_ROOT/skills/wiki-research-loop/scripts/research-loop.js status 2>/dev/null
+ls -1 ~/.pro-workflow/STOP 2>/dev/null && echo "KILL SWITCH ACTIVE — no research runs"
+tail -5 ~/.pro-workflow/tick.log 2>/dev/null
+```
+- List of wikis · seed counts per status · kill-switch state · last cron-tick activity
+- Embeddings: `OPENAI_API_KEY`/`VOYAGE_API_KEY` set? Hybrid search uses provider; otherwise BM25-only.
+
+### 9. Council Providers
+```bash
+node $PRO_WORKFLOW_ROOT/skills/llm-council/scripts/council.js providers 2>/dev/null
+```
+- Shows which provider env vars are set (Anthropic/OpenAI/OpenRouter/Fireworks/custom).
+
 ## Quick Fixes
 
 | Issue | Fix |

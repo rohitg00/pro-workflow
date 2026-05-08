@@ -66,6 +66,17 @@ async function main() {
           log(`[ProWorkflow] Previous session: ${lastSession.started_at.split('T')[0]} (${lastSession.edit_count} edits, ${lastSession.corrections_count} corrections)`);
         }
       }
+
+      if (typeof store.listWikis === 'function') {
+        const wikis = store.listWikis();
+        if (wikis.length > 0) {
+          log(`[ProWorkflow] ${wikis.length} wiki(s) available:`);
+          wikis.slice(0, 5).forEach(w => {
+            log(`  - ${w.slug} (${w.flavor}, ${w.scope})`);
+          });
+          if (wikis.length > 5) log(`  ... and ${wikis.length - 5} more`);
+        }
+      }
     } catch (e) {
       log(`[ProWorkflow] DB error: ${e.message}`);
     } finally {

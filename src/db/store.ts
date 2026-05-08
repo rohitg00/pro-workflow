@@ -22,13 +22,64 @@ export interface Session {
   prompts_count: number;
 }
 
+export type WikiFlavor =
+  | 'research' | 'paper' | 'domain' | 'product' | 'person'
+  | 'organization' | 'project' | 'codebase' | 'incident';
+
+export type WikiScope = 'global' | 'project';
+
+export interface Wiki {
+  slug: string;
+  title: string;
+  flavor: WikiFlavor;
+  root_path: string;
+  scope: WikiScope;
+  auto_research: number;
+  private: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WikiPage {
+  id: number;
+  wiki_slug: string;
+  rel_path: string;
+  title: string;
+  summary: string | null;
+  content: string | null;
+  page_type: string | null;
+  content_hash: string | null;
+  updated_at: string;
+}
+
+export interface WikiSearchHit {
+  page_id: number;
+  wiki_slug: string;
+  rel_path: string;
+  title: string;
+  summary: string | null;
+  snippet: string;
+  rank: number;
+}
+
+export interface WikiSeed {
+  id: number;
+  wiki_slug: string;
+  query: string;
+  status: 'pending' | 'active' | 'done' | 'failed';
+  parent_id: number | null;
+  depth: number;
+  created_at: string;
+}
+
 export interface Store {
   db: Database.Database;
   close: () => void;
 
-  addLearning: (learning: Omit<Learning, 'id' | 'created_at' | 'times_applied'>) => Learning;
+  addLearning: (learning: Omit<Learning, 'id' | 'created_at' | 'times_applied'>, wikiSlug?: string) => Learning;
   getLearning: (id: number) => Learning | undefined;
   getAllLearnings: (project?: string) => Learning[];
+  getLearningsByWiki: (wikiSlug: string) => Learning[];
   updateLearning: (id: number, updates: Partial<Learning>) => boolean;
   deleteLearning: (id: number) => boolean;
   incrementTimesApplied: (id: number) => void;
@@ -38,6 +89,21 @@ export interface Store {
   getSession: (id: string) => Session | undefined;
   updateSessionCounts: (id: string, edits?: number, corrections?: number, prompts?: number) => void;
   getRecentSessions: (limit?: number) => Session[];
+
+  // Wiki KB
+  upsertWiki: (wiki: Pick<Wiki, 'slug' | 'title' | 'flavor' | 'root_path'> & Partial<Wiki>) => Wiki;
+  getWiki: (slug: string) => Wiki | undefined;
+  listWikis: (scope?: WikiScope) => Wiki[];
+  deleteWiki: (slug: string) => boolean;
+
+  upsertWikiPage: (page: Omit<WikiPage, 'id' | 'updated_at'>) => WikiPage;
+  getWikiPage: (wikiSlug: string, relPath: string) => WikiPage | undefined;
+  listWikiPages: (wikiSlug: string) => WikiPage[];
+  searchWiki: (query: string, opts?: { wikiSlug?: string; limit?: number; loose?: boolean }) => WikiSearchHit[];
+
+  enqueueSeed: (seed: Omit<WikiSeed, 'id' | 'created_at' | 'status'> & { status?: WikiSeed['status'] }) => WikiSeed;
+  nextPendingSeed: (wikiSlug: string) => WikiSeed | undefined;
+  setSeedStatus: (id: number, status: WikiSeed['status']) => void;
 }
 
 export function createStore(dbPath: string = getDefaultDbPath()): Store {
@@ -102,11 +168,86 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
     SELECT * FROM sessions ORDER BY started_at DESC LIMIT ?
   `);
 
+  const upsertWikiStmt = db.prepare(`
+    INSERT INTO wikis (slug, title, flavor, root_path, scope, auto_research, private)
+    VALUES (@slug, @title, @flavor, @root_path, @scope, @auto_research, @private)
+    ON CONFLICT(slug) DO UPDATE SET
+      title = excluded.title,
+      flavor = excluded.flavor,
+      root_path = excluded.root_path,
+      scope = excluded.scope,
+      auto_research = excluded.auto_research,
+      private = excluded.private,
+      updated_at = datetime('now')
+  `);
+  const getWikiStmt = db.prepare(`SELECT * FROM wikis WHERE slug = ?`);
+  const listWikisStmt = db.prepare(`SELECT * FROM wikis ORDER BY updated_at DESC`);
+  const listWikisByScopeStmt = db.prepare(`SELECT * FROM wikis WHERE scope = ? ORDER BY updated_at DESC`);
+  const deleteWikiStmt = db.prepare(`DELETE FROM wikis WHERE slug = ?`);
+
+  const upsertWikiPageStmt = db.prepare(`
+    INSERT INTO wiki_pages (wiki_slug, rel_path, title, summary, content, page_type, content_hash)
+    VALUES (@wiki_slug, @rel_path, @title, @summary, @content, @page_type, @content_hash)
+    ON CONFLICT(wiki_slug, rel_path) DO UPDATE SET
+      title = excluded.title,
+      summary = excluded.summary,
+      content = excluded.content,
+      page_type = excluded.page_type,
+      content_hash = excluded.content_hash,
+      updated_at = datetime('now')
+    RETURNING id
+  `);
+  const getWikiPageStmt = db.prepare(`SELECT * FROM wiki_pages WHERE wiki_slug = ? AND rel_path = ?`);
+  const getWikiPageByIdStmt = db.prepare(`SELECT * FROM wiki_pages WHERE id = ?`);
+  const listWikiPagesStmt = db.prepare(`SELECT * FROM wiki_pages WHERE wiki_slug = ? ORDER BY updated_at DESC`);
+
+  const searchWikiAllStmt = db.prepare(`
+    SELECT p.id AS page_id, p.wiki_slug, p.rel_path, p.title, p.summary,
+           snippet(wiki_pages_fts, 2, '[', ']', '...', 16) AS snippet,
+           bm25(wiki_pages_fts) AS rank
+    FROM wiki_pages_fts
+    JOIN wiki_pages p ON p.id = wiki_pages_fts.rowid
+    WHERE wiki_pages_fts MATCH @q
+    ORDER BY rank
+    LIMIT @limit
+  `);
+  const searchWikiScopedStmt = db.prepare(`
+    SELECT p.id AS page_id, p.wiki_slug, p.rel_path, p.title, p.summary,
+           snippet(wiki_pages_fts, 2, '[', ']', '...', 16) AS snippet,
+           bm25(wiki_pages_fts) AS rank
+    FROM wiki_pages_fts
+    JOIN wiki_pages p ON p.id = wiki_pages_fts.rowid
+    WHERE wiki_pages_fts MATCH @q AND p.wiki_slug = @slug
+    ORDER BY rank
+    LIMIT @limit
+  `);
+
+  const enqueueSeedStmt = db.prepare(`
+    INSERT INTO wiki_seeds (wiki_slug, query, status, parent_id, depth)
+    VALUES (@wiki_slug, @query, @status, @parent_id, @depth)
+    RETURNING *
+  `);
+  const nextPendingSeedStmt = db.prepare(`
+    SELECT * FROM wiki_seeds WHERE wiki_slug = ? AND status = 'pending'
+    ORDER BY depth ASC, created_at ASC LIMIT 1
+  `);
+  const setSeedStatusStmt = db.prepare(`UPDATE wiki_seeds SET status = ? WHERE id = ?`);
+
+  const linkLearningWikiStmt = db.prepare(`
+    INSERT OR REPLACE INTO learnings_wiki (learning_id, wiki_slug) VALUES (?, ?)
+  `);
+  const learningsByWikiStmt = db.prepare(`
+    SELECT l.* FROM learnings l
+    JOIN learnings_wiki lw ON lw.learning_id = l.id
+    WHERE lw.wiki_slug = ?
+    ORDER BY l.created_at DESC
+  `);
+
   return {
     db,
     close: () => db.close(),
 
-    addLearning(learning) {
+    addLearning(learning, wikiSlug) {
       const result = addLearningStmt.run({
         project: learning.project ?? null,
         category: learning.category,
@@ -114,7 +255,11 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
         mistake: learning.mistake ?? null,
         correction: learning.correction ?? null,
       });
-      return getLearningStmt.get(result.lastInsertRowid) as Learning;
+      const row = getLearningStmt.get(result.lastInsertRowid) as Learning;
+      if (wikiSlug) {
+        linkLearningWikiStmt.run(row.id, wikiSlug);
+      }
+      return row;
     },
 
     getLearning(id) {
@@ -168,5 +313,104 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
     getRecentSessions(limit = 10) {
       return getRecentSessionsStmt.all(limit) as Session[];
     },
+
+    getLearningsByWiki(wikiSlug) {
+      return learningsByWikiStmt.all(wikiSlug) as Learning[];
+    },
+
+    upsertWiki(wiki) {
+      upsertWikiStmt.run({
+        slug: wiki.slug,
+        title: wiki.title,
+        flavor: wiki.flavor,
+        root_path: wiki.root_path,
+        scope: wiki.scope ?? 'global',
+        auto_research: wiki.auto_research ?? 0,
+        private: wiki.private ?? 0,
+      });
+      return getWikiStmt.get(wiki.slug) as Wiki;
+    },
+
+    getWiki(slug) {
+      return getWikiStmt.get(slug) as Wiki | undefined;
+    },
+
+    listWikis(scope) {
+      if (scope) return listWikisByScopeStmt.all(scope) as Wiki[];
+      return listWikisStmt.all() as Wiki[];
+    },
+
+    deleteWiki(slug) {
+      return deleteWikiStmt.run(slug).changes > 0;
+    },
+
+    upsertWikiPage(page) {
+      const row = upsertWikiPageStmt.get({
+        wiki_slug: page.wiki_slug,
+        rel_path: page.rel_path,
+        title: page.title,
+        summary: page.summary ?? null,
+        content: page.content ?? null,
+        page_type: page.page_type ?? null,
+        content_hash: page.content_hash ?? null,
+      }) as { id: number };
+      return getWikiPageByIdStmt.get(row.id) as WikiPage;
+    },
+
+    getWikiPage(wikiSlug, relPath) {
+      return getWikiPageStmt.get(wikiSlug, relPath) as WikiPage | undefined;
+    },
+
+    listWikiPages(wikiSlug) {
+      return listWikiPagesStmt.all(wikiSlug) as WikiPage[];
+    },
+
+    searchWiki(query, opts = {}) {
+      const limit = opts.limit ?? 10;
+      const q = sanitizeFtsQuery(query, opts.loose);
+      if (!q) return [];
+      const rows = opts.wikiSlug
+        ? searchWikiScopedStmt.all({ q, slug: opts.wikiSlug, limit })
+        : searchWikiAllStmt.all({ q, limit });
+      return rows as WikiSearchHit[];
+    },
+
+    enqueueSeed(seed) {
+      return enqueueSeedStmt.get({
+        wiki_slug: seed.wiki_slug,
+        query: seed.query,
+        status: seed.status ?? 'pending',
+        parent_id: seed.parent_id ?? null,
+        depth: seed.depth,
+      }) as WikiSeed;
+    },
+
+    nextPendingSeed(wikiSlug) {
+      return nextPendingSeedStmt.get(wikiSlug) as WikiSeed | undefined;
+    },
+
+    setSeedStatus(id, status) {
+      setSeedStatusStmt.run(status, id);
+    },
   };
+}
+
+const STOPWORDS = new Set([
+  'a', 'an', 'the', 'and', 'or', 'of', 'to', 'in', 'on', 'for', 'with',
+  'is', 'it', 'this', 'that', 'be', 'as', 'at', 'by', 'are', 'was', 'were',
+  'what', 'which', 'how', 'why', 'when', 'where', 'who', 'about',
+  'explain', 'tell', 'show', 'find', 'do', 'does', 'use', 'using'
+]);
+
+function sanitizeFtsQuery(input: string, loose = false): string {
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+  const tokens = trimmed.split(/\s+/)
+    .map(t => t.replace(/[^A-Za-z0-9_]/g, '').toLowerCase())
+    .filter(t => t.length >= 2 && !STOPWORDS.has(t));
+  if (!tokens.length) return '';
+  if (loose) {
+    return tokens.map(t => `${t}*`).join(' OR ');
+  }
+  return tokens.map(t => `"${t}"`).join(' ');
 }

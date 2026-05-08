@@ -1,0 +1,48 @@
+const https = require('https');
+
+function httpsGet(url, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const opts = { headers: { 'User-Agent': 'pro-workflow/wiki-research-loop', Accept: 'application/vnd.github+json', ...headers } };
+    https.get(url, opts, res => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return httpsGet(res.headers.location, headers).then(resolve, reject);
+      }
+      let data = '';
+      res.on('data', c => { data += c; });
+      res.on('end', () => resolve({ status: res.statusCode, body: data }));
+    }).on('error', reject);
+  });
+}
+
+function authHeader() {
+  const tok = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
+  return tok ? { Authorization: `Bearer ${tok}` } : {};
+}
+
+module.exports = {
+  name: 'github',
+  match: () => true,
+  estimateCost: () => ({ usd: 0, tokens: 0 }),
+  async fetch(query, opts = {}) {
+    const limit = opts.limit || 3;
+    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&per_page=${limit}`;
+    const res = await httpsGet(url, authHeader());
+    if (res.status !== 200) return [];
+    let json;
+    try { json = JSON.parse(res.body); } catch { return []; }
+    const items = json.items || [];
+    const out = [];
+    for (const r of items) {
+      const desc = r.description || '';
+      const stars = r.stargazers_count || 0;
+      const summary = `${desc} (${stars}★, ${r.language || 'unknown'})`;
+      out.push({
+        title: r.full_name,
+        content: summary,
+        url: r.html_url,
+        fetched_at: new Date().toISOString(),
+      });
+    }
+    return out;
+  }
+};

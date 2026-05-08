@@ -1,0 +1,61 @@
+{
+  "topic": "<concise survey topic, e.g. 'Reasoning Models'>",
+  "anchor_source": "<URL of the public anchor: arXiv survey, awesome-list, canonical blog post>",
+  "abstract_hints": [
+    "<one bullet on the core motivation>",
+    "<one bullet on the key contributions to highlight>",
+    "<one bullet on the open questions to surface in the conclusion>"
+  ],
+  "taxonomy": [
+    {
+      "branch": "<top-level category 1>",
+      "description": "<one sentence>",
+      "children": [
+        {"name": "<sub-area>", "description": "<one sentence>"},
+        {"name": "<sub-area>", "description": "<one sentence>"}
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "n": 1,
+      "title": "Introduction",
+      "guidance": "Frame the topic, state why it matters now, preview the taxonomy.",
+      "papers": []
+    },
+    {
+      "n": 2,
+      "title": "Foundations",
+      "guidance": "Cover the prerequisite concepts and earliest-cited papers.",
+      "papers": ["author1-year-key", "author2-year-key"]
+    },
+    {
+      "n": 3,
+      "title": "Methods",
+      "guidance": "Group method papers by taxonomy branch.",
+      "papers": []
+    },
+    {
+      "n": 4,
+      "title": "Evaluation",
+      "guidance": "Benchmarks, evaluation protocols, contested measurements.",
+      "papers": []
+    },
+    {
+      "n": 5,
+      "title": "Open Problems",
+      "guidance": "What remains unsolved, what the field disagrees on.",
+      "papers": []
+    }
+  ],
+  "bibliography": [
+    {
+      "key": "author1-year-shortname",
+      "authors": "Last, F., Other, A.",
+      "year": 2024,
+      "title": "<paper title>",
+      "venue": "<conference/journal/arXiv:NNNN.NNNNN>",
+      "summary": "<one to two sentence summary of contribution>"
+    }
+  ]
+}

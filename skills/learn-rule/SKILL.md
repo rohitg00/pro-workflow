@@ -26,6 +26,17 @@ Mistake: What went wrong
 Correction: How it was fixed
 ```
 
+### Wiki-scoped rules
+
+Append `Wiki: <slug>` to bind the rule to a single pro-workflow wiki. The rule loads only when that wiki is in scope, avoiding cross-project pollution:
+
+```
+[LEARN] Editing: Cite a sources.md row before adding any wiki claim.
+Wiki: agent-memory
+```
+
+The capture hook auto-detects `Wiki: <slug>` and links the learning to that wiki via `learnings_wiki`.
+
 ## Categories
 
 | Category | Examples |
