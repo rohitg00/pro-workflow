@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && cp src/db/schema.sql dist/db/schema.sql",
+    "build": "tsc && node -e \"const fs=require('fs');fs.mkdirSync('dist/db',{recursive:true});fs.copyFileSync('src/db/schema.sql','dist/db/schema.sql')\"",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "db:init": "node dist/db/index.js"

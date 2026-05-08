@@ -103,6 +103,7 @@ export interface Store {
 
   enqueueSeed: (seed: Omit<WikiSeed, 'id' | 'created_at' | 'status'> & { status?: WikiSeed['status'] }) => WikiSeed;
   nextPendingSeed: (wikiSlug: string) => WikiSeed | undefined;
+  claimPendingSeed: (wikiSlug: string) => WikiSeed | undefined;
   setSeedStatus: (id: number, status: WikiSeed['status']) => void;
 }
 
@@ -231,6 +232,17 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
     SELECT * FROM wiki_seeds WHERE wiki_slug = ? AND status = 'pending'
     ORDER BY depth ASC, created_at ASC LIMIT 1
   `);
+  const claimPendingSeedStmt = db.prepare(`
+    UPDATE wiki_seeds
+    SET status = 'active'
+    WHERE id = (
+      SELECT id FROM wiki_seeds
+      WHERE wiki_slug = ? AND status = 'pending'
+      ORDER BY depth ASC, created_at ASC
+      LIMIT 1
+    )
+    RETURNING *
+  `);
   const setSeedStatusStmt = db.prepare(`UPDATE wiki_seeds SET status = ? WHERE id = ?`);
 
   const linkLearningWikiStmt = db.prepare(`
@@ -243,23 +255,25 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
     ORDER BY l.created_at DESC
   `);
 
+  const addLearningTx = db.transaction((learning: Omit<Learning, 'id' | 'created_at' | 'times_applied'>, wikiSlug?: string) => {
+    const result = addLearningStmt.run({
+      project: learning.project ?? null,
+      category: learning.category,
+      rule: learning.rule,
+      mistake: learning.mistake ?? null,
+      correction: learning.correction ?? null,
+    });
+    const row = getLearningStmt.get(result.lastInsertRowid) as Learning;
+    if (wikiSlug) linkLearningWikiStmt.run(row.id, wikiSlug);
+    return row;
+  });
+
   return {
     db,
     close: () => db.close(),
 
     addLearning(learning, wikiSlug) {
-      const result = addLearningStmt.run({
-        project: learning.project ?? null,
-        category: learning.category,
-        rule: learning.rule,
-        mistake: learning.mistake ?? null,
-        correction: learning.correction ?? null,
-      });
-      const row = getLearningStmt.get(result.lastInsertRowid) as Learning;
-      if (wikiSlug) {
-        linkLearningWikiStmt.run(row.id, wikiSlug);
-      }
-      return row;
+      return addLearningTx(learning, wikiSlug);
     },
 
     getLearning(id) {
@@ -389,6 +403,10 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
       return nextPendingSeedStmt.get(wikiSlug) as WikiSeed | undefined;
     },
 
+    claimPendingSeed(wikiSlug) {
+      return claimPendingSeedStmt.get(wikiSlug) as WikiSeed | undefined;
+    },
+
     setSeedStatus(id, status) {
       setSeedStatusStmt.run(status, id);
     },
@@ -405,8 +423,11 @@ const STOPWORDS = new Set([
 function sanitizeFtsQuery(input: string, loose = false): string {
   const trimmed = input.trim();
   if (!trimmed) return '';
-  const tokens = trimmed.split(/\s+/)
-    .map(t => t.replace(/[^A-Za-z0-9_]/g, '').toLowerCase())
+  const tokens = trimmed
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, ' ')
+    .trim()
+    .split(/\s+/)
     .filter(t => t.length >= 2 && !STOPWORDS.has(t));
   if (!tokens.length) return '';
   if (loose) {

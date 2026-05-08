@@ -1,15 +1,19 @@
 const https = require('https');
 
-function httpsGet(url) {
+function httpsGet(url, redirects = 0) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'pro-workflow/wiki-research-loop' } }, res => {
+    if (redirects > 5) return reject(new Error('Too many redirects'));
+    const req = https.get(url, { headers: { 'User-Agent': 'pro-workflow/wiki-research-loop' } }, res => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return httpsGet(res.headers.location).then(resolve, reject);
+        res.resume();
+        return httpsGet(res.headers.location, redirects + 1).then(resolve, reject);
       }
       let data = '';
       res.on('data', c => { data += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    }).on('error', reject);
+    });
+    req.setTimeout(15000, () => req.destroy(new Error('arxiv fetch timeout')));
+    req.on('error', reject);
   });
 }
 

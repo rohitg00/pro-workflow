@@ -113,7 +113,7 @@ Each writes a separate versioned file; diff them.
 1. Never invent bibliography entries — every paper must be a real work with venue.
 2. Every section's `papers` array references keys in `bibliography`.
 3. Output is markdown ONLY. No HTML, no inline SVG, no JS.
-4. Bibliography rows in `sources.md` use the same `[^src-NNN]` format as the rest of the wiki.
+4. Bibliography rows in `sources.md` use the slug-style id `src-bib-<slug>` (derived from the bibliography `key`); cite as `[^src-bib-<slug>]`. Manual non-bibliography sources continue to use `src-NNN`.
 5. Iterate on inputs (`research_bundle.json`), not on the generated output.
 6. Provider+model selection is the user's call — never hardcode.
 

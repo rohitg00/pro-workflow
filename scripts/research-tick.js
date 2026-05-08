@@ -60,10 +60,16 @@ function tick() {
   if (!target) { appendLog('skip: no opted-in wiki with pending seeds'); return { skipped: 'no-target' }; }
 
   appendLog(`tick: running ${target.slug}`);
-  const r = spawnSync('node', [LOOP_SCRIPT, 'run', target.slug, '--max-pages', '1'], { encoding: 'utf8' });
+  const r = spawnSync('node', [LOOP_SCRIPT, 'run', target.slug, '--max-pages', '1'], {
+    encoding: 'utf8',
+    timeout: 10 * 60 * 1000,
+    killSignal: 'SIGKILL',
+  });
+  if (r.error) appendLog(`error: ${r.error.message}`);
+  if (r.signal) appendLog(`signal: ${r.signal}`);
   appendLog(`tick: ${target.slug} exit=${r.status}`);
   if (r.stderr) appendLog(`stderr: ${r.stderr.slice(0, 500)}`);
-  return { ran: target.slug, exit: r.status };
+  return { ran: target.slug, exit: r.status, error: r.error?.message, signal: r.signal };
 }
 
 const result = tick();

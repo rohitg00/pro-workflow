@@ -1,8 +1,9 @@
 const https = require('https');
 const { URL } = require('url');
 
-function httpsGet(url, headers = {}) {
+function httpsGet(url, headers = {}, redirects = 0) {
   return new Promise((resolve, reject) => {
+    if (redirects > 5) return reject(new Error('Too many redirects'));
     const u = new URL(url);
     const opts = {
       hostname: u.hostname,
@@ -14,15 +15,18 @@ function httpsGet(url, headers = {}) {
         ...headers,
       },
     };
-    https.get(opts, res => {
+    const req = https.get(opts, res => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        const loc = res.headers.location.startsWith('http') ? res.headers.location : `https://${u.hostname}${res.headers.location}`;
-        return httpsGet(loc, headers).then(resolve, reject);
+        res.resume();
+        const loc = new URL(res.headers.location, u).toString();
+        return httpsGet(loc, headers, redirects + 1).then(resolve, reject);
       }
       let data = '';
       res.on('data', c => { data += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    }).on('error', reject);
+    });
+    req.setTimeout(15000, () => req.destroy(new Error('web fetch timeout')));
+    req.on('error', reject);
   });
 }
 

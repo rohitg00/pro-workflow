@@ -1,16 +1,20 @@
 const https = require('https');
 
-function httpsGet(url, headers = {}) {
+function httpsGet(url, headers = {}, redirects = 0) {
   return new Promise((resolve, reject) => {
+    if (redirects > 5) return reject(new Error('Too many redirects'));
     const opts = { headers: { 'User-Agent': 'pro-workflow/wiki-research-loop', Accept: 'application/vnd.github+json', ...headers } };
-    https.get(url, opts, res => {
+    const req = https.get(url, opts, res => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return httpsGet(res.headers.location, headers).then(resolve, reject);
+        res.resume();
+        return httpsGet(res.headers.location, headers, redirects + 1).then(resolve, reject);
       }
       let data = '';
       res.on('data', c => { data += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    }).on('error', reject);
+    });
+    req.setTimeout(15000, () => req.destroy(new Error('github fetch timeout')));
+    req.on('error', reject);
   });
 }
 

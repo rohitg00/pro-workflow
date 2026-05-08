@@ -28,16 +28,21 @@ export function initializeDatabase(dbPath: string = DEFAULT_DB_PATH): Database.D
   db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
 
-  const candidates = [
-    path.join(__dirname, 'schema.sql'),
-    path.join(__dirname, '..', '..', 'src', 'db', 'schema.sql'),
-  ];
-  const schemaPath = candidates.find(p => fs.existsSync(p));
-  if (!schemaPath) {
-    throw new Error(`pro-workflow: schema.sql not found. Tried: ${candidates.join(', ')}. Run: npm run build`);
+  try {
+    const candidates = [
+      path.join(__dirname, 'schema.sql'),
+      path.join(__dirname, '..', '..', 'src', 'db', 'schema.sql'),
+    ];
+    const schemaPath = candidates.find(p => fs.existsSync(p));
+    if (!schemaPath) {
+      throw new Error(`pro-workflow: schema.sql not found. Tried: ${candidates.join(', ')}. Run: npm run build`);
+    }
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    db.exec(schema);
+  } catch (err) {
+    db.close();
+    throw err;
   }
-  const schema = fs.readFileSync(schemaPath, 'utf8');
-  db.exec(schema);
 
   return db;
 }

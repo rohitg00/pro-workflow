@@ -108,7 +108,11 @@ function cmdPage(args) {
     const wiki = store.getWiki(slug);
     if (!wiki) die(`unknown wiki: ${slug}. Run: wiki-cli.js init ${slug} --title "..."`);
 
-    const fileAbs = path.join(wiki.root_path, relPath);
+    const rootAbs = path.resolve(wiki.root_path);
+    const fileAbs = path.resolve(wiki.root_path, relPath);
+    if (fileAbs !== rootAbs && !fileAbs.startsWith(rootAbs + path.sep)) {
+      die(`rel-path escapes wiki root: ${relPath}`);
+    }
     let content = '';
     if (args['from-file']) {
       content = fs.readFileSync(args['from-file'], 'utf8');

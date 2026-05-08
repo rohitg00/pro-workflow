@@ -59,11 +59,11 @@ function readWikiConfig(rootPath) {
   const cfgPath = path.join(rootPath, 'wiki.config.md');
   if (!fs.existsSync(cfgPath)) return {};
   const raw = fs.readFileSync(cfgPath, 'utf8');
-  const m = raw.match(/^---\s*\n([\s\S]*?)\n---/);
+  const m = raw.match(/^---\s*\r?\n([\s\S]*?)\r?\n---/);
   if (!m) return {};
   const obj = {};
   let nested = null;
-  for (const line of m[1].split('\n')) {
+  for (const line of m[1].split(/\r?\n/)) {
     if (!line.trim()) continue;
     const indent = line.match(/^(\s*)/)[1].length;
     const trimmed = line.trim();
@@ -196,66 +196,81 @@ async function runOne(slug, args) {
 
     while (stats.pages < maxPages) {
       if (fs.existsSync(STOP_FILE)) { stats.halted = 'kill-switch'; break; }
-      const seed = store.nextPendingSeed(slug);
+      const seed = store.claimPendingSeed(slug);
       if (!seed) { stats.halted = 'queue-empty'; break; }
       if (seed.depth > maxDepth) { store.setSeedStatus(seed.id, 'done'); continue; }
-      store.setSeedStatus(seed.id, 'active');
 
-      const docs = [];
-      for (const [name, fetcher] of Object.entries(fetchers)) {
-        try {
-          if (!fetcher.match(seed.query)) continue;
-          const cost = fetcher.estimateCost ? fetcher.estimateCost(seed.query) : { usd: 0 };
-          if (stats.cost_usd + (cost.usd || 0) > budget) { stats.halted = 'budget'; break; }
-          const hits = await fetcher.fetch(seed.query, { limit: 3 });
-          docs.push(...hits);
-          stats.cost_usd += cost.usd || 0;
-          stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} fetcher=${name} hits=${hits.length}`);
-        } catch (e) {
-          stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} fetcher=${name} ERROR ${e.message}`);
+      let finalStatus = 'done';
+      let shouldBreak = false;
+      try {
+        const docs = [];
+        for (const [name, fetcher] of Object.entries(fetchers)) {
+          try {
+            if (!fetcher.match(seed.query)) continue;
+            const cost = fetcher.estimateCost ? fetcher.estimateCost(seed.query) : { usd: 0 };
+            if (stats.cost_usd + (cost.usd || 0) > budget) {
+              stats.halted = 'budget';
+              finalStatus = 'pending';
+              shouldBreak = true;
+              break;
+            }
+            const hits = await fetcher.fetch(seed.query, { limit: 3 });
+            docs.push(...hits);
+            stats.cost_usd += cost.usd || 0;
+            stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} fetcher=${name} hits=${hits.length}`);
+          } catch (e) {
+            stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} fetcher=${name} ERROR ${e.message}`);
+          }
         }
+        if (shouldBreak) continue;
+
+        const compiled = compilePage(seed, docs, prevPages);
+        if (!compiled) {
+          finalStatus = 'failed';
+          stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} no usable claims`);
+          continue;
+        }
+
+        const relPath = path.join('wiki', 'questions', `${slugify(seed.query)}.md`);
+        const fileAbs = path.join(wiki.root_path, relPath);
+        fs.mkdirSync(path.dirname(fileAbs), { recursive: true });
+        fs.writeFileSync(fileAbs, compiled.content);
+
+        const row = store.upsertWikiPage({
+          wiki_slug: slug,
+          rel_path: relPath,
+          title: seed.query,
+          summary: compiled.content.slice(0, 500),
+          content: compiled.content,
+          page_type: 'question',
+          content_hash: crypto.createHash('sha256').update(compiled.content).digest('hex').slice(0, 16),
+        });
+        prevPages.push(row);
+        stats.pages++;
+        stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} compiled ${relPath} novelty=${compiled.novelty.toFixed(2)}`);
+
+        if (compiled.novelty < 0.05) convergeStreak++;
+        else convergeStreak = 0;
+        if (convergeStreak >= 3) { stats.halted = 'converged'; shouldBreak = true; }
+
+        const followUps = deriveFollowUps(seed, compiled);
+        for (const q of followUps) {
+          if (seed.depth + 1 > maxDepth) continue;
+          store.enqueueSeed({ wiki_slug: slug, query: q, parent_id: seed.id, depth: seed.depth + 1 });
+        }
+      } catch (e) {
+        finalStatus = 'failed';
+        stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} ERROR ${e.message}`);
+      } finally {
+        store.setSeedStatus(seed.id, finalStatus);
       }
-      if (stats.halted === 'budget') break;
-
-      const compiled = compilePage(seed, docs, prevPages);
-      if (!compiled) {
-        store.setSeedStatus(seed.id, 'failed');
-        stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} no usable claims`);
-        continue;
-      }
-
-      const relPath = path.join('wiki', 'questions', `${slugify(seed.query)}.md`);
-      const fileAbs = path.join(wiki.root_path, relPath);
-      fs.mkdirSync(path.dirname(fileAbs), { recursive: true });
-      fs.writeFileSync(fileAbs, compiled.content);
-
-      const row = store.upsertWikiPage({
-        wiki_slug: slug,
-        rel_path: relPath,
-        title: seed.query,
-        summary: compiled.content.slice(0, 500),
-        content: compiled.content,
-        page_type: 'question',
-        content_hash: crypto.createHash('sha256').update(compiled.content).digest('hex').slice(0, 16),
-      });
-      prevPages.push(row);
-      stats.pages++;
-      stats.log.push(`[${new Date().toISOString()}] seed-${seed.id} compiled ${relPath} novelty=${compiled.novelty.toFixed(2)}`);
-
-      if (compiled.novelty < 0.05) convergeStreak++;
-      else convergeStreak = 0;
-      if (convergeStreak >= 3) { stats.halted = 'converged'; break; }
-
-      const followUps = deriveFollowUps(seed, compiled);
-      for (const q of followUps) {
-        if (seed.depth + 1 > maxDepth) continue;
-        store.enqueueSeed({ wiki_slug: slug, query: q, parent_id: seed.id, depth: seed.depth + 1 });
-      }
-      store.setSeedStatus(seed.id, 'done');
+      if (shouldBreak) break;
     }
 
     fs.writeFileSync(logFile, ['# Research run ' + ts, '', ...stats.log].join('\n'));
-    fs.writeFileSync(path.join(wiki.root_path, 'derived', `run-${ts}.json`), JSON.stringify(stats, null, 2));
+    const derivedDir = path.join(wiki.root_path, 'derived');
+    fs.mkdirSync(derivedDir, { recursive: true });
+    fs.writeFileSync(path.join(derivedDir, `run-${ts}.json`), JSON.stringify(stats, null, 2));
     return stats;
   } finally {
     store.close();

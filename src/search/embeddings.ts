@@ -32,6 +32,7 @@ function postJSON(urlStr: string, body: unknown, headers: Record<string, string>
       res.on('data', c => { chunks += c; });
       res.on('end', () => resolve({ status: res.statusCode || 0, body: chunks }));
     });
+    req.setTimeout(30000, () => req.destroy(new Error('embedding request timeout')));
     req.on('error', reject);
     req.write(data);
     req.end();
@@ -91,9 +92,9 @@ export function upsertEmbedding(db: Database.Database, pageId: number, provider:
 }
 
 function cosine(a: Float32Array, b: Float32Array): number {
+  if (a.length !== b.length) return 0;
   let dot = 0, na = 0, nb = 0;
-  const len = Math.min(a.length, b.length);
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < a.length; i++) {
     dot += a[i] * b[i];
     na += a[i] * a[i];
     nb += b[i] * b[i];
@@ -109,13 +110,15 @@ export interface VectorHit {
 
 export function vectorSearch(db: Database.Database, queryVec: Float32Array, opts: { wikiSlug?: string; limit?: number } = {}): VectorHit[] {
   const limit = opts.limit ?? 10;
+  const dim = queryVec.length;
   const sql = opts.wikiSlug
-    ? `SELECT e.page_id, e.vector FROM wiki_embeddings e JOIN wiki_pages p ON p.id = e.page_id WHERE p.wiki_slug = ?`
-    : `SELECT e.page_id, e.vector FROM wiki_embeddings e`;
-  const rows = opts.wikiSlug ? db.prepare(sql).all(opts.wikiSlug) : db.prepare(sql).all();
+    ? `SELECT e.page_id, e.vector FROM wiki_embeddings e JOIN wiki_pages p ON p.id = e.page_id WHERE p.wiki_slug = ? AND e.dim = ?`
+    : `SELECT e.page_id, e.vector FROM wiki_embeddings e WHERE e.dim = ?`;
+  const rows = opts.wikiSlug ? db.prepare(sql).all(opts.wikiSlug, dim) : db.prepare(sql).all(dim);
   const scored: VectorHit[] = [];
   for (const r of rows as { page_id: number; vector: Buffer }[]) {
     const v = blobToF32(r.vector);
+    if (v.length !== dim) continue;
     scored.push({ page_id: r.page_id, similarity: cosine(queryVec, v) });
   }
   scored.sort((a, b) => b.similarity - a.similarity);

@@ -57,7 +57,7 @@ function pickProvider(arg) {
   return null;
 }
 
-function postJSON(urlStr, body, headers) {
+function postJSON(urlStr, body, headers, timeoutMs = 120000) {
   return new Promise((resolve, reject) => {
     const url = new URL(urlStr);
     const data = JSON.stringify(body);
@@ -71,6 +71,7 @@ function postJSON(urlStr, body, headers) {
       res.on('data', c => { chunks += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: chunks }));
     });
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('council request timeout')));
     req.on('error', reject);
     req.write(data);
     req.end();
@@ -138,7 +139,7 @@ function persistToWiki(slug, sessionId, output) {
   try {
     const wiki = store.getWiki(slug);
     if (!wiki) return null;
-    const relPath = path.join('derived', 'council', `${sessionId}.md`);
+    const relPath = path.posix.join('derived', 'council', `${sessionId}.md`);
     const fileAbs = path.join(wiki.root_path, relPath);
     fs.mkdirSync(path.dirname(fileAbs), { recursive: true });
     fs.writeFileSync(fileAbs, output);
@@ -174,9 +175,15 @@ async function cmdRun(args) {
 
   fs.writeFileSync(path.join(sessionDir, 'config.json'), JSON.stringify({ query, models, chairman, provider: providerName }, null, 2));
 
+  function settledToEntry(model, settled) {
+    if (settled.status === 'fulfilled') return settled.value;
+    return { success: false, content: `[ERROR: ${settled.reason?.message || settled.reason}]`, model, latency_ms: 0 };
+  }
+
   // Phase 1
   const sysIndep = 'You are participating in an LLM council deliberation. Provide your best, most thoughtful response to the query. Be comprehensive but focused.';
-  const phase1Entries = await Promise.all(models.map(m => provider.call(provider, m, sysIndep, query)));
+  const phase1Settled = await Promise.allSettled(models.map(m => provider.call(provider, m, sysIndep, query)));
+  const phase1Entries = phase1Settled.map((s, i) => settledToEntry(models[i], s));
   const phase1 = Object.fromEntries(models.map((m, i) => [m, phase1Entries[i]]));
   fs.writeFileSync(path.join(sessionDir, 'phase1_responses.json'), JSON.stringify(phase1, null, 2));
 
@@ -186,7 +193,8 @@ async function cmdRun(args) {
   const anon = models.map(m => `=== Response ${labelOf[m]} ===\n${phase1[m].content}`).join('\n\n');
   const sysRank = (own) => `You are ranking AI responses objectively. Your own response is labeled '${own}'.`;
   const userRank = `QUERY:\n${query}\n\nRESPONSES:\n${anon}\n\nRank from BEST to WORST. Format:\nRANKINGS:\n1. [Letter] - [reason]\n2. [Letter] - [reason]\n...`;
-  const phase2Entries = await Promise.all(models.map(m => provider.call(provider, m, sysRank(labelOf[m]), userRank)));
+  const phase2Settled = await Promise.allSettled(models.map(m => provider.call(provider, m, sysRank(labelOf[m]), userRank)));
+  const phase2Entries = phase2Settled.map((s, i) => settledToEntry(models[i], s));
   const phase2 = { label_of: labelOf, rankings: Object.fromEntries(models.map((m, i) => [m, phase2Entries[i]])) };
   fs.writeFileSync(path.join(sessionDir, 'phase2_rankings.json'), JSON.stringify(phase2, null, 2));
 

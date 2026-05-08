@@ -29,7 +29,7 @@ function getStore() {
   return require(distPath).createStore();
 }
 
-function postJSON(urlStr, body, headers) {
+function postJSON(urlStr, body, headers, timeoutMs = 180000) {
   return new Promise((resolve, reject) => {
     const url = new URL(urlStr);
     const data = JSON.stringify(body);
@@ -43,6 +43,7 @@ function postJSON(urlStr, body, headers) {
       res.on('data', c => { chunks += c; });
       res.on('end', () => resolve({ status: res.statusCode, body: chunks }));
     });
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('survey request timeout')));
     req.on('error', reject);
     req.write(data);
     req.end();
@@ -155,6 +156,10 @@ async function cmdRun(args) {
 
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   if (!bundle.topic || !Array.isArray(bundle.bibliography)) die('bundle missing topic or bibliography[]');
+  const invalid = bundle.bibliography.find(
+    b => !b || typeof b.key !== 'string' || !b.key.trim() || typeof b.title !== 'string' || !b.title.trim()
+  );
+  if (invalid) die('bundle bibliography[] entries must include non-empty string key and title');
 
   const providerName = pickProvider(args.provider);
   if (!providerName) die('no provider env var set');
@@ -187,7 +192,7 @@ async function cmdRun(args) {
   try {
     execFileSync('node', [wikiCli, 'page', slug, relPath, '--type', 'survey'], { stdio: 'inherit' });
   } catch (e) {
-    console.error('[survey] wiki-cli page failed:', e.message);
+    die(`wiki-cli page failed: ${e.message}`);
   }
   console.log(JSON.stringify({ slug, file: fileAbs, version: v, bibliography_added: added }, null, 2));
 }
