@@ -60,6 +60,10 @@ CREATE INDEX IF NOT EXISTS idx_sessions_project ON sessions(project);
 CREATE INDEX IF NOT EXISTS idx_sessions_started_at ON sessions(started_at);
 
 -- Wiki knowledge base (Phase 3.3.0)
+-- slug is the natural id used everywhere (FKs, CLI, hooks). To avoid silent
+-- overwrites when two wikis share a slug across different (scope, root_path)
+-- locations, upsertWiki() guards on those columns at the application layer
+-- and refuses to overwrite a registration that points at a different location.
 CREATE TABLE IF NOT EXISTS wikis (
   slug TEXT PRIMARY KEY,
   title TEXT NOT NULL,

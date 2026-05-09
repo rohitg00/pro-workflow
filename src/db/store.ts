@@ -333,12 +333,20 @@ export function createStore(dbPath: string = getDefaultDbPath()): Store {
     },
 
     upsertWiki(wiki) {
+      const scope = wiki.scope ?? 'global';
+      const existing = getWikiStmt.get(wiki.slug) as Wiki | undefined;
+      if (existing && (existing.scope !== scope || existing.root_path !== wiki.root_path)) {
+        throw new Error(
+          `wiki slug "${wiki.slug}" already registered at ${existing.scope}:${existing.root_path}; ` +
+          `pick a different slug or delete the existing registration first`
+        );
+      }
       upsertWikiStmt.run({
         slug: wiki.slug,
         title: wiki.title,
         flavor: wiki.flavor,
         root_path: wiki.root_path,
-        scope: wiki.scope ?? 'global',
+        scope,
         auto_research: wiki.auto_research ?? 0,
         private: wiki.private ?? 0,
       });

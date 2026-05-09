@@ -14,7 +14,7 @@
 
 <p align="center">
   Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again. Persistent research wikis indexed in FTS5 surface relevant prior work the moment you ask. Auto-research loop grows the knowledge base while you sleep.<br/>
-  <b>29 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>31 hook scripts across 24 events</b><br/>
+  <b>33 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -75,6 +75,36 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 ---
 
+## Wiki Knowledge Base — 60-second tour
+
+Auto-grow a persistent FTS5-indexed research wiki next to your code:
+
+```bash
+# Scaffold
+/wiki init agent-memory --title "Agent Memory" --flavor research
+
+# Add a page (any .md you wrote — file gets FTS-indexed)
+/wiki page agent-memory wiki/concepts/episodic-memory.md --type concept
+
+# Ask the wiki anything
+/wiki ask "what is episodic memory" --wiki agent-memory
+
+# Auto-grow it: queue a seed, run the loop, watch it write pages + enqueue follow-ups
+/wiki seed agent-memory "memory consolidation in agents"
+/wiki research agent-memory --max-pages 5 --budget-usd 0.50
+
+# Hybrid retrieval (BM25 + vector RRF) — needs OPENAI_API_KEY or VOYAGE_API_KEY
+/wiki embed agent-memory
+/wiki hybrid "consolidation patterns" --wiki agent-memory
+
+# Multi-LLM deliberation, transcript persisted as a wiki page
+/wiki council "should we adopt episodic memory?" --wiki agent-memory
+```
+
+Every wiki hit auto-loads on `UserPromptSubmit` when prompts mention indexed topics. Kill-switch: `touch ~/.pro-workflow/STOP`.
+
+---
+
 ## What's New in v3.3
 
 Persistent knowledge plane on top of the self-correction memory.
@@ -118,7 +148,7 @@ Persistent knowledge plane on top of the self-correction memory.
 | Cost tracking and budget alerts | **Yes** | No | No | No | No |
 | MCP overhead auditing | **Yes** | No | No | No | No |
 | Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
-| Skills | 29 | 14 | 140+ | 18+ | 0 |
+| Skills | 33 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
 | Commands | 22 | 3 | 60+ | 5+ | 57 |
 | Hook Events | 24 | 8 | 18 | 0 | 0 |

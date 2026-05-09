@@ -28,25 +28,25 @@ module.exports = {
   match: () => true,
   estimateCost: () => ({ usd: 0, tokens: 0 }),
   async fetch(query, opts = {}) {
-    const limit = opts.limit || 3;
+    const limit = opts.limit ?? 3;
     const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&per_page=${limit}`;
-    const res = await httpsGet(url, authHeader());
-    if (res.status !== 200) return [];
-    let json;
-    try { json = JSON.parse(res.body); } catch { return []; }
-    const items = json.items || [];
-    const out = [];
-    for (const r of items) {
-      const desc = r.description || '';
-      const stars = r.stargazers_count || 0;
-      const summary = `${desc} (${stars}★, ${r.language || 'unknown'})`;
-      out.push({
-        title: r.full_name,
-        content: summary,
-        url: r.html_url,
-        fetched_at: new Date().toISOString(),
+    try {
+      const res = await httpsGet(url, authHeader());
+      if (res.status !== 200) return [];
+      const json = JSON.parse(res.body);
+      const items = json.items || [];
+      return items.map(r => {
+        const desc = r.description || '';
+        const stars = r.stargazers_count || 0;
+        return {
+          title: r.full_name,
+          content: `${desc} (${stars}★, ${r.language || 'unknown'})`,
+          url: r.html_url,
+          fetched_at: new Date().toISOString(),
+        };
       });
+    } catch {
+      return [];
     }
-    return out;
   }
 };

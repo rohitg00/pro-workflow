@@ -42,11 +42,15 @@ module.exports = {
   match: () => true,
   estimateCost: () => ({ usd: 0, tokens: 0 }),
   async fetch(query, opts = {}) {
-    const limit = opts.limit || 3;
+    const limit = opts.limit ?? 3;
     const q = encodeURIComponent(query);
     const url = `https://export.arxiv.org/api/query?search_query=all:${q}&start=0&max_results=${limit}`;
-    const res = await httpsGet(url);
-    if (res.status !== 200) return [];
-    return parseEntries(res.body);
+    try {
+      const res = await httpsGet(url);
+      if (res.status !== 200) return [];
+      return parseEntries(res.body);
+    } catch {
+      return [];
+    }
   }
 };

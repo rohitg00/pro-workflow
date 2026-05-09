@@ -64,6 +64,8 @@ function cmdInit(args) {
   const store = getStore();
   try {
     store.upsertWiki({ slug, title, flavor, root_path: dest, scope });
+  } catch (e) {
+    die(e.message);
   } finally {
     store.close();
   }

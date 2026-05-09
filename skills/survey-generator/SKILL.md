@@ -95,7 +95,7 @@ Each writes a separate versioned file; diff them.
 
 ## Output structure
 
-```
+```text
 <wiki-root>/
 ├── sources.md                                 # bibliography rows appended (deduped)
 └── derived/surveys/
@@ -105,7 +105,7 @@ Each writes a separate versioned file; diff them.
         # ## 2. Foundations
         # ...
         # ## References
-        # [^paper-key] author year. title. venue.
+        # [^src-bib-<slug>] author year. title. venue.
 ```
 
 ## Hard rules
@@ -119,7 +119,7 @@ Each writes a separate versioned file; diff them.
 
 ## Composing with research loop
 
-```
+```bash
 /wiki init reasoning-models --title "Reasoning Models" --flavor research
 # Manually compile a research_bundle.json
 node skills/survey-generator/scripts/build-survey.js --bundle bundle.json --wiki reasoning-models

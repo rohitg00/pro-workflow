@@ -86,6 +86,10 @@ async function callProvider(providerName, model, system, user, maxTokens) {
 
 function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60); }
 
+function bibCitationId(key) {
+  return `src-bib-${slugify(key)}`;
+}
+
 function appendBibliographyToSources(wikiRoot, bibliography) {
   const file = path.join(wikiRoot, 'sources.md');
   let existing = '';
@@ -95,14 +99,18 @@ function appendBibliographyToSources(wikiRoot, bibliography) {
 
   const newRows = [];
   for (const b of bibliography) {
-    const id = `src-bib-${slugify(b.key)}`;
+    const id = bibCitationId(b.key);
     if (seenKeys.has(id)) continue;
     const url = b.url || (b.venue && b.venue.startsWith('arXiv:') ? `https://arxiv.org/abs/${b.venue.slice(6)}` : '');
     newRows.push(`| ${id} | paper | ${url} | ${b.title.replace(/\|/g, '\\|')} | ${b.key} | ${new Date().toISOString().slice(0, 10)} |`);
   }
   if (!newRows.length) return 0;
-  if (!existing.includes('| id | type |')) {
-    fs.writeFileSync(file, existing + (existing.endsWith('\n') ? '' : '\n') + newRows.join('\n') + '\n');
+
+  const tableHeader = '| id | type | url | title | key | added_at |\n| --- | --- | --- | --- | --- | --- |';
+  const hasHeader = existing.includes('| id | type |');
+  if (!hasHeader) {
+    const prefix = existing.length ? (existing.endsWith('\n') ? existing : existing + '\n') : '';
+    fs.writeFileSync(file, `${prefix}${tableHeader}\n${newRows.join('\n')}\n`);
   } else {
     fs.writeFileSync(file, existing.trimEnd() + '\n' + newRows.join('\n') + '\n');
   }
@@ -121,30 +129,35 @@ function nextVersion(dir, baseSlug) {
 }
 
 function buildPrompt(bundle) {
+  const bibWithIds = bundle.bibliography.map(b => ({ ...b, citation_id: bibCitationId(b.key) }));
+  const sectionsWithIds = bundle.sections.map(s => ({
+    ...s,
+    paper_citation_ids: (s.papers || []).map(k => bibCitationId(k)),
+  }));
   return `Compile a literature survey on the topic "${bundle.topic}" using ONLY the bibliography provided.
 
 Output strict markdown:
 - H1 = topic title
 - Numbered H2 sections following the provided sections list
-- Inline citations as [^${'<paper-key>'}] referencing entries from the bibliography
-- A "## References" section at the end listing every cited [^key] with: key, authors, year, title, venue, one-sentence summary
+- Inline citations as [^citation_id] using the EXACT citation_id from the bibliography below (e.g., [^src-bib-park-2023-generative-agents])
+- A "## References" section at the end listing every cited [^citation_id] with: citation_id, authors, year, title, venue, one-sentence summary
 - No HTML, no SVG, no inline images
 - ~600-1200 words per section, scaled by bibliography size
-- For each section, weave together the papers in section[].papers; do not just list them
+- For each section, weave together the papers in section.paper_citation_ids; do not just list them
 
-Bibliography (USE THESE KEYS EXACTLY):
-${JSON.stringify(bundle.bibliography, null, 2)}
+Bibliography (USE THE citation_id FIELD EXACTLY for inline citations):
+${JSON.stringify(bibWithIds, null, 2)}
 
-Sections to produce in order:
-${JSON.stringify(bundle.sections, null, 2)}
+Sections to produce in order (use paper_citation_ids for citations):
+${JSON.stringify(sectionsWithIds, null, 2)}
 
 Anchor (context only, do not cite):
 ${bundle.anchor_source || ''}
 
 Hard rules:
 - Cite real papers from the bibliography only. Do not invent.
-- Every section that lists papers MUST cite each one at least once.
-- Use [^paper-key] for inline citations. The References section reuses these keys.
+- Every section that lists papers MUST cite each one at least once via its citation_id.
+- Use [^citation_id] for inline citations. The References section reuses these citation_id values.
 - Do not write any prose under the H1; start sections immediately.`;
 }
 
@@ -160,6 +173,22 @@ async function cmdRun(args) {
     b => !b || typeof b.key !== 'string' || !b.key.trim() || typeof b.title !== 'string' || !b.title.trim()
   );
   if (invalid) die('bundle bibliography[] entries must include non-empty string key and title');
+
+  const bibKeys = new Set();
+  for (const b of bundle.bibliography) {
+    if (bibKeys.has(b.key)) die(`duplicate bibliography key: ${b.key}`);
+    bibKeys.add(b.key);
+  }
+
+  if (Array.isArray(bundle.sections)) {
+    for (const [i, s] of bundle.sections.entries()) {
+      if (!Array.isArray(s.papers)) continue;
+      for (const k of s.papers) {
+        if (typeof k !== 'string' || !k.trim()) die(`sections[${i}].papers contains non-string entry`);
+        if (!bibKeys.has(k)) die(`sections[${i}].papers references unknown bibliography key: ${k}`);
+      }
+    }
+  }
 
   const providerName = pickProvider(args.provider);
   if (!providerName) die('no provider env var set');

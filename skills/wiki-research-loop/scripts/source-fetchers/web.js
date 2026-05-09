@@ -1,12 +1,18 @@
 const https = require('https');
+const http = require('http');
 const { URL } = require('url');
 
-function httpsGet(url, headers = {}, redirects = 0) {
+const MAX_BODY_BYTES = 4 * 1024 * 1024;
+const BODY_DEADLINE_MS = 30000;
+
+function httpGet(url, headers = {}, redirects = 0) {
   return new Promise((resolve, reject) => {
     if (redirects > 5) return reject(new Error('Too many redirects'));
     const u = new URL(url);
+    const client = u.protocol === 'http:' ? http : https;
     const opts = {
       hostname: u.hostname,
+      port: u.port || undefined,
       path: u.pathname + u.search,
       method: 'GET',
       headers: {
@@ -15,15 +21,28 @@ function httpsGet(url, headers = {}, redirects = 0) {
         ...headers,
       },
     };
-    const req = https.get(opts, res => {
+    const req = client.get(opts, res => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         res.resume();
         const loc = new URL(res.headers.location, u).toString();
-        return httpsGet(loc, headers, redirects + 1).then(resolve, reject);
+        return httpGet(loc, headers, redirects + 1).then(resolve, reject);
       }
-      let data = '';
-      res.on('data', c => { data += c; });
-      res.on('end', () => resolve({ status: res.statusCode, body: data }));
+      const chunks = [];
+      let received = 0;
+      let bodyTimer = null;
+      const cleanup = () => {
+        if (bodyTimer) clearTimeout(bodyTimer);
+        res.removeAllListeners();
+      };
+      const fail = (err) => { cleanup(); res.destroy(); reject(err); };
+      bodyTimer = setTimeout(() => fail(new Error('body read deadline exceeded')), BODY_DEADLINE_MS);
+      res.on('data', c => {
+        received += c.length;
+        if (received > MAX_BODY_BYTES) return fail(new Error(`body exceeds ${MAX_BODY_BYTES} bytes`));
+        chunks.push(c);
+      });
+      res.on('end', () => { cleanup(); resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString('utf8') }); });
+      res.on('error', fail);
     });
     req.setTimeout(15000, () => req.destroy(new Error('web fetch timeout')));
     req.on('error', reject);
@@ -59,10 +78,14 @@ module.exports = {
   match: () => true,
   estimateCost: () => ({ usd: 0, tokens: 0 }),
   async fetch(query, opts = {}) {
-    const limit = opts.limit || 3;
+    const limit = opts.limit ?? 3;
     const url = `https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`;
-    const res = await httpsGet(url);
-    if (res.status !== 200) return [];
-    return extractDuckDuckGoLite(res.body, limit);
+    try {
+      const res = await httpGet(url);
+      if (res.status !== 200) return [];
+      return extractDuckDuckGoLite(res.body, limit);
+    } catch {
+      return [];
+    }
   }
 };
