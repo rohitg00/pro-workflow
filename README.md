@@ -13,7 +13,8 @@
 <h3 align="center">Your Claude Code gets smarter every session.</h3>
 
 <p align="center">
-  Self-correcting memory that compounds over 50+ sessions. You correct Claude once &mdash; it never makes the same mistake again. Persistent research wikis indexed in FTS5 surface relevant prior work the moment you ask. Auto-research loop grows the knowledge base while you sleep.<br/>
+  Self-correcting memory + persistent FTS5-indexed wikis + auto-research loop, all on one SQLite store.<br/>
+  Correct Claude once &mdash; it never repeats the mistake. Build a wiki on a topic &mdash; it grows itself overnight.<br/>
   <b>33 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
@@ -22,13 +23,19 @@
 
 ## The Problem
 
-You correct Claude the same way 50 times. You tell it "don't mock the database" on Monday and again on Friday. You explain your project conventions every new session. Context compacts, learnings vanish, mistakes repeat.
+You correct Claude the same way 50 times. You explain conventions every new session. Context compacts, learnings vanish, mistakes repeat. You research the same topic in three different sessions because there is nowhere durable for the answers to land.
 
 **Every Claude Code user hits this wall.**
 
 ## The Solution
 
-Pro Workflow captures every correction in a persistent SQLite database with full-text search. Corrections compound into rules. Rules load automatically on session start. After 50 sessions, Claude barely needs correcting.
+Pro Workflow puts a single SQLite store underneath every session.
+
+- **Self-correction memory** &mdash; every correction becomes a rule, FTS5-searchable, auto-loaded on session start.
+- **Knowledge plane** &mdash; persistent research wikis on disk + FTS5 shadow index, queryable from any session, optionally grown by an auto-research loop.
+- **Quality gates** &mdash; LLM-powered hooks, deterministic git/secret guards, compaction-aware state, cost tracking.
+
+After 50 sessions you barely correct anything. After a week of auto-research, your wiki on a topic is denser than the curated lists you started from.
 
 <p align="center">
   <img src="assets/self-correction-demo.svg" alt="Self-Correction Loop" width="700"/>
@@ -38,15 +45,16 @@ Pro Workflow captures every correction in a persistent SQLite database with full
 Session 1:  You → "Don't mock the database in tests"
             Claude → Proposes rule → You approve → Saved to SQLite
 
-Session 2:  SessionStart hook loads all learnings
-            Claude → Writes integration tests (no mocks)
-            You → Zero corrections needed
+Session 2:  SessionStart loads all learnings + lists your wikis
+            UserPromptSubmit auto-injects top wiki hits when relevant
+            Claude writes integration tests, cites the right wiki page
 
-Session 50: Claude knows your conventions, style, and preferences
-            Correction rate: near zero
+Session 50: Correction rate near zero. Wiki has 200 cited claims.
 ```
 
-## Install (30 seconds)
+---
+
+## Install
 
 ```bash
 /plugin marketplace add rohitg00/pro-workflow
@@ -67,7 +75,7 @@ npx skillkit install pro-workflow
 git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
 cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
 
-# Build with SQLite support
+# Build SQLite-backed components
 cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 ```
 
@@ -75,70 +83,60 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 
 ---
 
-## Wiki Knowledge Base — 60-second tour
-
-Auto-grow a persistent FTS5-indexed research wiki next to your code:
+## 60-second tour
 
 ```bash
-# Scaffold
+# 1. Self-correction (existing)
+/learn-rule          # capture a correction
+/wrap-up             # end session, persist learnings, audit changes
+/insights            # heatmaps, trends, productivity
+
+# 2. Knowledge plane (v3.3, new)
 /wiki init agent-memory --title "Agent Memory" --flavor research
-
-# Add a page (any .md you wrote — file gets FTS-indexed)
 /wiki page agent-memory wiki/concepts/episodic-memory.md --type concept
-
-# Ask the wiki anything
 /wiki ask "what is episodic memory" --wiki agent-memory
 
-# Auto-grow it: queue a seed, run the loop, watch it write pages + enqueue follow-ups
+# 3. Auto-research (budget-capped, opt-in)
 /wiki seed agent-memory "memory consolidation in agents"
 /wiki research agent-memory --max-pages 5 --budget-usd 0.50
 
-# Hybrid retrieval (BM25 + vector RRF) — needs OPENAI_API_KEY or VOYAGE_API_KEY
-/wiki embed agent-memory
+# 4. Hybrid retrieval (BM25 + vector RRF, optional)
+/wiki embed agent-memory                       # OPENAI_API_KEY or VOYAGE_API_KEY
 /wiki hybrid "consolidation patterns" --wiki agent-memory
 
-# Multi-LLM deliberation, transcript persisted as a wiki page
+# 5. Multi-LLM deliberation (transcript persists as a wiki page)
 /wiki council "should we adopt episodic memory?" --wiki agent-memory
+
+# Kill switch for any auto loop
+touch ~/.pro-workflow/STOP
 ```
 
-Every wiki hit auto-loads on `UserPromptSubmit` when prompts mention indexed topics. Kill-switch: `touch ~/.pro-workflow/STOP`.
+`UserPromptSubmit` auto-loads top-3 wiki hits when prompts mention indexed topics. `SessionStart` lists registered wikis and recent learnings.
 
 ---
 
-## What's New in v3.3
+## What's new in v3.3
 
-Persistent knowledge plane on top of the self-correction memory.
+Persistent knowledge plane on top of self-correction memory.
 
-- **Wiki Builder** &mdash; Persistent research wikis on disk + SQLite FTS5 shadow index. 9 flavors: research, paper, domain, product, person, organization, project, codebase, incident. `/wiki init`, `/wiki page`, `/wiki reindex`.
-- **Wiki Query** &mdash; BM25 retrieval across wiki pages. `/wiki ask "<query>"` returns top-K with citations. `related` and `show` subcommands. Auto-loads top-3 hits on UserPromptSubmit when prompt mentions indexed topics.
-- **Wiki-scoped learnings** &mdash; `[LEARN] ... Wiki: <slug>` binds a rule to one wiki, no cross-project pollution.
-- **Auto-research loop** &mdash; Budget-capped BFS driver. Pluggable source fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, depth caps. `/wiki seed`, `/wiki research`, `/wiki seeds`, `/wiki cancel`, `/wiki status`.
-- **Hybrid retrieval (optional)** &mdash; sqlite-vec compatible embeddings via OpenAI or Voyage. RRF fusion of BM25 + vector. `/wiki embed`, `/wiki hybrid`. Degrades cleanly to BM25-only when no embedding key set.
-- **LLM Council** &mdash; Provider-agnostic 3-phase deliberation (Anthropic/OpenAI/OpenRouter/Fireworks/custom OpenAI-compat). Persists transcript as a wiki page when `--wiki` is passed. `/wiki council`.
-- **Survey Generator** &mdash; Provider-agnostic literature survey artifact. Output target = wiki markdown page (not standalone HTML). Bibliography rows append to `sources.md` deduped. `/wiki survey`.
-- **Reactive triggers** &mdash; Edits inside a wiki tree auto-enqueue verify-seeds. Cron-tick script (`scripts/research-tick.js`) runs one iteration of the oldest opted-in wiki with pending seeds.
-- **Schema additions** &mdash; `wikis`, `wiki_pages` (+ FTS5), `wiki_sources`, `wiki_claims`, `wiki_seeds`, `wiki_embeddings`, `learnings_wiki`.
+| Skill | Purpose |
+|-------|---------|
+| **wiki-builder** | Persistent FTS5-indexed research wikis. 9 flavors: research, paper, domain, product, person, organization, project, codebase, incident. Path-traversal-guarded. |
+| **wiki-query** | BM25 retrieval with snippets. `ask`, `related`, `show`. Auto-injects on `UserPromptSubmit`. |
+| **wiki-research-loop** | Budget-capped BFS. Pluggable source fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, atomic seed claim, try/finally state guards. |
+| **llm-council** | Provider-agnostic 3-phase deliberation (Anthropic/OpenAI/OpenRouter/Fireworks/custom). `Promise.allSettled` so one provider failure doesn't abort the run. Transcript persists as a wiki page. |
+| **survey-generator** | Provider-agnostic literature survey. Output target = wiki markdown page. Bibliography validation (uniqueness + section-paper refs), citation IDs aligned with `sources.md` rows. |
 
-## What's New in v3.2
-
-- **LLM Gates** &mdash; First plugin with `type: "prompt"` hooks for AI-powered commit validation and secret detection
-- **Permission Tuner** &mdash; Analyzes denial patterns, generates optimized allow/deny rules
-- **Compact Guard** &mdash; Protects context through compaction (5-file restore limit, 50K budget)
-- **Cost Tracker** &mdash; Session cost awareness with budget benchmarks
-- **MCP Audit** &mdash; Analyzes MCP server token overhead per request
-- **Auto Setup** &mdash; Detects project type, configures quality gates automatically
-- **File Watcher** &mdash; Reactive workflows with `CLAUDE_ENV_FILE` injection
-- **Agent Optimization** &mdash; `omitClaudeMd` on read-only agents saves tokens
-- **6 New Hook Events** &mdash; PermissionDenied, Setup, WorktreeCreate, WorktreeRemove, CwdChanged, TaskCreated
+Plus: `/wiki` command, `learn-rule` `Wiki: <slug>` scoping, schema additions (`wikis`, `wiki_pages` + FTS5, `wiki_sources`, `wiki_claims`, `wiki_seeds`, `wiki_embeddings`, `learnings_wiki`), reactive file-watcher seed enqueue, cron-tick driver, `/doctor` extended with KB + provider sections.
 
 ---
 
-## How Pro Workflow Compares
+## Comparison
 
 | Feature | Pro Workflow | [Superpowers](https://github.com/obra/superpowers) | [ECC](https://github.com/affaan-m/everything-claude-code) | [gstack](https://github.com/garrytan/gstack) | [GSD](https://github.com/gsd-build/get-shit-done) |
 |---------|:-----------:|:-----------:|:---:|:------:|:---:|
 | Self-correcting memory (SQLite + FTS5) | **Yes** | No | No | No | No |
-| Persistent research wikis (FTS5-indexed) | **Yes** | No | No | No | No |
+| Persistent research wikis (FTS5) | **Yes** | No | No | No | No |
 | Auto-research loop (budget-capped BFS) | **Yes** | No | No | No | No |
 | Hybrid retrieval (BM25 + vector + RRF) | **Yes** | No | No | No | No |
 | Multi-provider LLM council | **Yes** | No | No | No | No |
@@ -151,155 +149,146 @@ Persistent knowledge plane on top of the self-correction memory.
 | Skills | 33 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
 | Commands | 22 | 3 | 60+ | 5+ | 57 |
-| Hook Events | 24 | 8 | 18 | 0 | 0 |
+| Hook events | 24 | 8 | 18 | 0 | 0 |
 
 ---
 
-## Try It
+## What's inside
 
-```bash
-/develop add user authentication     # Multi-phase: Research > Plan > Implement > Review
-/wrap-up                             # End session, capture learnings, audit changes
-/doctor                              # Check your setup health
-/learn-rule                          # Extract a correction into persistent memory
-/commit                              # Quality gates > staged review > conventional commit
-/permission-tuner                    # Analyze denials, generate allow/deny rules
-/cost-tracker                        # Check session costs and token spend
-/mcp-audit                           # Audit MCP servers for overhead
-```
+### 33 skills
 
----
+**Knowledge plane (new in v3.3)**
 
-## What's Inside
+| Skill | What it does |
+|-------|--------------|
+| **wiki-builder** | Scaffold + register FTS5-indexed research wikis |
+| **wiki-query** | BM25 retrieval, snippets, related, show |
+| **wiki-research-loop** | Budget-capped BFS over web/arXiv/GitHub fetchers |
+| **llm-council** | Provider-agnostic 3-phase multi-LLM deliberation |
+| **survey-generator** | Literature survey artifact, output to a wiki page |
 
-### 24 Skills
+**Quality gates and observability**
 
-| Skill | What It Does |
-|:------|:------------|
-| **Self-Correction Loop** | Claude learns from your corrections automatically |
-| **Context Engineering** | Write/Select/Compress/Isolate framework for token management |
-| **Agent Teams** | Multi-instance coordination with shared task list and messaging |
-| **Batch Orchestration** | `/batch` pattern for parallel worktree agents |
-| **Parallel Worktrees** | Zero dead time with native `claude -w` worktrees |
-| **Smart Commit** | Quality gates, staged review, and conventional commits |
-| **Wrap-Up Ritual** | End sessions with intention, capture learnings |
-| **Context Optimizer** | Token management, context budget, MCP audit |
-| **Deslop** | Remove AI-generated code slop and clean up style |
-| **Orchestrate** | Wire Commands, Agents, and Skills for multi-phase development |
-| **Session Handoff** | Generate handoff documents for session continuity |
-| **Replay Learnings** | Surface past learnings relevant to the current task |
-| **Insights** | Session analytics, correction trends, productivity metrics |
-| **Safe Mode** | Guardrails for destructive operations |
-| **Sprint Status** | Track progress across sessions |
-| **Thoroughness Scoring** | Rate completeness of implementations |
-| **Learn Rule** | Capture corrections as persistent learning rules |
-| **LLM Gate** | AI-powered quality gates using `type: "prompt"` hooks |
-| **Permission Tuner** | Analyze denial patterns, generate allow/deny rules |
-| **Compact Guard** | State preservation through compaction cycles |
-| **Cost Tracker** | Session cost awareness with budget benchmarks |
-| **MCP Audit** | Audit MCP servers for token overhead and redundancy |
-| **Auto Setup** | Detect project type, configure quality gates automatically |
-| **File Watcher** | Reactive workflows on config and dependency changes |
+| Skill | What it does |
+|-------|--------------|
+| **smart-commit** | Quality gates, staged review, conventional commits |
+| **llm-gate** | AI-powered commit and secret hooks (`type: "prompt"`) |
+| **permission-tuner** | Analyze denials, generate allow/deny rules |
+| **compact-guard** | State preservation through compaction cycles |
+| **cost-tracker** | Session cost awareness with budget benchmarks |
+| **mcp-audit** | MCP server token-overhead analysis |
+| **token-efficiency** | Anti-sycophancy + tool-call budgets + read-before-write |
+| **safe-mode** | Guardrails for destructive operations |
+| **insights** | Session analytics, correction trends, productivity |
+| **thoroughness-scoring** | Rate completeness of implementations |
+| **deslop** | Remove AI-generated code slop from a diff |
 
-### 8 Agents
+**Memory and learning**
+
+| Skill | What it does |
+|-------|--------------|
+| **pro-workflow** | Core 8 patterns |
+| **learn-rule** | Capture corrections (now wiki-scopeable) |
+| **replay-learnings** | Surface past learnings for the current task |
+| **wrap-up** | End-of-session ritual |
+| **session-handoff** | Resume documents for the next session |
+
+**Orchestration and engineering loop**
+
+| Skill | What it does |
+|-------|--------------|
+| **orchestrate** | Multi-phase Research → Plan → Implement → Review |
+| **agent-teams** | Multi-instance coordination, shared task list |
+| **batch-orchestration** | Parallel worktree agents for large changes |
+| **parallel-worktrees** | Git worktree setup for zero dead time |
+| **context-engineering** | Write/Select/Compress/Isolate framework |
+| **context-optimizer** | Token management, context budget, MCP audit |
+| **auto-setup** | Auto-detect project type, configure quality gates |
+| **file-watcher** | Reactive workflows on config and dependency changes |
+| **bug-capture** | Capture defects as durable issues without leaking paths |
+| **module-map** | One-screen map of an unfamiliar codebase area |
+| **plan-interrogate** | Stress-test a plan by walking its decision tree |
+| **sprint-status** | Track multi-session progress |
+
+### 8 agents
 
 | Agent | Purpose |
 |-------|---------|
 | **planner** | Break down complex tasks (read-only, approval-gated) |
 | **reviewer** | Code review and security audit (checklist-based) |
 | **scout** | Confidence-gated exploration (background, worktree-isolated) |
-| **orchestrator** | Multi-phase feature development (Research > Plan > Implement > Review) |
-| **debugger** | Systematic bug investigation (hypothesis-driven) |
-| **context-engineer** | Context window analysis and optimization (lightweight, read-only) |
-| **permission-analyst** | Analyze permission denial patterns, recommend rule optimizations |
-| **cost-analyst** | Analyze token usage patterns, identify expensive operations |
+| **orchestrator** | Multi-phase feature development |
+| **debugger** | Systematic, hypothesis-driven bug investigation |
+| **context-engineer** | Context-window analysis (lightweight, read-only) |
+| **permission-analyst** | Denial-pattern analysis, rule-optimization recommendations |
+| **cost-analyst** | Token-usage analysis, identify expensive operations |
 
-### 21 Commands
+### 22 commands
 
-| Command | What It Does |
-|---------|-------------|
+| Command | What it does |
+|---------|--------------|
+| `/wiki` | Knowledge-plane entry: init, page, ask, hybrid, seed, research, council, survey, embed, status |
 | `/develop` | Multi-phase feature build with validation gates |
 | `/commit` | Smart commit with quality gates |
 | `/wrap-up` | End-of-session checklist and learning capture |
-| `/learn-rule` | Extract correction to persistent memory |
-| `/doctor` | Health check for setup and configuration |
+| `/learn-rule` / `/learn` | Extract correction or learn Claude Code best practices |
+| `/doctor` | Setup health check (now includes wiki KB + council providers) |
 | `/insights` | Session analytics and correction heatmap |
-| `/replay` | Surface past learnings for current task |
-| `/handoff` | Generate session handoff document |
-| `/search` | Search learnings by keyword |
-| `/list` | List all stored learnings |
-| `/deslop` | Remove AI-generated code slop from diff |
-| `/context-optimizer` | Audit and optimize context window usage |
+| `/replay` | Surface past learnings for the current task |
+| `/handoff` | Session handoff document |
+| `/search` / `/list` | Search and list stored learnings |
+| `/deslop` | Remove AI-generated code slop |
+| `/context-optimizer` | Audit and optimize context-window usage |
 | `/parallel` | Set up git worktrees for parallel sessions |
-| `/learn` | Interactive Claude Code best practices guide |
-| `/safe-mode` | Toggle destructive operation guardrails |
+| `/safe-mode` | Toggle destructive-operation guardrails |
 | `/sprint-status` | Track multi-session progress |
-| `/auto-setup` | Auto-detect project type and configure quality gates |
+| `/auto-setup` | Auto-detect project type, configure quality gates |
 | `/compact-guard` | Protected compaction with state preservation |
 | `/cost-tracker` | Track session costs and optimization tips |
 | `/mcp-audit` | Audit MCP servers for token overhead |
-| `/permission-tuner` | Analyze denial patterns, generate allow/deny rules |
+| `/permission-tuner` | Generate allow/deny rules from denial patterns |
 
-### 29 Hook Scripts (24 Events)
+### 37 hook scripts across 24 events
 
-| Hook Event | Scripts | What |
-|------------|:-------:|------|
-| SessionStart | 1 | Load learnings from database |
-| SessionEnd | 1 | Save session stats to database |
-| UserPromptSubmit | 2 | Correction tracking, drift detection |
-| PreToolUse (Edit/Write) | 1 | Track edit count, quality gate reminders |
-| PreToolUse (Bash) | 3 | Pre-commit check, LLM commit validation, pre-push check |
-| PreToolUse (Write) | 1 | LLM-powered secret detection |
-| PostToolUse (Edit) | 1 | Check for console.log, TODOs, secrets |
-| PostToolUse (Bash) | 1 | Suggest learning from test failures |
-| Stop | 2 | Context-aware reminders, auto-capture [LEARN] blocks |
-| PreCompact | 1 | Save context state before compaction |
-| PostCompact | 1 | Re-inject critical context summary |
-| SubagentStart | 1 | Log subagent lifecycle for observability |
-| SubagentStop | 1 | Log subagent completion and capture results |
-| TaskCompleted | 1 | Quality gate on completion |
-| TaskCreated | 1 | Validate task descriptions for tracking |
-| PermissionRequest | 1 | Flag dangerous operations |
-| PermissionDenied | 1 | Track denial patterns for optimization |
-| PostToolUseFailure | 1 | Track failures, suggest learnings |
-| TeammateIdle | 1 | Detect blockers in agent teams |
-| StopFailure | 1 | Log errors with retry advice |
-| FileChanged | 1 | Watch package.json, .env, CI configs |
-| ConfigChange | 1 | Detect mid-session settings changes |
-| Notification | 1 | Log permission requests |
-| Setup | 1 | Auto-detect project type on init |
-| WorktreeCreate | 1 | Log worktree creation for parallel tracking |
-| WorktreeRemove | 1 | Cleanup worktree tracking on removal |
-| CwdChanged | 1 | Detect project type on directory change |
+`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, `Stop`, `PreCompact`, `PostCompact`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `PermissionRequest`, `PermissionDenied`, `PostToolUseFailure`, `TeammateIdle`, `StopFailure`, `FileChanged`, `ConfigChange`, `Notification`, `Setup`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged`.
 
-### 10 Reference Guides
+Selected high-leverage hooks:
 
-| Guide | What's Covered |
-|-------|---------------|
-| [`settings-guide.md`](docs/settings-guide.md) | All settings keys, permission modes, hierarchy |
-| [`cli-cheatsheet.md`](docs/cli-cheatsheet.md) | Every CLI flag, keyboard shortcut, slash command |
-| [`orchestration-patterns.md`](docs/orchestration-patterns.md) | Command > Agent > Skill architecture, agent teams |
+| Hook | Script | Effect |
+|------|--------|--------|
+| `SessionStart` | `session-start.js` | Loads learnings; lists registered wikis |
+| `UserPromptSubmit` | `prompt-submit.js` | Auto-injects top-3 wiki hits when prompts match the index |
+| `Stop` | `learn-capture.js` | Auto-captures `[LEARN]` blocks (now parses `Wiki: <slug>`) |
+| `FileChanged` | `file-changed.js` | Edits inside a wiki tree enqueue verify-seeds |
+| `PreToolUse(Bash)` | `commit-validate.js`, `git-blast-radius.js`, `pre-push-check.js` | Conventional commit + destructive op + push guardrails |
+| `PreToolUse(Write)` | `secret-scan.js` | LLM-powered secret detection |
+| `PreCompact` / `PostCompact` | `pre-compact.js`, `post-compact.js` | Save and re-inject critical context summary |
+
+### 9 reference guides
+
+| Guide | What's covered |
+|-------|----------------|
+| [`settings-guide.md`](docs/settings-guide.md) | Settings keys, permission modes, hierarchy |
+| [`cli-cheatsheet.md`](docs/cli-cheatsheet.md) | CLI flags, keyboard shortcuts, slash commands |
+| [`orchestration-patterns.md`](docs/orchestration-patterns.md) | Command → Agent → Skill architecture, agent teams |
 | [`context-engineering.md`](docs/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction |
-| [`agent-teams.md`](docs/agent-teams.md) | Setup, task decomposition, teams vs sub-agents |
+| [`agent-teams.md`](docs/agent-teams.md) | Setup, decomposition, teams vs sub-agents |
 | [`context-loading.md`](docs/context-loading.md) | CLAUDE.md loading, agent memory, skills discovery |
 | [`cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Claude Code + Cursor together, SkillKit translation |
-| [`new-features.md`](docs/new-features.md) | Voice, agent teams, checkpointing, remote control |
+| [`decision-framework.md`](docs/decision-framework.md) | When to use which pattern |
 | [`daily-habits.md`](docs/daily-habits.md) | Session habits, debugging tips, anti-patterns |
-| [`core-rules.md`](rules/core-rules.md) | Quality gates, atomic commits, context discipline |
 
 ---
 
-## How It Works
+## How it works
 
-Pro Workflow optimizes for the 80/20 ratio. Every correction becomes a rule. Every rule prevents future mistakes. The loop compounds.
-
-### The `/develop` Flow
+### `/develop` flow
 
 <p align="center">
   <img src="assets/workflow-flow.svg" alt="Development Flow" width="900"/>
 </p>
 
-Multi-phase development with validation gates: Research before planning. Plan before implementing. Review before committing.
+Research before planning. Plan before implementing. Review before committing. Validation gates between every phase.
 
 ### Architecture
 
@@ -307,39 +296,48 @@ Multi-phase development with validation gates: Research before planning. Plan be
   <img src="assets/architecture.svg" alt="Architecture Diagram" width="900"/>
 </p>
 
-### Database
+Command → Agent → Skill, layered over a single SQLite store. The knowledge plane (v3.3) plugs into the same store as the learning rules.
 
-Learnings stored in SQLite with FTS5 full-text search:
+### Storage
 
-```bash
-/search testing           # Find all testing-related learnings
-/search "file paths"      # Exact phrase search
-/list                     # Show all stored learnings
 ```
+~/.pro-workflow/
+├── data.db                 # learnings, sessions, wikis (registry), wiki_pages (+FTS5),
+│                           # wiki_sources, wiki_claims, wiki_seeds, wiki_embeddings,
+│                           # learnings_wiki
+├── wikis/<slug>/           # global-scope wikis (default location)
+├── council/<session-id>/   # llm-council transcripts
+├── fetchers/               # user-supplied custom source fetchers
+├── tick.log                # cron-driven research-tick log
+└── STOP                    # touch this file to halt every research loop
+```
+
+Project-scope wikis live at `<project>/.claude/wikis/<slug>/` and are committable.
 
 ---
 
-## Core Patterns
+## Patterns
 
-| Pattern | What It Does |
+| Pattern | What it does |
 |---------|--------------|
-| **Self-Correction Loop** | Claude learns from your corrections automatically |
-| **Parallel Worktrees** | Zero dead time with native `claude -w` worktrees |
+| **Self-Correction Loop** | Claude learns from corrections automatically |
+| **Knowledge Plane** | Wiki + auto-research loop on the same SQLite store |
+| **Multi-Phase Dev** | Research → Plan → Implement → Review with gates |
+| **Parallel Worktrees** | Zero dead time with native `claude -w` |
 | **Wrap-Up Ritual** | End sessions with intention, capture learnings |
 | **Split Memory** | Modular CLAUDE.md for complex projects |
 | **80/20 Review** | Batch reviews at checkpoints |
 | **Context Engineering** | Write/Select/Compress/Isolate for token management |
 | **Agent Teams** | Multi-instance coordination with shared task list |
 | **Batch Orchestration** | Parallel worktree agents for large-scale changes |
-| **Multi-Phase Dev** | Research > Plan > Implement > Review with gates |
-| **Learning Log** | Auto-document insights |
-| **Orchestration** | Command > Agent > Skill wiring for complex features |
 | **LLM Gates** | AI-powered verification before destructive operations |
-| **Permission Tuning** | Reduce prompt fatigue with denial pattern analysis |
+| **Permission Tuning** | Denial-pattern analysis to reduce prompt fatigue |
+| **Token Efficiency** | Anti-sycophancy + tool-call budgets + read-before-write |
+| **Multi-LLM Council** | Provider-agnostic 3-phase deliberation for high-stakes calls |
 
 ---
 
-## Cross-Agent Support
+## Cross-agent support
 
 Works across 32+ AI coding agents via [SkillKit](https://agenstskills.com):
 
@@ -350,7 +348,7 @@ npx skillkit translate pro-workflow --agent codex
 npx skillkit translate pro-workflow --agent gemini-cli
 ```
 
-Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro, Amp, Goose, Roo, and [27 more](https://agenstskills.com).
+Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro, Amp, Goose, Roo, and 27 more.
 
 ---
 
@@ -358,16 +356,27 @@ Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro,
 
 ### Settings
 
-See [`settings.example.json`](settings.example.json) for production-ready configuration including permission rules, output style, auto-compaction, and custom spinner verbs.
+See [`settings.example.json`](settings.example.json) for production-ready configuration: permission rules, output style, auto-compaction, custom spinner verbs.
 
-### MCP Config
+### MCP
 
-See [`mcp-config.example.json`](mcp-config.example.json) for curated server recommendations:
-- **context7** &mdash; Live documentation lookup
-- **playwright** &mdash; Browser automation (most token-efficient)
+See [`mcp-config.example.json`](mcp-config.example.json):
+
+- **context7** &mdash; live documentation lookup
+- **playwright** &mdash; browser automation (most token-efficient)
 - **GitHub** &mdash; PRs, issues, code search
 
-Rule: Start with 3 MCPs. Add only for concrete needs.
+Rule: start with three MCPs, add only for concrete needs.
+
+### Knowledge plane env
+
+| Env | When |
+|-----|------|
+| `WIKI_ROOT` | Override default `~/.pro-workflow/wikis` |
+| `OPENAI_API_KEY` / `VOYAGE_API_KEY` | Enable hybrid retrieval (embeddings) |
+| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `OPENROUTER_API_KEY` / `FIREWORKS_API_KEY` / `LLM_COUNCIL_BASE_URL`+`LLM_COUNCIL_API_KEY` | Pick a council provider (first match wins) |
+| `WIKI_LOOP_BUDGET_USD` / `WIKI_LOOP_MAX_PAGES` / `WIKI_LOOP_MAX_DEPTH` | Per-run loop overrides |
+| `GH_TOKEN` / `GITHUB_TOKEN` | Lifts GitHub-fetcher rate limit |
 
 ---
 
@@ -375,22 +384,21 @@ Rule: Start with 3 MCPs. Add only for concrete needs.
 
 ```text
 pro-workflow/
-├── skills/           # 24 skills
+├── skills/           # 33 skills
 ├── agents/           # 8 agents
-├── commands/         # 21 slash commands
-├── hooks/            # 24 events, 29 scripts
-├── docs/             # 10 reference guides
-├── rules/            # 7 rules (Cursor + universal)
-├── contexts/         # 3 context modes
-├── templates/        # Split CLAUDE.md + AGENTS.md
-├── scripts/          # 29 hook scripts
-├── src/              # TypeScript source (SQLite)
+├── commands/         # 22 slash commands
+├── scripts/          # 37 hook scripts (24 events)
+├── docs/             # 9 reference guides + index.html + infographic.html
+├── rules/            # rule packs (Cursor + universal)
+├── contexts/         # context modes
+├── templates/        # split CLAUDE.md + AGENTS.md
+├── src/              # TypeScript source (SQLite + embeddings)
 └── config.json
 ```
 
 ---
 
-## Tips from the Community
+## Tips from the community
 
 > "80% of my code is written by AI, 20% is spent reviewing and correcting it." &mdash; [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876)
 
@@ -398,7 +406,7 @@ pro-workflow/
 
 > "If you do something more than once a day, turn it into a skill or command." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742748984742078)
 
-> "Write detailed specs and reduce ambiguity before handing work off &mdash; the more specific you are, the better the output." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742752566632544)
+> "Write detailed specs and reduce ambiguity before handing work off." &mdash; [Boris Cherny](https://x.com/bcherny/status/2017742752566632544)
 
 > "Skill description field is a trigger, not a summary &mdash; write it for the model." &mdash; [Thariq Shihipar](https://x.com/trq212/status/2033949937936085378)
 
@@ -406,26 +414,27 @@ pro-workflow/
 
 ## Philosophy
 
-1. **Compound improvements** &mdash; Small corrections lead to big gains over time
-2. **Trust but verify** &mdash; Let AI work, review at checkpoints
-3. **Zero dead time** &mdash; Parallel sessions keep momentum
-4. **Memory is precious** &mdash; Both yours and Claude's
-5. **Orchestrate, don't micromanage** &mdash; Wire patterns together, let agents execute
+1. **Compound improvements** &mdash; small corrections lead to big gains.
+2. **Trust but verify** &mdash; let AI work, review at checkpoints.
+3. **Zero dead time** &mdash; parallel sessions keep momentum.
+4. **Memory is precious** &mdash; both yours and Claude's.
+5. **Persistent over ephemeral** &mdash; if you'll need it next session, write it down on disk.
+6. **Orchestrate, don't micromanage** &mdash; wire patterns together, let agents execute.
 
 ---
 
-## Related Projects
+## Related projects
 
 | Project | Description |
 |---------|-------------|
-| [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 140+ skills, 36 agents &mdash; the comprehensive collection |
-| [claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Curated tips, comparisons, and community best practices |
+| [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 140+ skills, 36 agents — the comprehensive collection |
+| [claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Curated tips, comparisons, community best practices |
 | [SkillKit](https://github.com/rohitg00/skillkit) | Universal CLI for managing skills across 32+ agents |
-| [awesome-claude-code-toolkit](https://github.com/rohitg00/awesome-claude-code-toolkit) | 850+ files, 135 agents, 176 plugins &mdash; curated directory |
+| [awesome-claude-code-toolkit](https://github.com/rohitg00/awesome-claude-code-toolkit) | 850+ files, 135 agents, 176 plugins — curated directory |
 
 ---
 
-## Star History
+## Star history
 
 <a href="https://star-history.com/#rohitg00/pro-workflow&Date">
  <picture>

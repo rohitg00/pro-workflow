@@ -757,7 +757,7 @@
         <div class="comp-item"><div class="comp-num">22</div><div class="comp-label">Commands</div></div>
         <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
         <div class="comp-item"><div class="comp-num">7</div><div class="comp-label">Rules</div></div>
-        <div class="comp-item"><div class="comp-num">29</div><div class="comp-label">Scripts</div></div>
+        <div class="comp-item"><div class="comp-num">37</div><div class="comp-label">Scripts</div></div>
       </div>
       <div style="margin-top:14px;">
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
@@ -773,6 +773,61 @@
           <span class="tag">Full-Text Search</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 1.5: v3.3 Knowledge Plane -->
+  <div class="grid">
+
+    <!-- 03b WIKI BUILDER -->
+    <div style="grid-column: span 2;">
+      <div class="section-num">v3.3 &middot; Knowledge Plane</div>
+      <div class="section-title">Persistent FTS5 Wiki + Auto-Research Loop</div>
+      <table>
+        <tr><th style="width:34%">Skill</th><th>What it does</th></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-builder</strong></td><td>Scaffold + register FTS5-indexed research wikis. 9 flavors: research, paper, domain, product, person, organization, project, codebase, incident.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-query</strong></td><td>BM25 retrieval with snippets. <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">/wiki ask</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">related</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">show</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">hybrid</code> (BM25 + vector RRF).</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-research-loop</strong></td><td>Budget-capped BFS over pluggable fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, atomic seed claim.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>llm-council</strong></td><td>Provider-agnostic 3-phase deliberation. Anthropic/OpenAI/OpenRouter/Fireworks/custom. <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">Promise.allSettled</code> so one bad provider does not abort the run.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>survey-generator</strong></td><td>Provider-agnostic literature survey. Output target = wiki markdown page. Bibliography validation + citation alignment.</td></tr>
+      </table>
+      <div style="font-size:11px; color:var(--anthro-muted); margin-top:8px;">All five plug into the same SQLite store as the learning rules. Same FTS5 index, same auto-load on <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">UserPromptSubmit</code>.</div>
+    </div>
+
+    <!-- 03c LOOP DIAGRAM -->
+    <div>
+      <div class="section-num">Auto-research loop</div>
+      <div class="section-title">Budget-Capped BFS</div>
+      <div class="loop-container" style="flex-direction:column; align-items:stretch; gap:6px;">
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">1</div>
+          <div class="loop-step-text">Claim seed</div>
+          <div class="loop-step-desc">UPDATE...RETURNING (atomic)</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">2</div>
+          <div class="loop-step-text">Fetch sources</div>
+          <div class="loop-step-desc">web &middot; arXiv &middot; GitHub</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">3</div>
+          <div class="loop-step-text">Compile page</div>
+          <div class="loop-step-desc">Cite, score novelty</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">4</div>
+          <div class="loop-step-text">FTS-index</div>
+          <div class="loop-step-desc">wiki_pages_fts upsert</div>
+        </div>
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">5</div>
+          <div class="loop-step-text">Enqueue follow-ups</div>
+          <div class="loop-step-desc">depth + 1, MMR-eligible</div>
+        </div>
+      </div>
+      <div style="font-size:10px; color:var(--anthro-muted); margin-top:10px;">Halt on: budget cap, depth cap, 3 consecutive non-novel pages, <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">~/.pro-workflow/STOP</code>.</div>
     </div>
   </div>
 
@@ -1044,14 +1099,14 @@
         <div class="card card-coral">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Permission Analyst</div>
-            <span class="tag tag-coral">New in v3.2</span>
+            <span class="tag">v3.2</span>
           </div>
           <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Analyze denial patterns and generate optimized allow/deny rules by risk tier.</div>
         </div>
         <div class="card card-coral">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Cost Analyst</div>
-            <span class="tag tag-coral">New in v3.2</span>
+            <span class="tag">v3.2</span>
           </div>
           <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Token usage analysis, cache optimization, and model selection recommendations.</div>
         </div>
@@ -1269,7 +1324,7 @@
   <!-- FOOTER -->
   <div class="footer">
     <div class="footer-left">
-      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; Mar 2026<br>
+      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; May 2026<br>
       Pro Workflow v2.0 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
     </div>
     <div class="footer-right">Practice Makes Claude Perfect</div>
