@@ -23,6 +23,7 @@ Build, query, and maintain long-lived knowledge bases. Each wiki = markdown fold
 | `/wiki hybrid "<query>" [--wiki <slug>]` | Hybrid retrieval: BM25 + vector + RRF |
 | `/wiki council "<query>" --wiki <slug>` | Run llm-council; persist transcript as a wiki page |
 | `/wiki survey --bundle <path> --wiki <slug>` | Generate literature survey from a research_bundle.json |
+| `/wiki view <slug> [--out path] [--theme dark\|light]` | Render a single-file HTML viewer for the wiki (pages + sources + seeds + link graph + search) |
 
 ## Routes to skills
 
@@ -31,6 +32,7 @@ Build, query, and maintain long-lived knowledge bases. Each wiki = markdown fold
 - `seed / research / seeds / cancel / status` → `wiki-research-loop`
 - `council` → `llm-council`
 - `survey` → `survey-generator`
+- `view` → `wiki-viewer`
 - `embed` → `scripts/embed-wiki.js`
 
 ## Storage

@@ -15,7 +15,7 @@
 <p align="center">
   Self-correcting memory + persistent FTS5-indexed wikis + auto-research loop, all on one SQLite store.<br/>
   Correct Claude once &mdash; it never repeats the mistake. Build a wiki on a topic &mdash; it grows itself overnight.<br/>
-  <b>33 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
+  <b>34 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
 </p>
 
@@ -107,6 +107,10 @@ cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
 # 5. Multi-LLM deliberation (transcript persists as a wiki page)
 /wiki council "should we adopt episodic memory?" --wiki agent-memory
 
+# 6. Browse the wiki visually (single-file HTML, S3-shareable)
+/wiki view agent-memory
+open ~/.pro-workflow/wikis/agent-memory/derived/viewer.html
+
 # Kill switch for any auto loop
 touch ~/.pro-workflow/STOP
 ```
@@ -126,8 +130,9 @@ Persistent knowledge plane on top of self-correction memory.
 | **wiki-research-loop** | Budget-capped BFS. Pluggable source fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, atomic seed claim, try/finally state guards. |
 | **llm-council** | Provider-agnostic 3-phase deliberation (Anthropic/OpenAI/OpenRouter/Fireworks/custom). `Promise.allSettled` so one provider failure doesn't abort the run. Transcript persists as a wiki page. |
 | **survey-generator** | Provider-agnostic literature survey. Output target = wiki markdown page. Bibliography validation (uniqueness + section-paper refs), citation IDs aligned with `sources.md` rows. |
+| **wiki-viewer** | Single-file HTML viewer for any wiki: pages + sources + seeds + link graph + in-browser search + "copy as seed" CTAs. S3-shareable. Applied lessons from [Thariq Shihipar's HTML-as-output thesis](https://x.com/trq212/status/2034017024445244382). |
 
-Plus: `/wiki` command, `learn-rule` `Wiki: <slug>` scoping, schema additions (`wikis`, `wiki_pages` + FTS5, `wiki_sources`, `wiki_claims`, `wiki_seeds`, `wiki_embeddings`, `learnings_wiki`), reactive file-watcher seed enqueue, cron-tick driver, `/doctor` extended with KB + provider sections.
+Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, schema additions (`wikis`, `wiki_pages` + FTS5, `wiki_sources`, `wiki_claims`, `wiki_seeds`, `wiki_embeddings`, `learnings_wiki`), reactive file-watcher seed enqueue, cron-tick driver, `/doctor` extended with KB + provider sections.
 
 ---
 
@@ -146,7 +151,7 @@ Plus: `/wiki` command, `learn-rule` `Wiki: <slug>` scoping, schema additions (`w
 | Cost tracking and budget alerts | **Yes** | No | No | No | No |
 | MCP overhead auditing | **Yes** | No | No | No | No |
 | Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
-| Skills | 33 | 14 | 140+ | 18+ | 0 |
+| Skills | 34 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
 | Commands | 22 | 3 | 60+ | 5+ | 57 |
 | Hook events | 24 | 8 | 18 | 0 | 0 |
@@ -155,7 +160,7 @@ Plus: `/wiki` command, `learn-rule` `Wiki: <slug>` scoping, schema additions (`w
 
 ## What's inside
 
-### 33 skills
+### 34 skills
 
 **Knowledge plane (new in v3.3)**
 
@@ -166,6 +171,7 @@ Plus: `/wiki` command, `learn-rule` `Wiki: <slug>` scoping, schema additions (`w
 | **wiki-research-loop** | Budget-capped BFS over web/arXiv/GitHub fetchers |
 | **llm-council** | Provider-agnostic 3-phase multi-LLM deliberation |
 | **survey-generator** | Literature survey artifact, output to a wiki page |
+| **wiki-viewer** | Single-file HTML viewer (pages, sources, seeds, link graph, search) |
 
 **Quality gates and observability**
 
@@ -384,7 +390,7 @@ Rule: start with three MCPs, add only for concrete needs.
 
 ```text
 pro-workflow/
-├── skills/           # 33 skills
+├── skills/           # 34 skills
 ├── agents/           # 8 agents
 ├── commands/         # 22 slash commands
 ├── scripts/          # 37 hook scripts (24 events)
