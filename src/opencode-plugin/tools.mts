@@ -108,6 +108,72 @@ function escapeMd(text: string): string {
   return text.replace(/\|/g, "\\|").replace(/\n/g, " ");
 }
 
+export const pwLearn = tool({
+  description: "Store a new learning in the pro-workflow database",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  args: {
+    content: z.string().describe("Learning content"),
+    category: z.string().optional().describe("Learning category"),
+    tags: z.array(z.string()).optional().describe("Tags for categorization"),
+  } as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  execute: async (rawArgs: any, _ctx: any) => {
+    const args = rawArgs as { content: string; category?: string; tags?: string[] };
+    const store = resolveStore();
+
+    const tagsPrefix = args.tags?.length ? `[${args.tags.join(", ")}] ` : "";
+
+    const learning = store.addLearning({
+      project: null,
+      category: args.category ?? "general",
+      rule: tagsPrefix + args.content,
+      mistake: null,
+      correction: null,
+    });
+
+    const tagsInfo = args.tags?.length ? `, tags: ${args.tags.join(", ")}` : "";
+    return { output: `Learning stored (id: ${learning.id}, category: ${escapeMd(learning.category)}${tagsInfo})` };
+  },
+});
+
+export const pwWikiQuery = tool({
+  description: "Query wiki pages by title or content",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  args: {
+    query: z.string().describe("Search query"),
+    wiki_name: z.string().optional().describe("Specific wiki to search"),
+  } as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  execute: async (rawArgs: any, _ctx: any) => {
+    const args = rawArgs as { query: string; wiki_name?: string };
+    const store = resolveStore();
+
+    const results = store.searchWiki(args.query, {
+      wikiSlug: args.wiki_name,
+      limit: 10,
+    });
+
+    if (results.length === 0) {
+      return { output: `No wiki pages found for query: *${escapeMd(args.query)}*` };
+    }
+
+    const lines: string[] = [];
+    lines.push("## Wiki Pages");
+    lines.push("");
+    lines.push("| # | Wiki | Title | Snippet |");
+    lines.push("|---|------|-------|---------|");
+    for (let i = 0; i < results.length; i++) {
+      const w = results[i];
+      const title = w.title.length > 48 ? w.title.slice(0, 45) + "..." : w.title;
+      const snippet = w.snippet.length > 64 ? w.snippet.slice(0, 61) + "..." : w.snippet;
+      lines.push(`| ${i + 1} | ${escapeMd(w.wiki_slug)} | ${escapeMd(title)} | ${escapeMd(snippet)} |`);
+    }
+    lines.push("");
+
+    return { output: lines.join("\n") };
+  },
+});
+
 export const pwSearch = tool({
   description: "Search pro-workflow learnings and wiki pages using full-text search (FTS5) with embedding-based fallback",
   // args typed with Zod v3; @opencode-ai/plugin ships Zod v4 types so we cast

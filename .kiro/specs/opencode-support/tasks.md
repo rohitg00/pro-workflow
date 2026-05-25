@@ -33,7 +33,7 @@
     - Observable: `pw-search("test query")` returns results from test database within 200ms
     - _Requirements: 9.1, 9.2, 9.3, 11.2_
     - _Boundary: PluginTools_
-  - 2.2 Implement pw-learn and pw-wiki-query tools
+  - [x] 2.2 Implement pw-learn and pw-wiki-query tools
     - `pw-learn`: Zod schema with content (string), category (optional), tags (optional string array); calls `addLearning()`
     - `pw-wiki-query`: Zod schema with query (string), wiki_name (optional); calls `searchWikiPages()`
     - Both tools validate inputs and return structured results
