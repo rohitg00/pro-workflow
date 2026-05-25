@@ -166,39 +166,39 @@
 
 ## Integration
 
-- [ ] 8. Configuration templates and documentation
-  - 8.1 (P) Create opencode-config.example.json
+- [x] 8. Configuration templates and documentation
+  - [x] 8.1 (P) Create opencode-config.example.json
     - Include `plugin: ["pro-workflow"]` entry
     - Include `instructions` array pointing to generated `.opencode/AGENTS.md`
     - Include MCP server configuration for SQLite store access
     - Observable: Example file is valid JSON and matches OpenCode config schema
     - _Requirements: 7.1_
     - _Boundary: ConfigTemplates_
-  - 8.2 (P) Create opencode-settings.example.json
+  - [x] 8.2 (P) Create opencode-settings.example.json
     - Demonstrate OpenCode-specific options (model, provider, permissions)
     - Include variable substitution examples (`{env:VAR}`, `{file:path}`)
     - Observable: Settings template compiles as valid JSON
     - _Requirements: 7.1_
     - _Boundary: ConfigTemplates_
-  - 8.3 (P) Update README.md with OpenCode support
+  - [x] 8.3 (P) Update README.md with OpenCode support
     - Add OpenCode to supported agents list alongside Claude Code and Cursor
     - Add installation and configuration section for OpenCode users
     - Observable: README mentions OpenCode in the first paragraph and has a dedicated OpenCode setup section
     - _Requirements: 10.3_
     - _Boundary: PackageMetadata_
-  - 8.4 (P) Update cross-agent workflow documentation
+  - [x] 8.4 (P) Update cross-agent workflow documentation
     - Add OpenCode as first-class participant in workflow examples
     - Update compatibility matrices and examples
     - Observable: docs/cross-agent-workflows.md references OpenCode in all agent comparison tables
     - _Requirements: 8.2_
     - _Boundary: Documentation_
-  - 8.5 (P) Create OpenCode integration guide
+  - [x] 8.5 (P) Create OpenCode integration guide
     - Document installation via npm, setup command, and opencode.json configuration
     - Include troubleshooting section for common issues
     - Observable: docs/opencode-integration.md exists with step-by-step setup instructions
     - _Requirements: 8.1_
     - _Boundary: Documentation_
-  - 8.6 (P) Create feature parity matrix
+  - [x] 8.6 (P) Create feature parity matrix
     - Compare Claude Code, Cursor, and OpenCode support across all features
     - Document gaps and workarounds for unadaptable hooks and rules
     - Observable: docs/feature-parity.md contains a table covering all 13 requirement groups
@@ -207,8 +207,8 @@
 
 ## Validation
 
-- [ ] 9. Unit and integration tests
-  - 9.1 Test agent frontmatter conversion
+- [x] 9. Unit and integration tests
+  - [x] 9.1 Test agent frontmatter conversion
     - Verify tools[] → permission{} mapping for all 8 agents
     - Verify mode and hidden flag assignments
     - Verify deprecated fields are dropped
@@ -216,7 +216,7 @@
     - _Requirements: 3.1, 3.2_
     - _Depends: 4.4_
     - _Boundary: TestSuite_
-  - 9.2 Test command and rules conversion
+  - [x] 9.2 Test command and rules conversion
     - Verify command agent field addition
     - Verify rules merge produces correct AGENTS.md structure
     - Verify unconvertible rules are documented
@@ -224,7 +224,7 @@
     - _Requirements: 4.1, 4.2, 5.1, 5.2_
     - _Depends: 5.2, 6.2_
     - _Boundary: TestSuite_
-  - 9.3 Test event adapter payload transformations
+  - [x] 9.3 Test event adapter payload transformations
     - Verify each of 15 mapped events produces correct hook input shape
     - Verify 7 unmapped events are documented
     - Verify error handling in transformation functions
@@ -232,7 +232,7 @@
     - _Requirements: 6.1, 6.4_
     - _Depends: 3.1_
     - _Boundary: TestSuite_
-  - 9.4 Test custom tool parameter validation
+  - [x] 9.4 Test custom tool parameter validation
     - Verify Zod schemas reject invalid inputs with clear error messages
     - Verify valid inputs execute store methods correctly
     - Test edge cases: empty query, very long content, special characters
@@ -240,7 +240,7 @@
     - _Requirements: 9.1, 11.2_
     - _Depends: 2.1, 2.2_
     - _Boundary: TestSuite_
-  - 9.5 Integration test for setup utility
+  - [x] 9.5 Integration test for setup utility
     - Run setup-opencode in a temporary directory
     - Verify all expected files are created with correct content
     - Verify source files are never modified
@@ -248,7 +248,7 @@
     - _Requirements: 10.2, 12.1_
     - _Depends: 7.3_
     - _Boundary: TestSuite_
-  - 9.6 Integration test for plugin load and tool execution
+  - [x] 9.6 Integration test for plugin load and tool execution
     - Load plugin module in a test OpenCode-like environment
     - Verify event handlers register without errors
     - Execute custom tools against an in-memory SQLite test database
