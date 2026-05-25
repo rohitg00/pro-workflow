@@ -56,22 +56,28 @@ Session 50: Correction rate near zero. Wiki has 200 cited claims.
 
 ## Install
 
+**Claude Code:**
 ```bash
 /plugin marketplace add rohitg00/pro-workflow
 /plugin install pro-workflow@pro-workflow
+```
+
+**OpenCode:**
+```bash
+npm install pro-workflow
+npx pro-workflow setup-opencode ~/.config/opencode symlink
+```
+Then add the plugin path to `opencode.json` — see [OpenCode native plugin](#opencode-native-plugin) below.
+
+**Cursor:**
+```bash
+/add-plugin pro-workflow
 ```
 
 <details>
 <summary>Other install methods</summary>
 
 ```bash
-# Cursor
-/add-plugin pro-workflow
-
-# OpenCode
-npm install pro-workflow
-npx pro-workflow setup-opencode
-
 # Any agent via SkillKit
 npx skillkit install pro-workflow
 
