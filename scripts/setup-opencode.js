@@ -70,13 +70,6 @@ function generateConfigSnippet() {
     {
       plugin: ['pro-workflow'],
       instructions: ['./.opencode/AGENTS.md'],
-      mcp: {
-        'pro-workflow': {
-          command: ['node', 'dist/db/index.js'],
-          type: 'local',
-          enabled: true,
-        },
-      },
     },
     null,
     2

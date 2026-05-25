@@ -92,15 +92,6 @@ jq --arg a "$AGENTS_PATH" '
   if ($existing | index($a)) then . else .instructions += [$a] end
 ' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
 
-# Merge MCP server entry
-jq '
-  .mcp["pro-workflow"] //= {
-    "command": ["node", "dist/db/index.js"],
-    "type": "local",
-    "enabled": true
-  }
-' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
-
 echo "       Config merged into $CONFIG_FILE"
 echo ""
 
