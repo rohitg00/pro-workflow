@@ -1,0 +1,22 @@
+{
+  "feature_name": "opencode-support",
+  "created_at": "2026-05-25T00:00:00Z",
+  "updated_at": "2026-05-25T15:15:00Z",
+  "status": "implemented",
+  "phase": "implemented",
+  "language": "en",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  }
+}
