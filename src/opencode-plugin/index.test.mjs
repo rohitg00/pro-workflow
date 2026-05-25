@@ -122,4 +122,15 @@ describe("ProWorkflow Plugin Entry Point", () => {
     const before = mod.getStoreState();
     assert.equal(before, null, "store should not be initialized before first handler call");
   });
+
+  it("hooks object includes tool registrations for all three custom tools", async () => {
+    const hooks = await mod.ProWorkflow(mockPluginInput());
+    assert.ok("tool" in hooks, "hooks should have a 'tool' key for custom tools");
+    assert.equal(typeof hooks.tool, "object", "hooks.tool should be an object");
+    assert.notEqual(hooks.tool, null, "hooks.tool should not be null");
+
+    assert.ok("pw-search" in hooks.tool, "should register pw-search tool");
+    assert.ok("pw-learn" in hooks.tool, "should register pw-learn tool");
+    assert.ok("pw-wiki-query" in hooks.tool, "should register pw-wiki-query tool");
+  });
 });

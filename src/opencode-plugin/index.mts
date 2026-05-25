@@ -2,6 +2,7 @@ import type { Plugin, Hooks, PluginModule } from "@opencode-ai/plugin";
 import type { Event } from "@opencode-ai/sdk";
 import type { Store } from "../db/store.js";
 import { createStore } from "../db/store.js";
+import { pwSearch, pwLearn, pwWikiQuery } from "./tools.mjs";
 
 let _store: Store | null = null;
 
@@ -107,6 +108,12 @@ export const ProWorkflow: Plugin = async (input): Promise<Hooks> => {
         const message = err instanceof Error ? err.message : String(err);
         safeLog(log, `ProWorkflow: experimental.session.compacting error: ${message}`);
       }
+    },
+
+    tool: {
+      "pw-search": pwSearch,
+      "pw-learn": pwLearn,
+      "pw-wiki-query": pwWikiQuery,
     },
   };
 };
