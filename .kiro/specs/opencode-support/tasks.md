@@ -40,7 +40,7 @@
     - Observable: `pw-learn` persists to database and `pw-wiki-query` retrieves wiki pages
     - _Requirements: 9.1_
     - _Boundary: PluginTools_
-  - 2.3 Register custom tools in plugin entry point
+  - [x] 2.3 Register custom tools in plugin entry point
     - Import tool definitions from `tools.ts`
     - Register with OpenCode's `tool()` helper
     - Verify TypeScript type compatibility with `@opencode-ai/plugin`
@@ -49,7 +49,7 @@
     - _Boundary: PluginModule_
 
 - [ ] 3. Event adapter and script invocation
-  - 3.1 Create payload transformation for 15 mapped events
+  - [x] 3.1 Create payload transformation for 15 mapped events
     - Map OpenCode event shapes to Claude Code hook input JSON shapes
     - Handle tool.execute.before/after (PreToolUse/PostToolUse)
     - Handle session.created/idle (SessionStart/SessionEnd/Stop)
@@ -59,7 +59,7 @@
     - Observable: Adapter produces valid JSON matching each hook script's stdin expectations
     - _Requirements: 6.1, 6.4_
     - _Boundary: EventAdapter_
-  - 3.2 Integrate adapter with existing hook scripts
+  - [x] 3.2 Integrate adapter with existing hook scripts
     - Invoke scripts from `scripts/` directory via shell execution
     - Pass adapted JSON payload via stdin
     - Set environment variables: `CLAUDE_PLUGIN_ROOT`, `CLAUDE_SESSION_ID`, `CLAUDE_PROJECT_DIR`
@@ -70,22 +70,22 @@
 
 ## Core
 
-- [ ] 4. (P) Build agent frontmatter converter
-  - 4.1 Read and parse all agent markdown files
+- [x] 4. (P) Build agent frontmatter converter
+  - [x] 4.1 Read and parse all agent markdown files
     - Parse YAML frontmatter from `agents/*.md`
     - Extract name, description, tools, model, memory, skills, background, isolation fields
     - Validate that all 8 expected agents are present
     - Observable: Parser successfully extracts frontmatter from all 8 agent files without errors
     - _Requirements: 3.1_
     - _Boundary: AgentConverter_
-  - 4.2 Convert tools[] array to permission{} object
+  - [x] 4.2 Convert tools[] array to permission{} object
     - Map each tool name (Read, Bash, Edit, Write, Glob, Grep) to `allow` in permission object
     - Tools not listed default to `deny`
     - Preserve the restriction semantics of the original tools array
     - Observable: Agent with `tools: ["Read", "Bash"]` produces `permission: { read: allow, bash: allow }`
     - _Requirements: 3.2_
     - _Boundary: AgentConverter_
-  - 4.3 Assign mode, hidden flags, and model mapping
+  - [x] 4.3 Assign mode, hidden flags, and model mapping
     - Assign `mode: "primary"` to orchestrator, `mode: "subagent"` to all others
     - Assign `hidden: true` to scout, cost-analyst, permission-analyst
     - Map `model: "opus"` to `"anthropic/claude-opus-4"`, `model: "sonnet"` to `"anthropic/claude-sonnet-4"`, etc.
@@ -93,7 +93,7 @@
     - Observable: Each converted agent has valid OpenCode frontmatter with mode and permission fields
     - _Requirements: 3.1_
     - _Boundary: AgentConverter_
-  - 4.4 Write converted agents to output directory
+  - [x] 4.4 Write converted agents to output directory
     - Generate `.opencode/agents/<name>.md` with converted frontmatter
     - Preserve original agent body content (system prompt) unchanged
     - Validate output files have valid YAML frontmatter
@@ -101,15 +101,15 @@
     - _Requirements: 3.1_
     - _Boundary: AgentConverter_
 
-- [ ] 5. (P) Build command frontmatter converter
-  - 5.1 Parse command files and normalize frontmatter
+- [x] 5. (P) Build command frontmatter converter
+  - [x] 5.1 Parse command files and normalize frontmatter
     - Read all 22 `commands/*.md` files
     - Extract existing frontmatter where present (description, argument-hint)
     - For files without frontmatter, parse title/description from markdown body
     - Observable: Parser handles both frontmatter and no-frontmatter command formats
     - _Requirements: 4.1_
     - _Boundary: CommandConverter_
-  - 5.2 Add agent field and write converted commands
+  - [x] 5.2 Add agent field and write converted commands
     - Add `agent: "build"` as default for each command
     - Preserve `description` field; drop `argument-hint`
     - Write to `.opencode/commands/<name>.md` with new frontmatter + original body
@@ -117,15 +117,15 @@
     - _Requirements: 4.1, 4.2_
     - _Boundary: CommandConverter_
 
-- [ ] 6. (P) Build rules merger
-  - 6.1 Parse rule files and extract content
+- [x] 6. (P) Build rules merger
+  - [x] 6.1 Parse rule files and extract content
     - Read all 10 `.mdc` files and 1 `.md` file from `rules/`
     - Extract `description`, `alwaysApply`, `globs` from frontmatter
     - Strip frontmatter and collect rule body content
     - Observable: All 11 rule files are parsed with frontmatter fields correctly extracted
     - _Requirements: 5.1_
     - _Boundary: RulesMerger_
-  - 6.2 Merge rules into AGENTS.md sections
+  - [x] 6.2 Merge rules into AGENTS.md sections
     - Group `alwaysApply: true` rules into a global section
     - Group `alwaysApply: false` rules by glob pattern into conditional sections
     - Preserve rule body as markdown content under each section
@@ -133,22 +133,22 @@
     - Observable: Generated AGENTS.md contains all 11 rules organized by applicability
     - _Requirements: 5.1_
     - _Boundary: RulesMerger_
-  - 6.3 Document unconvertible rules as comments
+  - [x] 6.3 Document unconvertible rules as comments
     - Identify rules relying on `.mdc`-specific features (e.g., globs without OpenCode equivalent)
     - Add markdown comments noting limitations and alternative strategies
     - Observable: AGENTS.md includes comment blocks explaining any rule conversion gaps
     - _Requirements: 5.2_
     - _Boundary: RulesMerger_
 
-- [ ] 7. Setup utility orchestration
-  - 7.1 Implement skills provisioning
+- [x] 7. Setup utility orchestration
+  - [x] 7.1 Implement skills provisioning
     - Accept `strategy: "copy"` or `strategy: "symlink"` parameter
     - For each skill directory in `skills/`, create corresponding entry in `.opencode/skills/`
     - Verify SKILL.md exists in each source directory before provisioning
     - Observable: Running setup with symlink strategy creates 33 valid symlinks in `.opencode/skills/`
     - _Requirements: 2.1, 2.2, 2.3_
     - _Boundary: SetupUtility_
-  - 7.2 Integrate converters into unified setup flow
+  - [x] 7.2 Integrate converters into unified setup flow
     - Import and invoke agent converter, command converter, and rules merger
     - Generate `.opencode/agents/`, `.opencode/commands/`, `.opencode/AGENTS.md`
     - Handle errors from individual converters and collect into summary
@@ -156,7 +156,7 @@
     - _Requirements: 3.1, 4.1, 5.1_
     - _Depends: 4.4, 5.2, 6.2_
     - _Boundary: SetupUtility_
-  - 7.3 Generate config snippet and print summary
+  - [x] 7.3 Generate config snippet and print summary
     - Produce JSON snippet for `opencode.json` with plugin array, instructions, and MCP entries
     - Print setup summary showing counts: skills, agents, commands, rules provisioned
     - Report any conversion errors with file names and error messages
