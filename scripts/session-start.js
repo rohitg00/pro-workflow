@@ -120,7 +120,23 @@ async function main() {
     // Not a git repo or git not available
   }
 
-  log('[ProWorkflow] Ready. Use /wrap-up before ending, /learn to capture corrections.');
+  const stateDir = path.join(os.homedir(), '.pro-workflow');
+  const firstRunFlag = path.join(stateDir, '.welcomed');
+  if (!fs.existsSync(firstRunFlag)) {
+    try { fs.mkdirSync(stateDir, { recursive: true }); } catch (e) {}
+    log('');
+    log('[ProWorkflow] First run detected. Five commands to know:');
+    log('  /learn-rule     capture a correction so it never repeats');
+    log('  /wrap-up        end-of-session ritual (audit + persist + handoff)');
+    log('  /wiki init      start a persistent FTS5 research wiki');
+    log('  /develop        research -> plan -> implement with gates');
+    log('  /smart-commit   quality-gated conventional commit');
+    log('[ProWorkflow] Run /doctor to verify install. Full list: /list');
+    log('');
+    try { fs.writeFileSync(firstRunFlag, new Date().toISOString()); } catch (e) {}
+  } else {
+    log('[ProWorkflow] Ready. Use /wrap-up before ending, /learn to capture corrections.');
+  }
 
   process.exit(0);
 }

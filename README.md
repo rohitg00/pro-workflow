@@ -56,30 +56,111 @@ Session 50: Correction rate near zero. Wiki has 200 cited claims.
 
 ## Install
 
+Pick your agent. Every path drops the same 34 skills + 22 commands + 37 hook scripts into the right place.
+
+### Claude Code
+
 ```bash
 /plugin marketplace add rohitg00/pro-workflow
 /plugin install pro-workflow@pro-workflow
 ```
 
-<details>
-<summary>Other install methods</summary>
+### Cursor
 
 ```bash
-# Cursor
 /add-plugin pro-workflow
+```
 
-# Any agent via SkillKit
-npx skillkit install pro-workflow
+Or search `pro-workflow` in the plugin marketplace.
 
-# Manual
+### Codex CLI
+
+```bash
+/plugins
+pro-workflow
+```
+
+Select **Install Plugin** when it appears.
+
+### Codex App
+
+Plugins sidebar &rarr; **Coding** category &rarr; find **Pro Workflow** &rarr; click `+`.
+
+### GitHub Copilot CLI
+
+```bash
+copilot plugin marketplace add rohitg00/pro-workflow
+copilot plugin install pro-workflow@pro-workflow
+```
+
+### Factory Droid
+
+```bash
+droid plugin marketplace add https://github.com/rohitg00/pro-workflow
+droid plugin install pro-workflow@pro-workflow
+```
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/rohitg00/pro-workflow
+```
+
+### OpenCode
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/rohitg00/pro-workflow/main/.opencode/INSTALL.md
+```
+
+Follow the printed steps (drops the skills under `.opencode/skill/`).
+
+### Any other agent (28 more via SkillKit)
+
+```bash
+npx skillkit install pro-workflow --agent <name>
+```
+
+Supported: `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Use `--agent universal` to drop a portable bundle.
+
+<details>
+<summary>Manual install (any agent, any OS)</summary>
+
+```bash
 git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
 cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
 
-# Build SQLite-backed components
-cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build
+cd /tmp/pw && npm install && npm run build
+cp -r /tmp/pw/skills    ~/.claude/skills/
+cp -r /tmp/pw/commands  ~/.claude/commands/
+cp    /tmp/pw/hooks/hooks.json ~/.claude/hooks.json
 ```
 
 </details>
+
+### First-run smoke test (any agent)
+
+```bash
+/doctor              # confirms SQLite store, hooks, skills load
+/wrap-up             # runs the end-of-session ritual (no-op on fresh install)
+```
+
+If `/doctor` reports `KB: missing`, run `cd ~/.claude/plugins/*/pro-workflow && npm install && npm run build` &mdash; the SQLite components need a build step a handful of marketplaces skip.
+
+---
+
+## What to type first
+
+After install you have **34 auto-trigger skills** and **22 slash commands**. You don't need to memorize them; the agent picks the right skill from your prompt. The five commands below cover 80% of daily use:
+
+| When | Command | What it does |
+|---|---|---|
+| **Wrong correction repeats** | `/learn-rule` | Capture the correction as a rule. Loaded on every future `SessionStart`. |
+| **End of a coding session** | `/wrap-up` | Audit changes, persist learnings, write a handoff doc. |
+| **Researching a topic** | `/wiki init <slug>` | Spin up a persistent FTS5 wiki. Auto-injected when you mention the topic later. |
+| **Stuck on a hard bug** | `/develop` | Research &rarr; Plan &rarr; Implement phases with validation gates. |
+| **Before a PR** | `/smart-commit` | Quality gates, staged review, conventional commit message. |
+
+Full list: [`commands/`](./commands) &middot; [`skills/`](./skills) &middot; [`/list`](./commands/list.md) inside any session.
 
 ---
 
