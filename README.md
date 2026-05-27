@@ -56,80 +56,37 @@ Session 50: Correction rate near zero. Wiki has 200 cited claims.
 
 ## Install
 
-Pick your agent. Every path drops the same 34 skills + 22 commands + 37 hook scripts into the right place.
+Pro Workflow is published in two places: the Claude Code plugin marketplace (native), and SkillKit (cross-agent translator). Other agents do not have first-class plugins yet &mdash; SkillKit translates the skill bundle into each agent's native skill format.
 
-### Claude Code
+### Claude Code (native)
 
 ```bash
 /plugin marketplace add rohitg00/pro-workflow
 /plugin install pro-workflow@pro-workflow
 ```
 
-### Cursor
+### Cursor, Codex, Copilot CLI, Droid, Gemini CLI, OpenCode, and 26 more (via SkillKit)
 
-```bash
-/add-plugin pro-workflow
-```
-
-Or search `pro-workflow` in the plugin marketplace.
-
-### Codex CLI
-
-```bash
-/plugins
-pro-workflow
-```
-
-Select **Install Plugin** when it appears.
-
-### Codex App
-
-Plugins sidebar &rarr; **Coding** category &rarr; find **Pro Workflow** &rarr; click `+`.
-
-### GitHub Copilot CLI
-
-```bash
-copilot plugin marketplace add rohitg00/pro-workflow
-copilot plugin install pro-workflow@pro-workflow
-```
-
-### Factory Droid
-
-```bash
-droid plugin marketplace add https://github.com/rohitg00/pro-workflow
-droid plugin install pro-workflow@pro-workflow
-```
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/rohitg00/pro-workflow
-```
-
-### OpenCode
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/rohitg00/pro-workflow/main/.opencode/INSTALL.md
-```
-
-Follow the printed steps (drops the skills under `.opencode/skill/`).
-
-### Any other agent (28 more via SkillKit)
+SkillKit translates the same 34 skills + 22 commands into each agent's native skill format and drops them in the right config directory.
 
 ```bash
 npx skillkit install pro-workflow --agent <name>
 ```
 
-Supported: `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Use `--agent universal` to drop a portable bundle.
+Supported `<name>` values: `cursor`, `codex`, `gemini-cli`, `opencode`, `github-copilot`, `droid` (factory), `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Pass `--agent universal` for a portable bundle.
+
+SkillKit lives at [`agenstskills.com`](https://agenstskills.com); the marketplace entry is `pro-workflow`.
 
 <details>
 <summary>Manual install (any agent, any OS)</summary>
 
+If neither path works for your setup, clone and copy the bundle directly. Adjust the destination to your agent's skill directory (e.g. `~/.cursor/rules/`, `~/.gemini/extensions/`, etc.).
+
 ```bash
 git clone https://github.com/rohitg00/pro-workflow.git /tmp/pw
-cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
-
 cd /tmp/pw && npm install && npm run build
+
+cp -r /tmp/pw/templates/split-claude-md/* ./.claude/
 cp -r /tmp/pw/skills    ~/.claude/skills/
 cp -r /tmp/pw/commands  ~/.claude/commands/
 cp    /tmp/pw/hooks/hooks.json ~/.claude/hooks.json
@@ -137,7 +94,7 @@ cp    /tmp/pw/hooks/hooks.json ~/.claude/hooks.json
 
 </details>
 
-### First-run smoke test (any agent)
+### First-run smoke test
 
 ```bash
 /doctor              # confirms SQLite store, hooks, skills load
