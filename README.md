@@ -76,7 +76,7 @@ npx skillkit install rohitg00/pro-workflow --agent <name> --force
 Notes:
 
 - Use `rohitg00/pro-workflow` (the GitHub form), not the bare name &mdash; `skillkit install` resolves providers from `owner/repo`, not marketplace slugs.
-- `--force` is currently required: SkillKit's security scanner has open false positives on standard Node patterns (`child_process` imports, `Bearer ${env}` template literals) that block legit skills like `survey-generator` and `safe-mode`. Tracked at [`skillkit#TBD`](https://github.com/rohitg00/skillkit/issues).
+- `--force` is currently required: SkillKit's security scanner has open false positives on standard Node patterns (`child_process` imports, `Bearer ${env}` template literals) that block legit skills like `survey-generator` and `safe-mode`. Tracked at [`skillkit#129`](https://github.com/rohitg00/skillkit/issues/129).
 
 Supported `<name>` values: `cursor`, `codex`, `gemini-cli`, `opencode`, `github-copilot`, `droid` (factory), `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Pass `--agent universal` for a portable bundle.
 
