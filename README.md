@@ -67,15 +67,20 @@ Pro Workflow is published in two places: the Claude Code plugin marketplace (nat
 
 ### Cursor, Codex, Copilot CLI, Droid, Gemini CLI, OpenCode, and 26 more (via SkillKit)
 
-SkillKit translates the same 34 skills + 22 commands into each agent's native skill format and drops them in the right config directory.
+SkillKit translates the 34 skills + 22 commands into each agent's native skill format and drops them in the right config directory.
 
 ```bash
-npx skillkit install pro-workflow --agent <name>
+npx skillkit install rohitg00/pro-workflow --agent <name> --force
 ```
+
+Notes:
+
+- Use `rohitg00/pro-workflow` (the GitHub form), not the bare name &mdash; `skillkit install` resolves providers from `owner/repo`, not marketplace slugs.
+- `--force` is currently required: SkillKit's security scanner has open false positives on standard Node patterns (`child_process` imports, `Bearer ${env}` template literals) that block legit skills like `survey-generator` and `safe-mode`. Tracked at [`skillkit#TBD`](https://github.com/rohitg00/skillkit/issues).
 
 Supported `<name>` values: `cursor`, `codex`, `gemini-cli`, `opencode`, `github-copilot`, `droid` (factory), `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Pass `--agent universal` for a portable bundle.
 
-SkillKit lives at [`agenstskills.com`](https://agenstskills.com); the marketplace entry is `pro-workflow`.
+After install, run `skillkit sync` to register the skills with the target agent's config.
 
 <details>
 <summary>Manual install (any agent, any OS)</summary>

@@ -72,7 +72,7 @@ Run each command with `--version` or `--help` to confirm availability. Report mi
 
 Generate a `.claude/settings.json` with:
 - Quality gate commands for the detected project type
-- Safe permission rules (read-only tools auto-approved)
+- Suggested permission rules (user reviews and approves)
 - Hook configuration for the project
 
 ## Output

@@ -33,7 +33,7 @@ cat ~/.claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 
 ### Step 2: Identify Safe Patterns
 
-**Auto-approve candidates** (low risk):
+**Allow-list candidates** (low risk):
 - `Read` — all file reads (read-only, no side effects)
 - `Glob` — file pattern matching (read-only)
 - `Grep` — content search (read-only)
@@ -44,14 +44,14 @@ cat ~/.claude/settings.json 2>/dev/null | grep -A 20 "permissions"
 - `Bash(npm run lint*)` — linting
 - `Bash(npm run typecheck*)` — type checking
 
-**Ask candidates** (medium risk — auto-approve only if user confirms):
+**Ask candidates** (medium risk — prompt user every time):
 - `Edit` — file modifications
 - `Write` — new file creation
 - `Bash(git add*)` — staging changes
 - `Bash(git commit*)` — creating commits
 - `Bash(npm install*)` — dependency changes
 
-**Never auto-approve** (high risk):
+**Deny-list candidates** (high risk):
 - `Bash(git push*)` — affects remote
 - `Bash(git reset --hard*)` — destructive
 - `Bash(rm -rf*)` — destructive
@@ -112,7 +112,7 @@ Estimated prompts saved per session: ~[N]
 
 ## Rules
 
-- Never auto-approve destructive operations
+- Destructive operations must stay in the deny list
 - Always present rules for user approval before applying
 - Group rules by risk level (safe/medium/dangerous)
 - Include estimated prompt savings

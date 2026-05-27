@@ -452,7 +452,7 @@ For features touching >5 files or needing architecture decisions:
 3. **Implement** → executes plan step by step with quality gates every 5 edits
 4. **Review** → reviewer agent checks for security, logic, quality
 
-Never skip phases. Never proceed without approval between phases.
+All four phases run in order. Each phase requires explicit user approval before the next phase begins.
 
 ### Agent Skills (Preloaded)
 

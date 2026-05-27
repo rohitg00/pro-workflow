@@ -37,7 +37,7 @@ Intercepts Bash commands before execution. Warns on dangerous patterns but does 
 | `git clean -f` | Untracked file deletion |
 | `git checkout .` / `git restore .` | Discard all changes |
 | `chmod 777` | World-writable permissions |
-| `curl \| sh` / `wget \| sh` | Piped remote execution |
+| `curl` or `wget` piped to a shell | Piped remote execution |
 | `> /dev/sda` / `dd if=` | Disk-level operations |
 | `:(){ :\|:& };:` | Fork bombs |
 | `sudo rm` | Elevated deletion |
