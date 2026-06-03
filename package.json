@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Complete AI coding workflow system with orchestration patterns, cross-agent support, reference guides, searchable learnings, and persistent research wikis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,8 @@
     "build": "tsc && node -e \"const fs=require('fs');fs.mkdirSync('dist/db',{recursive:true});fs.copyFileSync('src/db/schema.sql','dist/db/schema.sql')\"",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "db:init": "node dist/db/index.js"
+    "db:init": "node dist/db/index.js",
+    "test": "tsx --test src/optimizer/__tests__/*.test.ts"
   },
   "keywords": [
     "claude-code",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^25.2.2",
+    "tsx": "^4.20.0",
     "typescript": "^6.0.2"
   },
   "files": [
