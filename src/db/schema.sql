@@ -166,3 +166,86 @@ CREATE TABLE IF NOT EXISTS learnings_wiki (
   wiki_slug TEXT NOT NULL REFERENCES wikis(slug) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_learnings_wiki_slug ON learnings_wiki(wiki_slug);
+
+-- Skill optimizer (Phase 3.4). SkillOpt-flavored offline training loop for skill markdown.
+-- Treats SKILL.md as trainable text-space state, learn-rule rows as training trajectories,
+-- and held-out corrections as the validation set. Mirrors the 6-stage ReflACT pipeline:
+-- rollout (existing learnings) -> reflect (LLM patches) -> aggregate -> select/clip ->
+-- update (apply) -> evaluate (gate). All LLM calls are batched and budget-capped.
+
+CREATE TABLE IF NOT EXISTS optimization_runs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  skill_slug TEXT NOT NULL,
+  started_at TEXT DEFAULT (datetime('now')),
+  ended_at TEXT,
+  status TEXT NOT NULL DEFAULT 'running',
+  initial_skill_hash TEXT NOT NULL,
+  best_skill_hash TEXT,
+  initial_score REAL,
+  best_score REAL,
+  epochs_completed INTEGER DEFAULT 0,
+  accepted_steps INTEGER DEFAULT 0,
+  rejected_steps INTEGER DEFAULT 0,
+  budget_usd REAL,
+  spent_usd REAL DEFAULT 0,
+  config_json TEXT,
+  reason TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_opt_runs_skill ON optimization_runs(skill_slug);
+CREATE INDEX IF NOT EXISTS idx_opt_runs_status ON optimization_runs(status);
+
+CREATE TABLE IF NOT EXISTS optimization_candidates (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id INTEGER NOT NULL REFERENCES optimization_runs(id) ON DELETE CASCADE,
+  parent_hash TEXT NOT NULL,
+  content_hash TEXT NOT NULL,
+  content TEXT NOT NULL,
+  source_patches_json TEXT,
+  step INTEGER NOT NULL,
+  epoch INTEGER NOT NULL,
+  score REAL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  created_at TEXT DEFAULT (datetime('now')),
+  evaluated_at TEXT,
+  UNIQUE(run_id, content_hash)
+);
+CREATE INDEX IF NOT EXISTS idx_opt_cand_run ON optimization_candidates(run_id);
+CREATE INDEX IF NOT EXISTS idx_opt_cand_status ON optimization_candidates(status);
+
+CREATE TABLE IF NOT EXISTS optimization_patches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id INTEGER NOT NULL REFERENCES optimization_runs(id) ON DELETE CASCADE,
+  candidate_id INTEGER REFERENCES optimization_candidates(id) ON DELETE SET NULL,
+  step INTEGER NOT NULL,
+  epoch INTEGER NOT NULL,
+  op TEXT NOT NULL,
+  anchor TEXT,
+  payload TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'proposed',
+  rejected_reason TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_opt_patches_run ON optimization_patches(run_id);
+CREATE INDEX IF NOT EXISTS idx_opt_patches_status ON optimization_patches(status);
+
+CREATE TABLE IF NOT EXISTS optimization_validation (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  skill_slug TEXT NOT NULL,
+  learning_id INTEGER REFERENCES learnings(id) ON DELETE SET NULL,
+  prompt TEXT NOT NULL,
+  expected TEXT NOT NULL,
+  weight REAL NOT NULL DEFAULT 1.0,
+  frozen_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_opt_val_skill ON optimization_validation(skill_slug);
+
+CREATE TABLE IF NOT EXISTS optimization_rejections (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id INTEGER NOT NULL REFERENCES optimization_runs(id) ON DELETE CASCADE,
+  candidate_hash TEXT NOT NULL,
+  patches_json TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  delta_score REAL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_opt_rej_run ON optimization_rejections(run_id);
