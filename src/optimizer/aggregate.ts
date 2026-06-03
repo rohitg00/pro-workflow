@@ -8,23 +8,27 @@ export interface AggregateResult {
 
 export function aggregatePatches(batches: Patch[][]): AggregateResult {
   const seen = new Map<string, { patch: Patch; votes: number }>();
-  let conflicts = 0;
+  const anchorSeen = new Map<string, Set<string>>();
 
   for (const batch of batches) {
     for (const patch of batch) {
       const key = patchKey(patch);
       const prior = seen.get(key);
-      if (!prior) {
-        seen.set(key, { patch, votes: 1 });
-        continue;
-      }
-      if (prior.patch.op === patch.op && prior.patch.payload === patch.payload) {
+      if (prior) {
         prior.votes++;
       } else {
-        conflicts++;
-        if (prior.votes < 2) seen.set(key, { patch, votes: 1 });
+        seen.set(key, { patch, votes: 1 });
       }
+      const anchorKey = anchorKeyFor(patch);
+      const set = anchorSeen.get(anchorKey) ?? new Set<string>();
+      set.add(patch.payload);
+      anchorSeen.set(anchorKey, set);
     }
+  }
+
+  let conflicts = 0;
+  for (const variants of anchorSeen.values()) {
+    if (variants.size > 1) conflicts += variants.size - 1;
   }
 
   const ordered = [...seen.values()].sort((a, b) => {
@@ -37,6 +41,10 @@ export function aggregatePatches(batches: Patch[][]): AggregateResult {
 }
 
 function patchKey(p: Patch): string {
+  return `${p.op}::${p.anchor.trim().toLowerCase()}::${p.payload}`;
+}
+
+function anchorKeyFor(p: Patch): string {
   return `${p.op}::${p.anchor.trim().toLowerCase()}`;
 }
 

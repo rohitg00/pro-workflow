@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import { createHash } from 'node:crypto';
 import { initializeDatabase, getDefaultDbPath } from '../db/index';
 import type {
   Candidate,
@@ -23,7 +24,10 @@ export interface OptimizerStore {
   getRejections: (runId: number, limit: number) => Rejection[];
   collectTrajectories: (skillSlug: string, limit: number) => Trajectory[];
   listValidation: (skillSlug: string) => ValidationItem[];
-  upsertValidation: (skillSlug: string, items: Array<Omit<ValidationItem, 'id' | 'frozenAt'>>) => number;
+  upsertValidation: (
+    skillSlug: string,
+    items: Array<Omit<ValidationItem, 'id' | 'frozenAt'> & { learningId?: number | null }>,
+  ) => number;
   close: () => void;
 }
 
@@ -104,8 +108,11 @@ export function createOptimizerStore(dbPath: string = getDefaultDbPath()): Optim
   `);
 
   const insertValidationStmt = db.prepare(`
-    INSERT INTO optimization_validation (skill_slug, learning_id, prompt, expected, weight)
-    VALUES (@skill_slug, @learning_id, @prompt, @expected, @weight)
+    INSERT INTO optimization_validation (skill_slug, learning_id, prompt_hash, prompt, expected, weight)
+    VALUES (@skill_slug, @learning_id, @prompt_hash, @prompt, @expected, @weight)
+    ON CONFLICT(skill_slug, prompt_hash) DO UPDATE SET
+      expected = excluded.expected,
+      weight = excluded.weight
   `);
 
   return {
@@ -269,9 +276,11 @@ export function createOptimizerStore(dbPath: string = getDefaultDbPath()): Optim
     upsertValidation(slug, items) {
       const insert = db.transaction(() => {
         for (const it of items) {
+          const promptHash = createHash('sha256').update(it.prompt, 'utf8').digest('hex').slice(0, 16);
           insertValidationStmt.run({
             skill_slug: slug,
-            learning_id: null,
+            learning_id: it.learningId ?? null,
+            prompt_hash: promptHash,
             prompt: it.prompt,
             expected: it.expected,
             weight: it.weight,
@@ -292,13 +301,17 @@ export function trajectoriesToValidation(
   slug: string,
   trajectories: Trajectory[],
   holdout: number,
-): { train: Trajectory[]; validation: Array<Omit<ValidationItem, 'id' | 'frozenAt'>> } {
+): {
+  train: Trajectory[];
+  validation: Array<Omit<ValidationItem, 'id' | 'frozenAt'> & { learningId: number }>;
+} {
   const sorted = [...trajectories].sort((a, b) => (a.timesApplied - b.timesApplied) || (a.learningId - b.learningId));
   const valCount = Math.min(holdout, Math.floor(sorted.length / 4));
   const validationRows = sorted.slice(-valCount);
   const trainRows = sorted.slice(0, sorted.length - valCount);
   const validation = validationRows.map((t) => ({
     skillSlug: slug,
+    learningId: t.learningId,
     prompt: t.mistake ?? `Scenario from category "${t.category}"`,
     expected: t.correction ?? t.rule,
     weight: 1 + Math.min(2, Math.log2(1 + t.timesApplied)),

@@ -1,5 +1,7 @@
 import * as https from 'node:https';
 
+const DEFAULT_TIMEOUT_MS = 120_000;
+
 export type Provider = 'anthropic' | 'openai' | 'openrouter' | 'fireworks';
 
 export interface LLMRequest {
@@ -46,11 +48,19 @@ export async function callLLM(req: LLMRequest): Promise<LLMResponse> {
     ? { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }
     : { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' };
 
+  const price = PRICE_PER_M_TOKENS[req.model];
+  if (!price) {
+    const known = Object.keys(PRICE_PER_M_TOKENS).join(', ');
+    throw new Error(
+      `Unknown model "${req.model}". Budget cap cannot be enforced. ` +
+      `Add a price entry to PRICE_PER_M_TOKENS in src/optimizer/llm.ts or pick one of: ${known}.`,
+    );
+  }
+
   const raw = await postJson(cfg.host, cfg.path, headers, body);
   const parsed = JSON.parse(raw);
   const text = extractText(req.provider, parsed);
   const usage = extractUsage(req.provider, parsed);
-  const price = PRICE_PER_M_TOKENS[req.model] ?? { input: 0, output: 0 };
   const costUsd = (usage.input / 1_000_000) * price.input + (usage.output / 1_000_000) * price.output;
 
   return { text, inputTokens: usage.input, outputTokens: usage.output, costUsd };
@@ -99,7 +109,19 @@ function extractUsage(provider: Provider, body: unknown): { input: number; outpu
 }
 
 function postJson(host: string, path: string, headers: Record<string, string>, body: string): Promise<string> {
+  const timeoutMs = parseInt(process.env.SKILL_OPTIMIZER_TIMEOUT_MS ?? '', 10) || DEFAULT_TIMEOUT_MS;
   return new Promise((resolve, reject) => {
+    let timer: NodeJS.Timeout | null = null;
+    let settled = false;
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      fn();
+    };
     const req = https.request(
       { host, path, method: 'POST', headers: { ...headers, 'content-length': Buffer.byteLength(body).toString() } },
       (res) => {
@@ -107,12 +129,19 @@ function postJson(host: string, path: string, headers: Record<string, string>, b
         res.on('data', (c) => chunks.push(c));
         res.on('end', () => {
           const text = Buffer.concat(chunks).toString('utf8');
-          if ((res.statusCode ?? 500) >= 400) reject(new Error(`HTTP ${res.statusCode}: ${text.slice(0, 500)}`));
-          else resolve(text);
+          if ((res.statusCode ?? 500) >= 400) {
+            settle(() => reject(new Error(`HTTP ${res.statusCode}: ${text.slice(0, 500)}`)));
+          } else {
+            settle(() => resolve(text));
+          }
         });
+        res.on('error', (err) => settle(() => reject(err)));
       },
     );
-    req.on('error', reject);
+    req.on('error', (err) => settle(() => reject(err)));
+    timer = setTimeout(() => {
+      req.destroy(new Error(`Request timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
     req.write(body);
     req.end();
   });

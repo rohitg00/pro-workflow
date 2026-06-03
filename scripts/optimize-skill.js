@@ -35,11 +35,31 @@ function parseArgs(argv) {
     if (!a.startsWith('--')) continue;
     const key = a.slice(2).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
     const v = argv[++i];
-    if (intKeys.has(key)) out[key] = parseInt(v, 10);
-    else if (floatKeys.has(key)) out[key] = parseFloat(v);
-    else out[key] = v;
+    if (v === undefined || v === '') {
+      throw new Error(`Missing value for --${key}`);
+    }
+    if (intKeys.has(key)) {
+      const parsed = parseInt(v, 10);
+      if (!Number.isFinite(parsed)) throw new Error(`Invalid integer value for --${key}: ${v}`);
+      out[key] = parsed;
+    } else if (floatKeys.has(key)) {
+      const parsed = parseFloat(v);
+      if (!Number.isFinite(parsed)) throw new Error(`Invalid number value for --${key}: ${v}`);
+      out[key] = parsed;
+    } else {
+      out[key] = v;
+    }
   }
   return out;
+}
+
+function inferProvider(model) {
+  if (!model) return null;
+  if (/^claude-/.test(model)) return 'anthropic';
+  if (/^(gpt-|o\d|chatgpt-)/i.test(model) || /openai/i.test(model)) return 'openai';
+  if (/(?:^|\/)(?:llama-|mistralai\/|accounts\/fireworks)/i.test(model)) return 'fireworks';
+  if (/\//.test(model)) return 'openrouter';
+  return null;
 }
 
 function findSkillPath(slug) {
@@ -52,10 +72,26 @@ function findSkillPath(slug) {
 }
 
 (async () => {
-  const args = parseArgs(process.argv);
+  let args;
+  try {
+    args = parseArgs(process.argv);
+  } catch (err) {
+    process.stderr.write(`${err.message}\n`);
+    process.exit(1);
+  }
   if (!args.slug) {
     process.stderr.write('Usage: optimize-skill --slug <name> [--skill-path <path>] [options]\n');
     process.exit(1);
+  }
+  const userSetOptProvider = process.argv.includes('--optimizer-provider');
+  const userSetEvalProvider = process.argv.includes('--evaluator-provider');
+  if (!userSetOptProvider) {
+    const inferred = inferProvider(args.optimizerModel);
+    if (inferred) args.optimizerProvider = inferred;
+  }
+  if (!userSetEvalProvider) {
+    const inferred = inferProvider(args.evaluatorModel);
+    if (inferred) args.evaluatorProvider = inferred;
   }
   const skillPath = args.skillPath || findSkillPath(args.slug);
   if (!skillPath || !fs.existsSync(skillPath)) {

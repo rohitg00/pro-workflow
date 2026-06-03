@@ -1,5 +1,6 @@
 import type { LRBudget, Patch, ReflectInput, ReflectOutput, Rejection, Trajectory } from './types';
 import { callLLM, type Provider } from './llm';
+import { stripFencesAndParse } from './parse';
 
 export interface ReflectArgs {
   input: ReflectInput;
@@ -67,15 +68,8 @@ function formatRejection(r: Rejection): Record<string, unknown> {
 }
 
 function parsePatches(text: string): Patch[] {
-  const stripped = stripFences(text).trim();
-  let obj: unknown;
-  try {
-    obj = JSON.parse(stripped);
-  } catch {
-    return [];
-  }
-  const root = obj as { patches?: unknown };
-  if (!Array.isArray(root.patches)) return [];
+  const root = stripFencesAndParse<{ patches?: unknown }>(text);
+  if (!root || !Array.isArray(root.patches)) return [];
   const out: Patch[] = [];
   for (const raw of root.patches) {
     const p = raw as Record<string, unknown>;
@@ -87,17 +81,8 @@ function parsePatches(text: string): Patch[] {
 }
 
 function extractReasoning(text: string): string {
-  const stripped = stripFences(text).trim();
-  try {
-    const obj = JSON.parse(stripped) as { reasoning?: string };
-    return obj.reasoning ?? '';
-  } catch {
-    return '';
-  }
-}
-
-function stripFences(s: string): string {
-  return s.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '');
+  const root = stripFencesAndParse<{ reasoning?: string }>(text);
+  return root?.reasoning ?? '';
 }
 
 export const __test = { parsePatches, extractReasoning };

@@ -1,5 +1,6 @@
 import type { Trajectory } from './types';
 import { callLLM, type Provider } from './llm';
+import { stripFencesAndParse } from './parse';
 
 export interface SlowUpdateArgs {
   bestSkill: string;
@@ -57,10 +58,5 @@ Rules:
 }
 
 function parse(text: string): { skill?: string; reasoning?: string } {
-  const stripped = text.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '').trim();
-  try {
-    return JSON.parse(stripped);
-  } catch {
-    return {};
-  }
+  return stripFencesAndParse<{ skill?: string; reasoning?: string }>(text) ?? {};
 }

@@ -19,17 +19,17 @@ Do not use when:
 - The user wants real-time edits (this is offline, single-shot)
 - No `ANTHROPIC_API_KEY` (or equivalent provider key) is available
 
-## Architecture (mirrors SkillOpt)
+## Architecture (mirrors SkillOpt's six-stage loop)
 
-```
-rollout      — pull recent learnings from SQLite (existing learn-rule rows)
-reflect      — optimizer LLM analyzes a minibatch, proposes add/delete/replace patches
-aggregate    — vote-merge patches across minibatches
-select       — clip by LR budget (default: 3 adds, 2 deletes, 3 replaces per step)
-update       — apply selected patches to a candidate skill content
-evaluate     — evaluator LLM scores candidate against held-out validation items
-gate         — accept candidate only if weighted score >= current + acceptThreshold
-slow update  — at epoch boundary, consolidate accepted edits into a coherent rewrite
+```text
+rollout      pull recent learnings from SQLite (existing learn-rule rows)
+reflect      optimizer LLM analyzes a minibatch, proposes add/delete/replace patches
+aggregate    vote-merge patches across minibatches
+select       clip by LR budget (default: 3 adds, 2 deletes, 3 replaces per step)
+update       apply selected patches to a candidate skill content
+evaluate     evaluator LLM scores candidate against held-out validation items
+gate         accept candidate only if weighted score >= current + acceptThreshold
+slow update  at epoch boundary, consolidate accepted edits into a coherent rewrite
 ```
 
 Failed candidates are stored in a rejection buffer and fed back to the next reflect step so the optimizer doesn't propose the same patch twice.
@@ -84,4 +84,4 @@ sqlite3 ~/.pro-workflow/data.db "SELECT id, skill_slug, initial_score, best_scor
 
 ## Provenance
 
-Inspired by Microsoft SkillOpt (arXiv:2605.23904). The ReflACT 6-stage pipeline, LR budget, rejection buffer, and slow / meta update mechanics are adapted to pro-workflow's existing SQLite + learn-rule data plane. No SkillOpt code is reused.
+Inspired by Microsoft SkillOpt (arXiv:2605.23904). The six-stage rollout/reflect/aggregate/select/update/evaluate pipeline, LR budget, rejection buffer, and slow / meta update mechanics are adapted to pro-workflow's existing SQLite + learn-rule data plane. No SkillOpt code is reused. "ReflACT" is not a SkillOpt term and is not used here; the loop is referred to by stage names only.

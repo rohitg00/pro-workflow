@@ -1,5 +1,6 @@
 import type { ValidationItem, ValidationOutcome, ValidationResult } from './types';
 import { callLLM, type Provider } from './llm';
+import { stripFencesAndParse } from './parse';
 
 export interface ValidateArgs {
   skill: string;
@@ -52,15 +53,8 @@ Rules:
 - Be strict: borderline cases score below 0.6 and pass=false.`;
 
 function parseOutcomes(text: string): ValidationOutcome[] {
-  const stripped = text.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '').trim();
-  let obj: unknown;
-  try {
-    obj = JSON.parse(stripped);
-  } catch {
-    return [];
-  }
-  const root = obj as { outcomes?: unknown };
-  if (!Array.isArray(root.outcomes)) return [];
+  const root = stripFencesAndParse<{ outcomes?: unknown }>(text);
+  if (!root || !Array.isArray(root.outcomes)) return [];
   const out: ValidationOutcome[] = [];
   for (const raw of root.outcomes) {
     const o = raw as Record<string, unknown>;

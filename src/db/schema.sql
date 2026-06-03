@@ -232,12 +232,14 @@ CREATE TABLE IF NOT EXISTS optimization_validation (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   skill_slug TEXT NOT NULL,
   learning_id INTEGER REFERENCES learnings(id) ON DELETE SET NULL,
+  prompt_hash TEXT NOT NULL,
   prompt TEXT NOT NULL,
   expected TEXT NOT NULL,
   weight REAL NOT NULL DEFAULT 1.0,
   frozen_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_opt_val_skill ON optimization_validation(skill_slug);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_opt_val_unique ON optimization_validation(skill_slug, prompt_hash);
 
 CREATE TABLE IF NOT EXISTS optimization_rejections (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { applyPatches } from '../apply';
 import { aggregatePatches } from '../aggregate';
 import { clipByLR } from '../clip';
+import { stripExistingStamp } from '../trainer';
 import type { Patch } from '../types';
 
 describe('applyPatches', () => {
@@ -72,6 +73,38 @@ describe('aggregatePatches', () => {
     assert.equal(out.merged[0].op, 'delete');
     assert.equal(out.merged[1].op, 'replace');
     assert.equal(out.merged[2].op, 'add');
+  });
+});
+
+describe('apply replace handles $-sequences verbatim', () => {
+  it('does not treat $1 in payload as a backreference', () => {
+    const out = applyPatches('# A\nold\n', [
+      { op: 'replace', anchor: 'old', payload: 'cost: $1 per unit, $2 each' },
+    ]);
+    assert.match(out.content, /cost: \$1 per unit, \$2 each/);
+  });
+});
+
+describe('aggregate keeps distinct payloads at same anchor', () => {
+  it('does not collide different add payloads at same anchor', () => {
+    const out = aggregatePatches([
+      [{ op: 'add', anchor: '## X', payload: 'foo' }],
+      [{ op: 'add', anchor: '## X', payload: 'bar' }],
+    ]);
+    assert.equal(out.merged.length, 2);
+    assert.ok(out.conflicts >= 1);
+  });
+});
+
+describe('stripExistingStamp', () => {
+  it('removes the trailing optimizer stamp', () => {
+    const stamped = '# Skill\nbody\n<!-- skill-optimizer: hash=abc slug=foo -->\n';
+    assert.equal(stripExistingStamp(stamped), '# Skill\nbody');
+  });
+
+  it('leaves unstamped content alone', () => {
+    const plain = '# Skill\nbody\n';
+    assert.equal(stripExistingStamp(plain), plain);
   });
 });
 

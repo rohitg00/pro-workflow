@@ -8,7 +8,7 @@ Run an offline, budget-capped optimization loop over a skill's accumulated `lear
 
 ## Quick Start
 
-```
+```text
 /skill-optimize <slug> [--epochs 3] [--budget-usd 0.50]
 ```
 
@@ -28,10 +28,12 @@ Run an offline, budget-capped optimization loop over a skill's accumulated `lear
 
 ## Examples
 
-```
+```text
 /skill-optimize pro-workflow
 /skill-optimize wiki-research-loop --budget-usd 1.0 --epochs 5
-/skill-optimize wrap-up --optimizer-model claude-opus-4-7 --evaluator-model gpt-4o-mini --json
+/skill-optimize wrap-up --optimizer-model claude-opus-4-7 --evaluator-model gpt-4o-mini
 ```
+
+The third example mixes providers. The CLI infers the provider from the model id (`claude-*` → anthropic, `gpt-*` / `o*` → openai), so you do not need `--evaluator-provider openai` for `gpt-4o-mini`. Pass an explicit `--optimizer-provider` / `--evaluator-provider` to override inference.
 
 See [skills/skill-optimizer/SKILL.md](../skills/skill-optimizer/SKILL.md) for full mechanics, defaults, and the SkillOpt provenance.

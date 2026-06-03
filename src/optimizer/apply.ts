@@ -54,7 +54,7 @@ function applyOne(skill: string, patch: Patch): { ok: true; content: string } | 
     if (!skill.includes(patch.anchor)) {
       return { ok: false, reason: `anchor not found: ${truncate(patch.anchor)}` };
     }
-    return { ok: true, content: skill.replace(patch.anchor, patch.payload) };
+    return { ok: true, content: skill.replace(patch.anchor, () => patch.payload) };
   }
 
   return { ok: false, reason: `unknown op: ${(patch as Patch).op}` };
