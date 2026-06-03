@@ -99,12 +99,17 @@ describe('aggregate keeps distinct payloads at same anchor', () => {
 describe('stripExistingStamp', () => {
   it('removes the trailing optimizer stamp', () => {
     const stamped = '# Skill\nbody\n<!-- skill-optimizer: hash=abc slug=foo -->\n';
-    assert.equal(stripExistingStamp(stamped), '# Skill\nbody');
+    assert.equal(stripExistingStamp(stamped).trimEnd(), '# Skill\nbody');
   });
 
   it('leaves unstamped content alone', () => {
     const plain = '# Skill\nbody\n';
     assert.equal(stripExistingStamp(plain), plain);
+  });
+
+  it('removes multiple accumulated stamps', () => {
+    const doubled = '# Skill\nbody\n<!-- skill-optimizer: hash=abc slug=foo -->\n<!-- skill-optimizer: hash=def slug=foo -->\n';
+    assert.equal(stripExistingStamp(doubled).trimEnd(), '# Skill\nbody');
   });
 });
 

@@ -9,7 +9,7 @@ import { createOptimizerStore, trajectoriesToValidation, type OptimizerStore } f
 import type { Candidate, Patch, TrainerConfig, Trajectory } from './types';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
-const STAMP_RE = /\n?<!-- skill-optimizer: [^>]*-->\s*$/g;
+const STAMP_RE = /\n?<!-- skill-optimizer: [^>]*-->\s*/g;
 
 export interface TrainerArgs {
   skillSlug: string;
@@ -54,6 +54,12 @@ export async function train(args: TrainerArgs): Promise<TrainerOutcome> {
     );
     store.upsertValidation(args.skillSlug, valSeeds);
     const validationItems = store.listValidation(args.skillSlug);
+    if (validationItems.length < 2) {
+      throw new Error(
+        `validation set too small (${validationItems.length} items). ` +
+        `Need at least 2; increase --holdout or accumulate more learn-rule rows.`,
+      );
+    }
     log(`trajectories: train=${trainTraj.length} validation=${validationItems.length}`);
 
     const runId = store.createRun({
@@ -180,13 +186,16 @@ export async function train(args: TrainerArgs): Promise<TrainerOutcome> {
           continue;
         }
 
+        const candStep = accepted + rejected + 1;
+        if (!guardBudget(0.01, `evaluate step ${candStep}`)) break;
+
         const cand: Omit<Candidate, 'id'> = {
           runId,
           parentHash: bestHash,
           contentHash: candidateHash,
           content: candContent,
           sourcePatches: applied,
-          step: accepted + rejected + 1,
+          step: candStep,
           epoch,
           status: 'pending',
         };
@@ -196,7 +205,6 @@ export async function train(args: TrainerArgs): Promise<TrainerOutcome> {
           store.rejectPatches(runId, candidateId, cand.step, epoch, skipped.map((s) => s.patch), 'anchor_missing');
         }
 
-        if (!guardBudget(0.01, `evaluate step ${cand.step}`)) break;
         const evalRes = await validateSkill({
           skill: candContent,
           items: validationItems,
@@ -274,7 +282,11 @@ export async function train(args: TrainerArgs): Promise<TrainerOutcome> {
         }
       }
 
-      writeBestSkill(args.skillPath, bestSkill, bestHash, args.skillSlug);
+      if (bestHash !== initialHash) {
+        writeBestSkill(args.skillPath, bestSkill, bestHash, args.skillSlug);
+      } else {
+        log(`no candidate beat baseline; SKILL.md left untouched`);
+      }
       flushAndEnd('completed', stoppedReason);
       return outcome(runId, bestSkill, bestHash, bestScore, initialScoreValue, epoch - 1, accepted, rejected, spent, stoppedReason);
     } catch (err) {
@@ -315,10 +327,18 @@ function outcome(
 function makeMinibatches(traj: Trajectory[], batchSize: number, count: number): Trajectory[][] {
   const out: Trajectory[][] = [];
   for (let i = 0; i < count; i++) {
-    const shuffled = [...traj].sort(() => Math.random() - 0.5);
+    const shuffled = fisherYatesShuffle([...traj]);
     out.push(shuffled.slice(0, batchSize));
   }
   return out;
+}
+
+function fisherYatesShuffle<T>(arr: T[]): T[] {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 function candidateTokens(s: string): number {
