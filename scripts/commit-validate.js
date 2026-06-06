@@ -15,6 +15,15 @@ function readStdin() {
 function extractMessage(command) {
   if (!command) return { msg: null, form: 'empty' };
 
+  // Match bash heredoc: <<[-] [quote]DELIM[quote] \n body \n DELIM
+  // Group 1: optional opening quote (' or "), Group 2: delimiter name, Group 3: body.
+  // Closing delimiter is always bare (unquoted) per bash semantics.
+  const heredocAny = command.match(/<<-?\s*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1\s*\n([\s\S]*?)\n\s*\2\s*$/m);
+  if (heredocAny) {
+    const body = heredocAny[3].replace(/^\s*\n/, '');
+    return { msg: body, form: 'heredoc' };
+  }
+
   const shortFlag = command.match(/(?:^|\s)-m\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
   if (shortFlag) {
     const raw = shortFlag[1] || shortFlag[2] || shortFlag[3] || '';
@@ -26,9 +35,6 @@ function extractMessage(command) {
     const raw = longFlag[1] || longFlag[2] || longFlag[3] || '';
     return { msg: raw.replace(/\\"/g, '"').replace(/\\'/g, "'"), form: '--message' };
   }
-
-  const heredocAny = command.match(/<<-?\s*'?([A-Za-z_][A-Za-z0-9_]*)'?\s*\n([\s\S]*?)\n\s*\1\s*$/m);
-  if (heredocAny) return { msg: heredocAny[2].split('\n')[0], form: 'heredoc' };
 
   if (/(?:^|\s)-F(?:\s+\S+|=\S+)/.test(command) || /--file(?:=|\s+)\S+/.test(command)) {
     return { msg: null, form: 'file' };
