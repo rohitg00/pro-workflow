@@ -1,6 +1,7 @@
 ---
 name: session-handoff
 description: Generate a structured handoff document capturing current progress, open tasks, key decisions, and context needed to resume work. Use when ending a session, saying "continue later", "save progress", "session summary", or "pick up where I left off".
+user-invocable: true
 ---
 
 # Session Handoff

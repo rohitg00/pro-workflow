@@ -224,4 +224,4 @@ Key env vars (set in settings or shell):
 
 ## Cross-Agent Note
 
-Cursor uses `.cursor/rules/` and `.cursorrules` for similar configuration. See `docs/cross-agent-workflows.md` for mapping between Claude Code settings and Cursor rules.
+Cursor uses `.cursor/rules/` and `.cursorrules` for similar configuration. See `references/cross-agent-workflows.md` for mapping between Claude Code settings and Cursor rules.

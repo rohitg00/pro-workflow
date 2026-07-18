@@ -1,6 +1,7 @@
 ---
 name: context-optimizer
 description: Optimize token usage and context management. Use when sessions feel slow, context is degraded, or you're running out of budget.
+user-invocable: true
 ---
 
 # Context Optimizer

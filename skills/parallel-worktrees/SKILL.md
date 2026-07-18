@@ -1,6 +1,7 @@
 ---
 name: parallel-worktrees
 description: Create and manage git worktrees for parallel coding sessions with zero dead time. Use when blocked on tests, builds, wanting to work on multiple branches, context switching, or exploring multiple approaches simultaneously.
+user-invocable: true
 ---
 
 # Parallel Worktrees

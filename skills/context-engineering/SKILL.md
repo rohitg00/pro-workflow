@@ -1,6 +1,7 @@
 ---
 name: context-engineering
 description: Master the four operations of context engineering — Write, Select, Compress, Isolate. Manage token budgets, compaction strategies, and context partitioning to keep AI sessions sharp and efficient.
+user-invocable: true
 ---
 
 # Context Engineering

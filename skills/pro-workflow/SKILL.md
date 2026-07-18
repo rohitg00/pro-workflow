@@ -1,13 +1,13 @@
 ---
 name: pro-workflow
-description: Complete AI coding workflow system. Orchestration patterns, 18 hook events, 5 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
+description: Complete AI coding workflow system. Orchestration patterns, 18 hook events, 8 agents, cross-agent support, reference guides, and searchable learnings. Works with Claude Code, Cursor, and 32+ agents.
 ---
 
 # Pro Workflow
 
 Complete AI coding workflow system from production use. Orchestration patterns, reference guides, and battle-tested habits that compound over time.
 
-**Works with:** Claude Code, Cursor, Codex, Gemini CLI, and 32+ AI coding agents via SkillKit. Sections marked *(Claude Code)* use features specific to Claude Code — Cursor users can skip those or use the noted alternatives.
+**Works with:** Claude Code, Cursor, Codex, Gemini CLI, and 32+ AI coding agents via skills add. Sections marked *(Claude Code)* use features specific to Claude Code — Cursor users can skip those or use the noted alternatives.
 
 ## The Core Insight
 
@@ -223,26 +223,26 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Opus 4.6 and Sonnet 4.6** both support adaptive thinking and 1M-token context (as of 2025-08). The 1M context is available as a beta option (via the `context-1m-2025-08-07` beta header); the default context window remains 200K. Sonnet 4.5 (200K context) has been retired from the Max plan in favor of Sonnet 4.6. See [Models overview](https://docs.anthropic.com/en/docs/about-claude/models/overview) for current capabilities.
+**Current lineup (2026):** Fable 5, Opus 4.8, Sonnet 5, and Haiku 4.5. The flagship tiers carry a 1M-token context; Haiku 4.5 is 200K. Frontier models converged, so the harness and the effort setting decide output quality more than the model choice. See [`references/models-2026.md`](../../references/models-2026.md) for strings, prices, and routing.
 
-| Task | Model |
-|------|-------|
-| Quick fixes, exploration | Haiku 4.5 |
-| Features, balanced work | Sonnet 4.6 |
-| Refactors, architecture | Opus 4.6 |
-| Hard bugs, multi-system | Opus 4.6 |
+| Task | Model | Effort |
+|------|-------|--------|
+| Quick fixes, lookups | Haiku 4.5 | low |
+| Features, balanced work | Sonnet 5 | high |
+| Refactors, architecture, hard debug | Opus 4.8 | xhigh |
+| Long-horizon autonomous builds | Fable 5 | high / xhigh |
 
-### Adaptive Thinking
+### Effort and adaptive thinking
 
-Opus 4.6 and Sonnet 4.6 automatically calibrate reasoning depth per task — lightweight for simple operations, deep analysis for complex problems. No configuration needed. Extended thinking is built-in.
+Fixed thinking budgets are retired on the current tiers. Control depth with `effort` (`low` through `xhigh` to `max`); `xhigh` is the default for coding and agentic work. Adaptive thinking lets the model calibrate reasoning per step with no fixed budget. Run grunt subagents at `low` effort on Haiku and keep the reasoning path on the capable tier.
 
 ### Add to CLAUDE.md
 
 ```markdown
-## Model Hints (as of 2025-08)
-Opus 4.6 and Sonnet 4.6 auto-calibrate reasoning depth — no need to toggle thinking mode.
-Use subagents with Haiku for fast read-only exploration, Sonnet 4.6 for balanced work.
-Docs: https://docs.anthropic.com/en/docs/about-claude/models/overview
+## Model Hints
+Route by task: Haiku 4.5 for lookups, Sonnet 5 for features, Opus 4.8 for
+architecture and hard debugging, Fable 5 for long-horizon builds.
+Effort is the lever, not thinking budgets: xhigh for coding, low for subagents.
 ```
 
 ---
@@ -497,7 +497,7 @@ Skills with `user-invocable: true` are called via `/skill-name`. Use `context: f
 ### Cross-Agent Tips
 - Use Cursor for tab completions + Claude Code in terminal for hard problems
 - Same MCP servers work across both (share `.mcp.json` at project root)
-- SkillKit translates skills to any agent: `npx skillkit translate pro-workflow --agent cursor`
+- skills add installs to any agent: `npx skills add rohitg00/pro-workflow`
 
 ---
 
@@ -538,13 +538,13 @@ Deep dives on configuration and features:
 
 | Guide | Topics |
 |-------|--------|
-| `docs/settings-guide.md` | All settings keys, permission modes, hierarchy, sandbox, env vars |
-| `docs/cli-cheatsheet.md` | Every CLI flag, keyboard shortcut, slash command |
-| `docs/orchestration-patterns.md` | Command > Agent > Skill architecture, frontmatter reference |
-| `docs/context-loading.md` | CLAUDE.md monorepo loading, agent memory, skills discovery |
-| `docs/cross-agent-workflows.md` | Claude Code + Cursor config mapping, background agents |
-| `docs/new-features.md` | Voice mode, agent teams, checkpointing, new hook events |
-| `docs/daily-habits.md` | Session habits, debugging tips, terminal setup, anti-patterns |
+| `references/settings-guide.md` | All settings keys, permission modes, hierarchy, sandbox, env vars |
+| `references/cli-cheatsheet.md` | Every CLI flag, keyboard shortcut, slash command |
+| `references/orchestration-patterns.md` | Command > Agent > Skill architecture, frontmatter reference |
+| `references/context-loading.md` | CLAUDE.md monorepo loading, agent memory, skills discovery |
+| `references/cross-agent-workflows.md` | Claude Code + Cursor config mapping, background agents |
+| `references/new-features.md` | Voice mode, agent teams, checkpointing, new hook events |
+| `references/daily-habits.md` | Session habits, debugging tips, terminal setup, anti-patterns |
 
 ---
 

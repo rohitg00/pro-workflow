@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pro Workflow — Battle-Tested Claude Code Patterns</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -35,9 +35,10 @@
   }
 
   .page {
-    width: 1200px;
+    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
-    padding: 48px 56px 40px;
+    padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 56px) 40px;
   }
 
   /* ---- HEADER ---- */
@@ -665,6 +666,34 @@
     color: var(--anthro-muted);
     margin-top: 4px;
   }
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 1080px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .grid-span-2 { grid-column: span 2; }
+    .title { font-size: 44px; }
+  }
+  @media (max-width: 760px) {
+    .title { font-size: 34px; letter-spacing: -1px; }
+    .subtitle { font-size: 13.5px; }
+    .section-title { font-size: 19px; }
+    .section-title-lg { font-size: 23px; }
+    .grid, .grid-2 { grid-template-columns: 1fr !important; gap: 20px; }
+    .grid-span-2 { grid-column: span 1 !important; }
+    [style*="grid-column: span 2"] { grid-column: span 1 !important; }
+    .mode-cards, .stats-row, .hook-grid, .memory-grid { grid-template-columns: 1fr 1fr !important; }
+    .comp-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    .loop-container, .flow > div[style*="flex"] { flex-direction: column !important; align-items: stretch !important; }
+    .flow-arrow, .loop-arrow { transform: rotate(90deg); padding: 4px 0; align-self: center; }
+    .verdict-row { flex-direction: column; }
+    .header { flex-wrap: wrap; gap: 10px; }
+    .footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+    table { font-size: 11.5px; }
+  }
+  @media (max-width: 460px) {
+    .title { font-size: 28px; }
+    .mode-cards, .stats-row, .hook-grid, .memory-grid, .comp-grid { grid-template-columns: 1fr 1fr !important; }
+    .star-count { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
@@ -691,7 +720,7 @@
     <div class="subtitle">
       Battle-tested Claude Code patterns from power users who ship production code daily.
       Self-correcting memory, persistent FTS5-indexed wikis, auto-research loop, multi-LLM council, parallel worktrees, quality gates &mdash;
-      34 Skills, 8 Agents, 24 Hook events, 22 Commands, 3 Contexts, 7 Guides.
+      41 Skills, 8 Agents, 24 Hook events, 23 Commands, 3 Contexts, 13 Guides.
     </div>
   </div>
 
@@ -740,7 +769,7 @@
         <tr><td><strong>Wrap-Up Ritual</strong></td><td>End sessions with intention, capture learnings</td></tr>
         <tr><td><strong>Split Memory</strong></td><td>Modular CLAUDE.md for complex projects</td></tr>
         <tr><td><strong>80/20 Review</strong></td><td>Batch reviews at checkpoints, not every change</td></tr>
-        <tr><td><strong>Model Selection</strong></td><td>Opus 4.6 &amp; Sonnet 4.6 adaptive thinking</td></tr>
+        <tr><td><strong>Model Selection</strong></td><td>Opus 4.8 &amp; Sonnet 5, effort routing</td></tr>
         <tr><td><strong>Context Discipline</strong></td><td>Manage your 200k token budget</td></tr>
         <tr><td><strong>Learning Log</strong></td><td>Auto-document insights from sessions</td></tr>
       </table>
@@ -751,12 +780,12 @@
       <div class="section-num">03 Components</div>
       <div class="section-title">Everything Included</div>
       <div class="comp-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="comp-item"><div class="comp-num">34</div><div class="comp-label">Skills</div></div>
+        <div class="comp-item"><div class="comp-num">41</div><div class="comp-label">Skills</div></div>
         <div class="comp-item"><div class="comp-num">8</div><div class="comp-label">Agents</div></div>
         <div class="comp-item"><div class="comp-num">24</div><div class="comp-label">Hook events</div></div>
-        <div class="comp-item"><div class="comp-num">22</div><div class="comp-label">Commands</div></div>
+        <div class="comp-item"><div class="comp-num">23</div><div class="comp-label">Commands</div></div>
         <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
-        <div class="comp-item"><div class="comp-num">7</div><div class="comp-label">Rules</div></div>
+        <div class="comp-item"><div class="comp-num">12</div><div class="comp-label">Rules</div></div>
         <div class="comp-item"><div class="comp-num">37</div><div class="comp-label">Scripts</div></div>
       </div>
       <div style="margin-top:14px;">
@@ -764,7 +793,7 @@
         <div class="tag-row">
           <span class="tag tag-coral">Claude Code</span>
           <span class="tag tag-coral">Cursor</span>
-          <span class="tag">SkillKit (32+ agents)</span>
+          <span class="tag">skills add (32+ agents)</span>
         </div>
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px; margin-top:12px;">Database</div>
         <div class="tag-row">
@@ -1216,7 +1245,7 @@
     <!-- 10 SKILLS -->
     <div>
       <div class="section-num">10 Skills Library</div>
-      <div class="section-title">34 Skills</div>
+      <div class="section-title">41 Skills</div>
       <table>
         <tr><th>Skill</th><th>What It Does</th></tr>
         <tr><td><strong>pro-workflow</strong></td><td>Core 8 patterns</td></tr>
@@ -1244,7 +1273,7 @@
         <tr><td><strong>llm-gate</strong></td><td>AI-powered quality gates</td></tr>
         <tr><td><strong>file-watcher</strong></td><td>Reactive file change workflows</td></tr>
       </table>
-      <div style="font-size:10px; color:var(--anthro-muted); margin-top:6px;">Coral rows = new in v3.3 (knowledge plane). + 10 more: context-engineering, batch-orchestration, thoroughness-scoring, sprint-status, agent-teams, safe-mode, token-efficiency, anti-sycophancy, tool-call-budget, design-rules</div>
+      <div style="font-size:10px; color:var(--anthro-muted); margin-top:6px;">Coral rows = knowledge plane. New: skill-router, tdd, domain-modeling, design-engineering, writing-guidelines, improve-architecture. + more: context-engineering, batch-orchestration, thoroughness-scoring, sprint-status, agent-teams, safe-mode, token-efficiency, skill-optimizer, bug-capture, module-map</div>
     </div>
 
     <!-- 11 MODEL SELECTION -->
@@ -1253,11 +1282,11 @@
       <div class="section-title">Right Model, Right Task</div>
       <table>
         <tr><th>Task</th><th>Model</th></tr>
-        <tr><td><strong>Quick fixes</strong></td><td>Haiku 4.5</td></tr>
-        <tr><td><strong>Features</strong></td><td>Sonnet 4.6 (adaptive thinking)</td></tr>
-        <tr><td><strong>Refactors</strong></td><td>Opus 4.6 (adaptive thinking)</td></tr>
-        <tr><td><strong>Architecture</strong></td><td>Opus 4.6 (1M context beta)</td></tr>
-        <tr><td><strong>Hard bugs</strong></td><td>Opus 4.6 (1M context beta)</td></tr>
+        <tr><td><strong>Quick fixes</strong></td><td>Haiku 4.5 &middot; low</td></tr>
+        <tr><td><strong>Features</strong></td><td>Sonnet 5 &middot; high</td></tr>
+        <tr><td><strong>Refactors</strong></td><td>Opus 4.8 &middot; xhigh</td></tr>
+        <tr><td><strong>Architecture</strong></td><td>Opus 4.8 &middot; xhigh</td></tr>
+        <tr><td><strong>Long-horizon</strong></td><td>Fable 5 &middot; high</td></tr>
       </table>
       <div style="margin-top:16px;">
         <div class="section-num" style="margin-bottom:6px;">Wrap-Up Ritual (5 Steps)</div>
@@ -1304,10 +1333,9 @@
         </div>
       </div>
       <div class="install-box" style="margin-top:8px;">
-        <div class="install-label">SkillKit (32+ Agents)</div>
+        <div class="install-label">skills add (32+ agents)</div>
         <div class="install-code">
-          <span class="cmd">npx skillkit install</span> pro-workflow<br>
-          <span class="cmd">npx skillkit translate</span> pro-workflow --agent cursor
+          <span class="cmd">npx skills add</span> rohitg00/pro-workflow
         </div>
       </div>
       <div style="margin-top:14px;">
@@ -1326,7 +1354,7 @@
   <div class="footer">
     <div class="footer-left">
       By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; May 2026<br>
-      Pro Workflow v2.0 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
+      Pro Workflow v3.3 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
     </div>
     <div class="footer-right">Practice Makes Claude Perfect</div>
   </div>

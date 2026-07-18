@@ -1,0 +1,68 @@
+---
+description: Conventions every pro-workflow skill follows - invocation intent, write semantics, buckets, and sync. A skill that gets these wrong misfires, duplicates state, or hides from the people who need it.
+globs:
+alwaysApply: true
+---
+
+# Skill Conventions
+
+## Invocation intent - declare one
+
+Every skill is either human-run or auto-triggered. Getting this wrong is the
+most common failure: a deliberate skill that auto-fires interrupts, an
+auto-skill with a vague description never fires.
+
+- **Human-run** - deliberate, side-effectful, or a session ritual. Set
+  `user-invocable: true`. The user reaches for it on purpose; it should not
+  fire from a stray phrase. Examples: `wrap-up`, `safe-mode`, `agent-teams`,
+  `plan-interrogate`, `auto-setup`, `tdd`, `domain-modeling`.
+- **Auto-triggered** - the agent should reach for it from the prompt. No
+  `user-invocable` flag; instead the description must be precise enough to
+  fire on the right task and stay silent otherwise. A description that is
+  vague under-fires; one that over-claims interrupts. Examples: `deslop`,
+  `module-map`, `replay-learnings`, `bug-capture`, `wiki-query`.
+
+Pick the mode from what the skill does, not from habit. If you cannot say in
+one sentence when it should fire on its own, it is human-run. The full
+per-skill classification lives in [`skills/skill-router/SKILL.md`](../skills/skill-router/SKILL.md).
+
+## Write semantics - add vs update vs append
+
+A skill that changes stored state (learnings, wiki pages, handoffs, issues)
+must be explicit about which operation it performs, and must be safe to run
+twice.
+
+- **add** - create a new record. Derive its identity from content, not a fresh
+  random id, so re-running the same input does not duplicate. If a record with
+  that identity exists, reinforce or update it instead of adding a twin.
+- **update** - modify an existing record addressed by its identity. Never
+  blind-overwrite a record you did not locate first.
+- **append** - add to an ordered log or list (a session handoff, a research
+  trail) where every entry is meant to persist in sequence. Appends accrete;
+  they never replace.
+
+Rule of thumb: re-importable or re-derivable input uses content-addressed
+`add` with upsert. One-off events use `append`. Corrections to an existing
+fact use `update`. A skill that re-runs and duplicates its own output is
+broken, not chatty.
+
+## Buckets
+
+Keep the promoted set clean. A skill is either shipped or it is not.
+
+- **Promoted** - listed in the router, ready to use, carries a clear
+  invocation intent. Only promoted skills appear in `skill-router`.
+- **Draft** - work in progress, not yet in the router. Do not promote until
+  it has a stable invocation intent and passes `deslop` skill-file mode.
+- **Deprecated** - superseded; leave a one-line pointer to the replacement and
+  drop it from the router.
+
+## Sync obligations
+
+- **Router** - adding, renaming, removing, or re-scoping a promoted skill
+  updates `skills/skill-router/SKILL.md` in the same change.
+- **Description** - the description is the auto-trigger surface. When behavior
+  changes, re-tune it so it still fires on the right prompt.
+- **Quality** - run `deslop` skill-file mode before promoting: no stale lines,
+  no bloat past one screen, no dead sentences, no instruction stated twice, a
+  clear anchor concept, and a declared invocation intent.

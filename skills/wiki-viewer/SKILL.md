@@ -1,6 +1,7 @@
 ---
 name: wiki-viewer
 description: Render a self-contained HTML viewer for a pro-workflow wiki. Pages, sources, claims, seed queue, page-link graph and full-text search all in one file. No external dependencies, no JS framework, S3-uploadable. Use when the user wants to browse a wiki visually, share its current state with someone, audit research progress, or hand off a knowledge base. Inspired by Thariq Shihipar's "Unreasonable Effectiveness of HTML" — favors information density and shareability over markdown-only outputs.
+user-invocable: true
 ---
 
 # Wiki Viewer

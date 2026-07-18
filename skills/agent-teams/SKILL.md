@@ -1,6 +1,7 @@
 ---
 name: agent-teams
 description: Coordinate multiple Claude Code sessions as a team — lead + teammates with shared task lists, mailbox messaging, and file-lock claiming. Patterns for team sizing, task decomposition, and when to use teams vs sub-agents vs worktrees.
+user-invocable: true
 ---
 
 # Agent Teams

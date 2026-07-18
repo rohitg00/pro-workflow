@@ -112,7 +112,7 @@ The "scaffolding > model" insight means investing in context infrastructure (mem
 - [ ] Root CLAUDE.md under 60 lines
 - [ ] AGENTS.md in project root with build/test/lint commands
 - [ ] Monorepo packages have their own CLAUDE.md
-- [ ] Skills marked `user-invocable: false` if only used by agents
+- [ ] Skills declare invocation intent per `rules/skill-conventions.mdc` (omit `user-invocable` for auto-triggered, set true for human-run)
 - [ ] Heavy skills use `context: fork`
 - [ ] MCP servers have tool filtering enabled where supported
 - [ ] Manual compaction at task boundaries (between features, not mid-implementation)

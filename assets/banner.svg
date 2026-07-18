@@ -68,16 +68,16 @@
 
   <g transform="translate(220, 210)">
     <rect x="0" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="65" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">14 Skills</text>
+    <text x="65" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">41 Skills</text>
 
     <rect x="145" y="0" width="110" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="200" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">6 Agents</text>
+    <text x="200" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">8 Agents</text>
 
     <rect x="270" y="0" width="140" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
     <text x="340" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">23 Hook Scripts</text>
 
     <rect x="425" y="0" width="140" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
-    <text x="495" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">14 Commands</text>
+    <text x="495" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">23 Commands</text>
 
     <rect x="580" y="0" width="130" height="30" rx="15" fill="#252636" stroke="#D97757" stroke-width="1"/>
     <text x="645" y="20" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#E8926F">9 Guides</text>

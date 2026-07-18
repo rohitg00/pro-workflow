@@ -6,7 +6,7 @@
   <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
   <a href="https://www.npmjs.com/package/pro-workflow"><img src="https://img.shields.io/npm/v/pro-workflow?style=for-the-badge&logo=npm&color=E8926F&labelColor=1e1e2e" alt="npm"/></a>
   <a href="https://github.com/rohitg00/pro-workflow/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge&labelColor=1e1e2e" alt="License"/></a>
-  <a href="https://agenstskills.com"><img src="https://img.shields.io/badge/SkillKit-32%2B%20agents-f59e0b?style=for-the-badge&labelColor=1e1e2e" alt="SkillKit"/></a>
+  <a href="https://skills.sh"><img src="https://img.shields.io/badge/skills%20add-32%2B%20agents-f59e0b?style=for-the-badge&labelColor=1e1e2e" alt="skills add"/></a>
   <a href="https://rohitg00-pro-workflow.mintlify.app/"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373?style=for-the-badge&logo=mintlify&labelColor=1e1e2e" alt="Docs"/></a>
 </p>
 
@@ -15,8 +15,8 @@
 <p align="center">
   Self-correcting memory + persistent FTS5-indexed wikis + auto-research loop, all on one SQLite store.<br/>
   Correct Claude once &mdash; it never repeats the mistake. Build a wiki on a topic &mdash; it grows itself overnight.<br/>
-  <b>34 skills</b> &bull; <b>8 agents</b> &bull; <b>22 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
-  Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via SkillKit.
+  <b>41 skills</b> &bull; <b>8 agents</b> &bull; <b>23 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
+  Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via skills add.
 </p>
 
 ---
@@ -56,7 +56,7 @@ Session 50: Correction rate near zero. Wiki has 200 cited claims.
 
 ## Install
 
-Pro Workflow is published in two places: the Claude Code plugin marketplace (native), and SkillKit (cross-agent translator). Other agents do not have first-class plugins yet &mdash; SkillKit translates the skill bundle into each agent's native skill format.
+Pro Workflow is published in two places: the Claude Code plugin marketplace (native), and skills add (cross-agent installer). Other agents do not have first-class plugins yet &mdash; skills add installs the skill bundle into each agent's native skill directory.
 
 ### Claude Code (native)
 
@@ -65,22 +65,23 @@ Pro Workflow is published in two places: the Claude Code plugin marketplace (nat
 /plugin install pro-workflow@pro-workflow
 ```
 
-### Cursor, Codex, Copilot CLI, Droid, Gemini CLI, OpenCode, and 26 more (via SkillKit)
+### Cursor, Codex, Copilot CLI, Droid, Gemini CLI, OpenCode, and 26 more (via skills add)
 
-SkillKit translates the 34 skills + 22 commands into each agent's native skill format and drops them in the right config directory.
+skills add installs the 41 skills + 23 commands into each agent's native skill directory.
 
 ```bash
-npx skillkit install rohitg00/pro-workflow --agent <name> --force
+npx skills add rohitg00/pro-workflow
 ```
 
 Notes:
 
-- Use `rohitg00/pro-workflow` (the GitHub form), not the bare name &mdash; `skillkit install` resolves providers from `owner/repo`, not marketplace slugs.
-- `--force` is currently required: SkillKit's security scanner has open false positives on standard Node patterns (`child_process` imports, `Bearer ${env}` template literals) that block legit skills like `survey-generator` and `safe-mode`. Tracked at [`skillkit#129`](https://github.com/rohitg00/skillkit/issues/129).
+- Use `rohitg00/pro-workflow` (the GitHub form), not the bare name &mdash; `skills add` resolves providers from `owner/repo`, not marketplace slugs.
 
-Supported `<name>` values: `cursor`, `codex`, `gemini-cli`, `opencode`, `github-copilot`, `droid` (factory), `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`. Pass `--agent universal` for a portable bundle.
+Works with these agents: `cursor`, `codex`, `gemini-cli`, `opencode`, `github-copilot`, `droid` (factory), `antigravity`, `amp`, `clawdbot`, `cline`, `codebuddy`, `commandcode`, `continue`, `crush`, `goose`, `kilo`, `kiro-cli`, `mcpjam`, `mux`, `neovate`, `openhands`, `pi`, `qoder`, `qwen`, `roo`, `trae`, `universal`, `vercel`, `windsurf`, `zencoder`.
 
-After install, run `skillkit sync` to register the skills with the target agent's config.
+Roster notes (2026): `windsurf` relaunched as Devin Desktop, which speaks the Agent Client Protocol (ACP); `gemini-cli` was superseded by the Antigravity CLI for consumers. The adapter names above still resolve, but target the current product. MCP works across every agent in this list with the same setup. See [`references/modern-workflows-2026.md`](references/modern-workflows-2026.md) for the interop picture.
+
+After install, run `skills sync` to register the skills with the target agent's config.
 
 <details>
 <summary>Manual install (any agent, any OS)</summary>
@@ -112,7 +113,7 @@ If `/doctor` reports `KB: missing`, run `cd ~/.claude/plugins/*/pro-workflow && 
 
 ## What to type first
 
-After install you have **34 auto-trigger skills** and **22 slash commands**. You don't need to memorize them; the agent picks the right skill from your prompt. The five commands below cover 80% of daily use:
+After install you have **41 skills** and **23 slash commands**. You don't need to memorize them; the agent picks the right skill from your prompt. The five commands below cover 80% of daily use:
 
 | When | Command | What it does |
 |---|---|---|
@@ -193,7 +194,7 @@ Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, sc
 | Compaction-aware state preservation | **Yes** | No | No | No | No |
 | Cost tracking and budget alerts | **Yes** | No | No | No | No |
 | MCP overhead auditing | **Yes** | No | No | No | No |
-| Cross-agent (32+ agents via SkillKit) | **Yes** | No | Some | No | No |
+| Cross-agent (32+ agents via skills add) | **Yes** | No | Some | No | No |
 | Skills | 34 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
 | Commands | 22 | 3 | 60+ | 5+ | 57 |
@@ -203,7 +204,7 @@ Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, sc
 
 ## What's inside
 
-### 34 skills
+### 41 skills
 
 **Knowledge plane (new in v3.3)**
 
@@ -272,7 +273,7 @@ Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, sc
 | **permission-analyst** | Denial-pattern analysis, rule-optimization recommendations |
 | **cost-analyst** | Token-usage analysis, identify expensive operations |
 
-### 22 commands
+### 23 commands
 
 | Command | What it does |
 |---------|--------------|
@@ -313,19 +314,23 @@ Selected high-leverage hooks:
 | `PreToolUse(Write)` | `secret-scan.js` | LLM-powered secret detection |
 | `PreCompact` / `PostCompact` | `pre-compact.js`, `post-compact.js` | Save and re-inject critical context summary |
 
-### 9 reference guides
+### Reference guides
 
 | Guide | What's covered |
 |-------|----------------|
-| [`settings-guide.md`](docs/settings-guide.md) | Settings keys, permission modes, hierarchy |
-| [`cli-cheatsheet.md`](docs/cli-cheatsheet.md) | CLI flags, keyboard shortcuts, slash commands |
-| [`orchestration-patterns.md`](docs/orchestration-patterns.md) | Command → Agent → Skill architecture, agent teams |
-| [`context-engineering.md`](docs/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction |
-| [`agent-teams.md`](docs/agent-teams.md) | Setup, decomposition, teams vs sub-agents |
-| [`context-loading.md`](docs/context-loading.md) | CLAUDE.md loading, agent memory, skills discovery |
-| [`cross-agent-workflows.md`](docs/cross-agent-workflows.md) | Claude Code + Cursor together, SkillKit translation |
-| [`decision-framework.md`](docs/decision-framework.md) | When to use which pattern |
-| [`daily-habits.md`](docs/daily-habits.md) | Session habits, debugging tips, anti-patterns |
+| [`modern-workflows-2026.md`](references/modern-workflows-2026.md) | Multi-agent orchestration, Agent Teams, checkpoints, ACP/MCP interop, skills-commands merger |
+| [`../references/models-2026.md`](references/models-2026.md) | Current model tiers, effort routing, task budgets |
+| [`settings-guide.md`](references/settings-guide.md) | Settings keys, permission modes, hierarchy |
+| [`cli-cheatsheet.md`](references/cli-cheatsheet.md) | CLI flags, keyboard shortcuts, slash commands |
+| [`orchestration-patterns.md`](references/orchestration-patterns.md) | Command → Agent → Skill architecture, agent teams |
+| [`context-engineering.md`](references/context-engineering.md) | Write/Select/Compress/Isolate, memory taxonomy, compaction |
+| [`agent-teams.md`](references/agent-teams.md) | Setup, decomposition, teams vs sub-agents |
+| [`context-loading.md`](references/context-loading.md) | CLAUDE.md loading, agent memory, skills discovery |
+| [`cross-agent-workflows.md`](references/cross-agent-workflows.md) | Claude Code + Cursor together, skills add cross-agent |
+| [`decision-framework.md`](references/decision-framework.md) | When to use which pattern |
+| [`daily-habits.md`](references/daily-habits.md) | Session habits, debugging tips, anti-patterns |
+| [`new-features.md`](references/new-features.md) | Checkpoints, remote sessions, agent and prompt hooks |
+| [`claude-code-resources.md`](references/claude-code-resources.md) | Official docs map and resource index |
 
 ---
 
@@ -388,13 +393,10 @@ Project-scope wikis live at `<project>/.claude/wikis/<slug>/` and are committabl
 
 ## Cross-agent support
 
-Works across 32+ AI coding agents via [SkillKit](https://agenstskills.com):
+Works across 32+ AI coding agents via [skills add](https://skills.sh):
 
 ```bash
-npx skillkit install pro-workflow
-npx skillkit translate pro-workflow --agent cursor
-npx skillkit translate pro-workflow --agent codex
-npx skillkit translate pro-workflow --agent gemini-cli
+npx skills add rohitg00/pro-workflow
 ```
 
 Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro, Amp, Goose, Roo, and 27 more.
@@ -433,11 +435,12 @@ Rule: start with three MCPs, add only for concrete needs.
 
 ```text
 pro-workflow/
-├── skills/           # 34 skills
+├── skills/           # 41 skills
 ├── agents/           # 8 agents
-├── commands/         # 22 slash commands
+├── commands/         # 23 slash commands
 ├── scripts/          # 37 hook scripts (24 events)
-├── docs/             # 9 reference guides + index.html + infographic.html
+├── references/       # workflow, model, and skill reference guides
+├── docs/             # GitHub Pages infographic
 ├── rules/            # rule packs (Cursor + universal)
 ├── contexts/         # context modes
 ├── templates/        # split CLAUDE.md + AGENTS.md
@@ -478,7 +481,7 @@ pro-workflow/
 |---------|-------------|
 | [everything-claude-code](https://github.com/affaan-m/everything-claude-code) | 140+ skills, 36 agents — the comprehensive collection |
 | [claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Curated tips, comparisons, community best practices |
-| [SkillKit](https://github.com/rohitg00/skillkit) | Universal CLI for managing skills across 32+ agents |
+| [skills](https://skills.sh) | Registry and CLI to add skills across 32+ agents |
 | [awesome-claude-code-toolkit](https://github.com/rohitg00/awesome-claude-code-toolkit) | 850+ files, 135 agents, 176 plugins — curated directory |
 
 ---
@@ -502,7 +505,7 @@ pro-workflow/
   <a href="https://github.com/rohitg00/pro-workflow/stargazers"><img src="https://img.shields.io/github/stars/rohitg00/pro-workflow?style=for-the-badge&logo=github&color=D97757&labelColor=1e1e2e" alt="Stars"/></a>
   <br/><br/>
   <a href="https://rohitg00-pro-workflow.mintlify.app/">Documentation</a> &bull;
-  <a href="https://agenstskills.com">SkillKit Marketplace</a> &bull;
+  <a href="https://skills.sh">Skills Registry</a> &bull;
   <a href="https://github.com/rohitg00/pro-workflow/issues">Report Issues</a> &bull;
-  <a href="docs/">Reference Guides</a>
+  <a href="references/">Reference Guides</a>
 </p>

@@ -1,6 +1,7 @@
 ---
 name: file-watcher
 description: Configure file watching hooks to auto-react to config changes, env file updates, and dependency modifications. Use to set up reactive workflows.
+user-invocable: true
 ---
 
 # File Watcher

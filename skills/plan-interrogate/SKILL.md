@@ -27,7 +27,7 @@ before any code is written.
    prior commits, or an existing doc. If so, skip the question and mark
    the node resolved with source `inferred: <path>`.
 7. Exit only when zero nodes are open. Print the resolved tree as a flat
-   list: `Decision — Choice — Source (user | inferred: <path>)`.
+   list: `Decision - Choice - Source (user | inferred: <path>)`.
 
 ## Anti-patterns
 
@@ -40,8 +40,33 @@ before any code is written.
 - Rolling past an unresolved node. If a dependency is not pinned, the
   downstream question is premature.
 
+## Outputs
+
+The interrogation produces three artifacts, not just answers. Offer to write
+each; do not force it.
+
+1. **Decision ledger** (always). The resolved tree as a flat list:
+   `Decision - Choice - Source (user | inferred: <path>)`.
+
+2. **`CONTEXT.md`** (when the interrogation surfaced project-specific terms).
+   A short shared-language file: every domain term you and the user had to
+   pin down, with a one-line definition in the project's own words. This is
+   what stops the agent from using twenty words where one will do next
+   session, and keeps names in code consistent. One term per line:
+   `term - what it means here`. Point future sessions at it. On re-run, merge
+   new terms in place rather than overwriting existing ones.
+
+3. **Decision records** (for contested or hard-to-reverse nodes only). One
+   short record per decision that a future reader would question: the
+   context, the choice, the alternatives rejected, and why. Keep them in
+   `docs/decisions/NNNN-slug.md`. Read the directory first and number from the
+   highest existing record so two records never collide. Skip the obvious ones -
+   a record for a trivial choice is noise.
+
 ## Output contract
 
-A single decision ledger the user can paste into the plan doc. No prose
-summary. No hedging. If the user declines to decide a node, mark it
-`DEFERRED` with the reason the user gave — this is not the same as open.
+The decision ledger the user can paste into the plan doc. No prose summary.
+No hedging. If the user declines to decide a node, mark it `DEFERRED` with
+the reason the user gave - this is not the same as open. When you write
+`CONTEXT.md` or a decision record, keep it in the project's language, not a
+generic template.

@@ -32,9 +32,13 @@ Analyze token usage patterns and recommend cost optimizations.
 - Reusing agents via SendMessage saves context creation cost
 
 ### Model Selection Impact
-- Opus: highest quality, highest cost
-- Sonnet: good balance for most tasks
-- Haiku: fast and cheap for simple lookups
+Current tiers (see [`references/models-2026.md`](../references/models-2026.md) for strings, prices, and routing):
+- Fable 5: most capable, highest cost - hardest long-horizon runs only
+- Opus 4.8: flagship reasoning - architecture, refactors, deep debugging
+- Sonnet 5: near-Opus coding at lower cost - most feature work
+- Haiku 4.5: fast and cheap - lookups, scans, grunt subagent work
+
+Effort is a second cost lever on top of the model, not a substitute for it: the model sets the base per-token price, effort sets how much reasoning gets spent. A low-effort call on an expensive tier is still billed at that tier's rate. Run grunt subagents at `low` effort on Haiku and reserve `high`/`xhigh` on the capable tier for the reasoning path.
 
 ## Recommendations Template
 

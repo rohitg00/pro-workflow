@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Remove AI-generated code slop, unnecessary comments, and over-engineering from the current branch diff. Cleans up boilerplate, simplifies abstractions, and strips defensive code. Use when cleaning up code, simplifying, removing boilerplate, or before committing.
+description: Remove AI-generated code slop, unnecessary comments, and over-engineering from the current branch diff. Cleans up boilerplate, simplifies abstractions, strips defensive code, and in skill-file mode lints SKILL.md files for quality. Use when cleaning up code, simplifying, removing boilerplate, before committing, or when reviewing a skill before promoting it.
 ---
 
 # Remove AI Code Slop
@@ -48,7 +48,32 @@ git diff origin/main...HEAD
 - If you remove something, verify it's truly unused first.
 - Keep the final summary concise (1-3 sentences).
 
-## Output
+## Skill-file mode
+
+When the target is a `SKILL.md` (not a code diff), lint it against the same
+slop instinct applied to prose. Run this before promoting a skill. Flag:
+
+- **Stale lines** - guidance written for an old version of the skill that no
+  longer matches what it does. Cut it.
+- **Bloat** - the skill runs past one screen with detail that belongs in a
+  linked reference. Push it down: in-skill step, then in-skill reference, then
+  an external file behind a pointer.
+- **Dead sentences** - a line that changes nothing if deleted. Delete it.
+- **Duplication** - the same instruction stated in two places, so edits drift.
+  Keep one source of truth.
+- **Premature stop** - the method ends before the work does (asks the question
+  but never records the answer, cleans but never verifies).
+- **Weak anchor** - no single concept the skill turns on. A skill the reader
+  can name in one word triggers and executes in fewer tokens.
+- **Missing invocation intent** - no declared human-run vs auto-triggered mode.
+  See [`rules/skill-conventions.mdc`](../../rules/skill-conventions.mdc).
+- **Wrong write op** - a state-changing skill that does not say whether it
+  adds, updates, or appends, or that duplicates its output on a second run.
+
+**Skill-file mode output:** the flagged issues by line, the edits applied,
+the cleanup summary, and whether the skill is ready to promote.
+
+## Output (code mode)
 
 - List of slop patterns found with file locations
 - Edits applied

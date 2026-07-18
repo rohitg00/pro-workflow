@@ -1,6 +1,7 @@
 ---
 name: auto-setup
 description: Auto-configure quality gates, hooks, and settings for a new project. Detects project type and sets up appropriate tooling. Use when onboarding a new codebase.
+user-invocable: true
 ---
 
 # Auto Setup

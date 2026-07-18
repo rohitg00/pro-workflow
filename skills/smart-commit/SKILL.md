@@ -1,6 +1,7 @@
 ---
 name: smart-commit
 description: Run quality gates, review staged changes for issues, and create a well-crafted conventional commit. Use when saying "commit", "git commit", "save my changes", or ready to commit after making changes.
+user-invocable: true
 ---
 
 # Smart Commit

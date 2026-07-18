@@ -1,6 +1,7 @@
 ---
 name: skill-optimizer
 description: SkillOpt-flavored offline training loop for any SKILL.md. Treats accumulated learn-rule corrections as training trajectories, proposes bounded patches via an optimizer LLM, gates each candidate against a held-out validation set built from the user's own past corrections, and ships only candidates that demonstrably improve the score. Inspired by Microsoft SkillOpt's ReflACT pipeline (rollout → reflect → aggregate → select → update → evaluate) adapted to pro-workflow's SQLite store. Use when a skill has accumulated 8+ learn-rule rows and the user wants the skill itself to get better, not just longer.
+user-invocable: true
 ---
 
 # Skill Optimizer

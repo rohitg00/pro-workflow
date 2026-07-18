@@ -1,6 +1,7 @@
 ---
 name: insights
 description: Show session analytics, learning patterns, correction trends, heatmaps, and productivity metrics. Computes stats from project memory and session history. Use when asking for stats, statistics, progress, how am I doing, coding history, or dashboard.
+user-invocable: true
 ---
 
 # Session Insights

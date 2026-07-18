@@ -50,13 +50,13 @@ Essential references and community workflows.
 
 | Guide | Path | Topics |
 |-------|------|--------|
-| Settings Guide | `docs/settings-guide.md` | Hierarchy, permissions, sandbox, env vars |
-| CLI Cheatsheet | `docs/cli-cheatsheet.md` | Flags, shortcuts, slash commands, scripting |
-| Orchestration Patterns | `docs/orchestration-patterns.md` | Command > Agent > Skill, frontmatter |
-| Context Loading | `docs/context-loading.md` | Monorepo CLAUDE.md, agent memory, skills |
-| Cross-Agent Workflows | `docs/cross-agent-workflows.md` | Claude Code + Cursor config mapping |
-| New Features | `docs/new-features.md` | Voice, teams, checkpointing, hooks |
-| Daily Habits | `docs/daily-habits.md` | Session habits, debugging, terminal setup |
+| Settings Guide | `references/settings-guide.md` | Hierarchy, permissions, sandbox, env vars |
+| CLI Cheatsheet | `references/cli-cheatsheet.md` | Flags, shortcuts, slash commands, scripting |
+| Orchestration Patterns | `references/orchestration-patterns.md` | Command > Agent > Skill, frontmatter |
+| Context Loading | `references/context-loading.md` | Monorepo CLAUDE.md, agent memory, skills |
+| Cross-Agent Workflows | `references/cross-agent-workflows.md` | Claude Code + Cursor config mapping |
+| New Features | `references/new-features.md` | Voice, teams, checkpointing, hooks |
+| Daily Habits | `references/daily-habits.md` | Session habits, debugging, terminal setup |
 
 ## Learning Path
 
@@ -77,8 +77,8 @@ Essential references and community workflows.
 ### With /learn
 Save to database with `Claude-Code` category for searchability.
 
-### With SkillKit
+### With skills add
 ```bash
-npx skillkit install pro-workflow
-npx skillkit translate pro-workflow --agent cursor
+npx skills add rohitg00/pro-workflow
+npx skills add rohitg00/pro-workflow
 ```

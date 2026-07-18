@@ -107,5 +107,5 @@
   <!-- Bottom: Cross-Agent -->
   <rect x="50" y="430" width="800" height="50" rx="10" fill="#252636" stroke="#64748b" stroke-width="1"/>
   <text x="450" y="455" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#94a3b8">Works with: </text>
-  <text x="450" y="470" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">Claude Code  |  Cursor  |  Codex  |  Gemini CLI  |  32+ agents via SkillKit</text>
+  <text x="450" y="470" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#E8926F">Claude Code  |  Cursor  |  Codex  |  Gemini CLI  |  32+ agents via skills</text>
 </svg>

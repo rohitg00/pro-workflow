@@ -77,20 +77,17 @@ Uses skills (.mdc rules) instead of hooks. Same patterns, different enforcement.
 ```
 
 What loads:
-- 9 skills (pro-workflow, smart-commit, wrap-up, learn-rule, etc.)
+- 41 skills (pro-workflow, smart-commit, wrap-up, learn-rule, etc.)
 - 6 rules (quality-gates, atomic-commits, context-discipline, etc.)
-- 3 agents (planner, reviewer, scout)
+- 8 agents (planner, reviewer, scout, etc.)
 
-### Other Agents (via SkillKit)
+### Other Agents (via skills add)
 
 ```bash
-npx skillkit install pro-workflow
-npx skillkit translate pro-workflow --agent codex
-npx skillkit translate pro-workflow --agent gemini-cli
-npx skillkit translate pro-workflow --agent windsurf
+npx skills add rohitg00/pro-workflow
 ```
 
-SkillKit translates the SKILL.md format to each agent's native format.
+skills add installs the SKILL.md format into each agent's native skill directory.
 
 ## Shared Patterns That Work Everywhere
 

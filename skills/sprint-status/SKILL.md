@@ -1,6 +1,7 @@
 ---
 name: sprint-status
 description: Track parallel work sessions and prevent confusion across multiple Claude Code instances. Every major step ends with a status line. Every question re-states project, branch, and task.
+user-invocable: true
 ---
 
 # Sprint Status

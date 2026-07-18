@@ -1,6 +1,7 @@
 ---
 name: llm-council
 description: Provider-agnostic multi-LLM deliberation. Three phases — independent responses, cross-model anonymized ranking, chairman synthesis. Provider config from env (OPENAI/ANTHROPIC/FIREWORKS/OPENROUTER/custom OpenAI-compatible base URL). Persists transcript to a wiki page when --wiki <slug> is passed. Use when the user wants multiple AI perspectives, consensus-building, or the "LLM Council" approach for high-stakes reviews, plan critique, or contested learning rules.
+user-invocable: true
 allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: cost-tracker
 description: Track session costs, set budget alerts, and optimize token spend. Use to check costs mid-session or set spending limits.
+user-invocable: true
 ---
 
 # Cost Tracker

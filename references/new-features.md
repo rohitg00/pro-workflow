@@ -84,7 +84,7 @@ Claude Code automatically tracks checkpoints during your session.
 
 - **`Esc Esc`** — Rewind to the last checkpoint
 - **`/rewind`** — Browse and select a checkpoint to restore
-- Checkpoints are git-based — your code state is saved at each point
+- Checkpoints are local session snapshots - `/rewind` restores code and conversation state without creating Git commits
 
 ### When to Rewind
 
@@ -104,7 +104,7 @@ Continue sessions from phone, tablet, or browser.
 ### How It Works
 
 - Start Claude Code on your machine
-- Access it remotely via `--remote` flag
+- Enable remote access, then continue the session from any device
 - Continue interacting from any device
 - Session state persists
 

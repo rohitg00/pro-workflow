@@ -1,6 +1,7 @@
 ---
 name: wiki-builder
 description: Start, structure, and grow a persistent research wiki indexed in pro-workflow's SQLite knowledge base. Each wiki is a folder of markdown pages with provenance, plus a shadow FTS5 index so any session can recall it. Use when the user says "start a wiki", "add to wiki", "compile a page", "wiki on X", or wants a long-lived knowledge base on a topic, paper, product, person, project, or codebase.
+user-invocable: true
 ---
 
 # Wiki Builder
