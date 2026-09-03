@@ -20,7 +20,7 @@ const WRAPPER = '(?:\\w+=\\S*|then|else|elif|do|exec|eval|time|nohup|setsid|comm
 const GITWORD = '(?:[\\w./~-]*/)?git';
 const GIT_COMMIT = new RegExp(
   SEGMENT + '\\s*(?:' + WRAPPER + '\\s+)*' + GITWORD +
-  '\\s+(?:(?:-[cC]\\s+\\S+|-{1,2}[^\\s]+)\\s+)*commit\\b'
+  '\\s+(?:(?:-[cC]\\s+\\S+|-{1,2}[^\\s]+)\\s+)*commit(?![\\w-])'
 );
 const HEREDOC_MARKER = /<<-?\s*(?:'([A-Za-z_][A-Za-z0-9_]*)'|"([A-Za-z_][A-Za-z0-9_]*)"|\\?([A-Za-z_][A-Za-z0-9_]*))/g;
 const SHELL_C = /(?:^|[\s;&|(])(?:ba|z|k|da)?sh\s+-c\s+(['"])/g;
@@ -78,6 +78,9 @@ function maskQuoted(code) {
   let quote = null;
   for (let i = 0; i < code.length; i++) {
     const c = code[i];
+    // A backslash escapes the next character; without this, `\"` closes the
+    // string early and the text after it is masked — or worse, exposed — wrongly.
+    if (c === '\\' && quote !== "'") { if (quote !== null) { out[i] = ' '; out[i + 1] = ' '; } i++; continue; }
     if (quote === null && (c === "'" || c === '"')) { quote = c; continue; }
     if (quote !== null) { if (c === quote) { quote = null; continue; } out[i] = ' '; }
   }
@@ -135,7 +138,12 @@ function extractMessage(command) {
   // Everything the commit itself could be carrying lives after the `commit` word.
   const afterCommit = commitArgs(code.slice(gitCommit.index + gitCommit[0].length));
 
-  const shortFlag = afterCommit.match(/(?:^|\s)-m\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
+  // `-m` is a short flag, so it may be clustered behind other boolean shorts
+  // (`-am`) and its value may be attached (`-m"x"`, `-mx`). Matching only the
+  // spaced `-m "x"` form leaves `git commit -am "..."` — a very common
+  // invocation — silently unvalidated. The cluster is restricted to git-commit's
+  // own boolean shorts so an unrelated token like `-format` cannot match.
+  const shortFlag = afterCommit.match(/(?:^|\s)-[aApsSvqenioz]*m\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
   if (shortFlag) {
     const raw = shortFlag[1] || shortFlag[2] || shortFlag[3] || '';
     return { msg: raw.replace(/\\"/g, '"').replace(/\\'/g, "'"), form: '-m' };
@@ -161,7 +169,7 @@ function extractMessage(command) {
     return { msg: null, form: 'file' };
   }
 
-  const hasExplicitFlag = /(?:-m|--message|-F|--file|--amend)\b/.test(afterCommit);
+  const hasExplicitFlag = /(?:(?:^|\s)-[aApsSvqenioz]*m|--message|-F|--file|--amend)\b/.test(afterCommit);
   if (!hasExplicitFlag) return { msg: null, form: 'editor' };
   return { msg: null, form: 'unknown' };
 }

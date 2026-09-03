@@ -23,6 +23,7 @@ const path = require('node:path');
 const SCRIPT = path.join(__dirname, '..', 'commit-validate.js');
 const BAD = 'bad message not conventional';
 const LONG_SUMMARY = 'x'.repeat(80); // > MAX_SUMMARY (72)
+const BAD_SUBJECT = 'bad message not conventional'; // fails the conventional-commit pattern
 
 function runHook(command) {
   const res = spawnSync(process.execPath, [SCRIPT], {
@@ -170,4 +171,51 @@ describe('commit-validate: degenerate input', () => {
     assert.strictEqual(code, 0);
     assert.strictEqual(stderr, '', 'the hook must not print on every unrelated Bash call');
   });
+});
+
+// The three cases below came out of review on this PR. Each was a real defect in
+// the first version of the patch, and each is the kind that fails silently — two
+// let a bad message through, one blocked a command that makes no commit at all.
+
+describe('commit-validate: -m in its other legal spellings', () => {
+  // `-m` is a short flag: it clusters behind other boolean shorts and its value
+  // may be attached. Matching only `-m "x"` left `git commit -am "..."`
+  // unvalidated, which is one of the most common ways a commit is actually made.
+  const blocked = [
+    ['clustered as -am', `git commit -am "${BAD_SUBJECT}"`],
+    ['clustered as -sam', `git commit -sam "${BAD_SUBJECT}"`],
+    ['value attached to -m', `git commit -m"${BAD_SUBJECT}"`],
+    ['value attached with no quotes', 'git commit -mwip'],
+  ];
+  for (const [why, command] of blocked) {
+    test(`blocks an invalid message with the message ${why}`, () => assertBlocks(command, why));
+  }
+
+  const allowed = [
+    ['clustered as -am', 'git commit -am "feat(x): valid"'],
+    ['value attached to -m', 'git commit -m"feat(x): valid"'],
+  ];
+  for (const [why, command] of allowed) {
+    test(`allows a valid message with the message ${why}`, () => assertAllows(command, why));
+  }
+});
+
+describe('commit-validate: commit must be the whole subcommand', () => {
+  // `commit\b` also matches the stem of `commit-tree` / `commit-graph`, which are
+  // plumbing commands that write no commit message of their own.
+  test('allows git commit-tree', () =>
+    assertAllows(`git commit-tree HEAD^{tree} -m "${BAD_SUBJECT}"`, 'commit-tree is not commit'));
+
+  test('allows git commit-graph', () =>
+    assertAllows('git commit-graph write --reachable', 'commit-graph is not commit'));
+});
+
+describe('commit-validate: a backslash escapes the next character', () => {
+  // Without escape handling, `\"` closes the string early and the rest of the
+  // argument is read as shell code — so a quoted mention becomes a "commit".
+  test('allows an escaped quote followed by a mention after ;', () =>
+    assertAllows(`echo "x \\"; git commit -m \\"${BAD_SUBJECT}\\""`, 'escaped quote must not end the string'));
+
+  test('allows an escaped quote followed by a mention after &&', () =>
+    assertAllows('echo "a \\" && git commit -m b"', 'escaped quote must not end the string'));
 });
