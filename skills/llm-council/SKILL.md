@@ -19,9 +19,11 @@ Karpathy's LLM Council pattern, provider-agnostic. dair-academy's version hardco
 
 ## Three phases
 
-1. **Independent**: each model answers in parallel
-2. **Ranking**: each model ranks anonymized peer responses
+1. **Independent**: each model answers in parallel by default
+2. **Ranking**: each model ranks anonymized peer responses in parallel by default
 3. **Synthesis**: chairman model reads all responses + rankings → final answer
+
+`--sequential` overrides the default parallel behavior for phases 1 and 2, running their model calls one at a time.
 
 ## Provider config
 
@@ -42,10 +44,21 @@ Default model rosters per provider live in `scripts/council.js` and can be overr
 ## Commands
 
 ```
-node $SKILL_ROOT/scripts/council.js run "<query>" [--models id1,id2,id3] [--chairman id] [--provider <name>] [--wiki <slug>]
+node $SKILL_ROOT/scripts/council.js run "<query>" [--models id1,id2,id3] [--chairman id] [--provider <name>] [--wiki <slug>]\
+                        [--max-tokens N] [--timeout ms] [--max-retries N] [--sequential] [--reasoning-effort low|medium|high]
 node $SKILL_ROOT/scripts/council.js providers
 node $SKILL_ROOT/scripts/council.js show <session-id>
 ```
+
+### Runtime options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--max-tokens` | 4000 | Max output tokens per model call. Bump to 16000+ for reasoning models. |
+| `--timeout` | 120000 | HTTP request timeout in ms. Bump to 300000+ for slow endpoints (NVIDIA NIM). |
+| `--max-retries` | 1 | Retry count on 429/5xx and connection errors. Exponential backoff (2s, 4s, 8s...). |
+| `--sequential` | false | Run model calls one at a time instead of in parallel. Use when free endpoints reject concurrent requests. |
+| `--reasoning-effort` | — | low\|medium\|high passed as `reasoning.effort` (OpenAI-compat) or `output_config.effort` (Anthropic adaptive thinking). |
 
 `--wiki <slug>` writes the full transcript to `<wiki>/derived/council/<session-id>.md` and registers it via `wiki-cli.js page` so it shows in FTS5 search.
 
