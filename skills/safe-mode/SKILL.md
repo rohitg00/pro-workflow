@@ -3,10 +3,8 @@ name: safe-mode
 description: Prevent destructive operations using Claude Code hooks. Three modes — cautious (warn on dangerous commands), lockdown (restrict edits to one directory), and clear (remove restrictions). Uses PreToolUse matchers for Bash, Edit, and Write.
 hooks:
   PreToolUse:
-    - matcher: "tool == \"Bash\""
-      description: "Intercept shell commands and check for destructive operations"
-    - matcher: "tool == \"Edit\" || tool == \"Write\""
-      description: "Enforce directory lockdown when active"
+    - matcher: "Bash"
+    - matcher: "Edit|Write"
 ---
 
 # Safe Mode

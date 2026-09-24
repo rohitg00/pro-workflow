@@ -24,7 +24,7 @@ async function main() {
       const input = JSON.parse(data);
       const filePath = input.tool_input?.file_path;
 
-      if (!filePath || !fs.existsSync(filePath)) {
+      if (!filePath || !/\.(ts|tsx|js|jsx|mjs|cjs|py|go|rs)$/.test(filePath) || !fs.existsSync(filePath)) {
         console.log(data);
         return;
       }
