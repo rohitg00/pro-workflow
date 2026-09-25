@@ -57,7 +57,11 @@ function pickProvider(arg) {
   return null;
 }
 
-function postJSON(urlStr, body, headers, timeoutMs = 120000) {
+// Runtime tuning knobs that can be overridden via CLI flags in `cmdRun`.
+// Defaults preserve previous hard-coded behavior.
+const RUN_OPTS = { max_tokens: 4000, timeout_ms: 120000 };
+
+function postJSON(urlStr, body, headers, timeoutMs = RUN_OPTS.timeout_ms) {
   return new Promise((resolve, reject) => {
     const url = new URL(urlStr);
     const data = JSON.stringify(body);
@@ -84,7 +88,7 @@ async function callOpenAICompat(provider, model, system, user) {
   const res = await postJSON(url, {
     model,
     messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-    max_tokens: 4000,
+    max_tokens: RUN_OPTS.max_tokens,
     temperature: 1,
   }, { Authorization: `Bearer ${process.env[provider.envKey]}` });
   const elapsed = Date.now() - start;
@@ -100,7 +104,7 @@ async function callAnthropic(provider, model, system, user) {
   const url = `${provider.baseUrl}/v1/messages`;
   const res = await postJSON(url, {
     model,
-    max_tokens: 4000,
+    max_tokens: RUN_OPTS.max_tokens,
     system,
     messages: [{ role: 'user', content: user }],
   }, {
@@ -163,6 +167,17 @@ async function cmdRun(args) {
   if (!providerName) { console.error('No provider env var set. Try ANTHROPIC_API_KEY or OPENAI_API_KEY.'); process.exit(2); }
   const provider = PROVIDERS[providerName];
   if (!provider.baseUrl) { console.error(`provider ${providerName} requires LLM_COUNCIL_BASE_URL`); process.exit(2); }
+
+  function parseIntSafe(val, name) {
+    const n = parseInt(val, 10);
+    if (isNaN(n) || n <= 0 || n !== Math.floor(n)) {
+      console.error(`Invalid --${name}: ${val} (must be a positive integer)`);
+      process.exit(2);
+    }
+    return n;
+  }
+  if (args['max-tokens']) RUN_OPTS.max_tokens = parseIntSafe(args['max-tokens'], 'max-tokens');
+  if (args.timeout) RUN_OPTS.timeout_ms = parseIntSafe(args.timeout, 'timeout');
 
   const models = (args.models ? String(args.models).split(',') : provider.defaultModels).filter(Boolean);
   const chairman = args.chairman || provider.defaultChairman;
@@ -267,8 +282,13 @@ function cmdShow(args) {
 function usage() {
   console.error(`Usage:
   council.js run "<query>" [--models id1,id2,id3] [--chairman id] [--provider name] [--wiki slug]
+                        [--max-tokens N] [--timeout ms]
   council.js providers
-  council.js show <session-id>`);
+  council.js show <session-id>
+
+Options:
+  --max-tokens  Max output tokens per model call (default 4000; bump to 16000+ for reasoning models)
+  --timeout     HTTP request timeout in ms (default 120000; bump to 300000+ for slow NIM endpoints)`);
   process.exit(1);
 }
 
