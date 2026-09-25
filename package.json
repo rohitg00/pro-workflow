@@ -9,7 +9,9 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "db:init": "node dist/db/index.js",
-    "test": "tsx --test src/optimizer/__tests__/*.test.ts"
+    "test": "npm run test:optimizer && npm run test:hooks",
+    "test:optimizer": "tsx --test src/optimizer/__tests__/*.test.ts",
+    "test:hooks": "node --test scripts/__tests__/commit-validate.test.js"
   },
   "keywords": [
     "claude-code",
