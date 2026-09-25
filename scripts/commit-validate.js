@@ -15,6 +15,15 @@ function readStdin() {
 function extractMessage(command) {
   if (!command) return { msg: null, form: 'empty' };
 
+  // Guard: none of the sub-patterns below (-m, --message, heredoc, -F/--file)
+  // are specific to git commit — they match on any command containing those
+  // tokens. Without this check, e.g. `cat > file.py <<'EOF' ...` (any heredoc)
+  // or `python3 -m module` (unrelated -m flag) gets misread as a commit and
+  // validated against the conventional-commit pattern, blocking unrelated work.
+  if (!/\bgit\s+(?:-[^\s]+\s+)*commit\b/.test(command)) {
+    return { msg: null, form: 'not-a-commit' };
+  }
+
   const shortFlag = command.match(/(?:^|\s)-m\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
   if (shortFlag) {
     const raw = shortFlag[1] || shortFlag[2] || shortFlag[3] || '';
