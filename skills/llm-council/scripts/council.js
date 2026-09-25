@@ -57,7 +57,46 @@ function pickProvider(arg) {
   return null;
 }
 
-function postJSON(urlStr, body, headers, timeoutMs = 120000) {
+// Runtime tuning knobs that can be overridden via CLI flags in `cmdRun`.
+// Defaults preserve previous hard-coded behavior.
+const RUN_OPTS = { max_tokens: 4000, timeout_ms: 120000, max_retries: 1, sequential: false, reasoning_effort: null };
+
+// Reasoning-content extraction heuristics by provider/model.
+// Different reasoning models expose the final answer in different fields of the OpenAI-compat response.
+// Order matters: most-specific first.
+function extractContent(data) {
+  const choice = data?.choices?.[0];
+  if (!choice) return '';
+  const msg = choice.message || {};
+  // 1. Standard: message.content (string, non-empty)
+  if (msg.content && typeof msg.content === 'string' && msg.content.trim()) return msg.content;
+  // 2. DeepSeek / GLM: message.reasoning_content
+  if (msg.reasoning_content && typeof msg.reasoning_content === 'string' && msg.reasoning_content.trim()) return msg.reasoning_content;
+  // 3. Some OpenRouter reasoning models: message.content as array with {type:'output',text}
+  if (Array.isArray(msg.content)) {
+    const text = msg.content
+      .filter(p => p && (p.type === 'output' || p.type === 'text') && typeof p.text === 'string')
+      .map(p => p.text)
+      .join('\n');
+    if (text.trim()) return text;
+    // 3b. reasoning parts as fallback
+    const reason = msg.content
+      .filter(p => p && (p.type === 'reasoning' || p.type === 'thinking') && typeof p.text === 'string')
+      .map(p => p.text)
+      .join('\n');
+    if (reason.trim()) return reason;
+  }
+  // 4. NVIDIA NIM reasoning models: message.reasoning (string)
+  if (msg.reasoning && typeof msg.reasoning === 'string' && msg.reasoning.trim()) return msg.reasoning;
+  // 5. Claude thinking via compat: message.thinking
+  if (msg.thinking && typeof msg.thinking === 'string' && msg.thinking.trim()) return msg.thinking;
+  // 6. Legacy completions: choice.text
+  if (choice.text && typeof choice.text === 'string' && choice.text.trim()) return choice.text;
+  // 7. Fallback
+  return '';
+}
+
+function postJSON(urlStr, body, headers, timeoutMs = RUN_OPTS.timeout_ms) {
   return new Promise((resolve, reject) => {
     const url = new URL(urlStr);
     const data = JSON.stringify(body);
@@ -78,36 +117,69 @@ function postJSON(urlStr, body, headers, timeoutMs = 120000) {
   });
 }
 
+async function postJSONWithRetry(urlStr, body, headers) {
+  const delay = attempt => new Promise(r => setTimeout(r, 2000 * Math.pow(2, attempt - 1)));
+  let res;
+  let lastError;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      res = await postJSON(urlStr, body, headers);
+    } catch (e) {
+      // Connection-level error (ETIMEDOUT, ECONNRESET)
+      lastError = e;
+      if (attempt >= RUN_OPTS.max_retries) return { error: lastError };
+      await delay(attempt + 1);
+      continue;
+    }
+    if (res.status < 500 && res.status !== 429) return { res };
+    if (attempt >= RUN_OPTS.max_retries) return { res };
+    await delay(attempt + 1);
+  }
+}
+
 async function callOpenAICompat(provider, model, system, user) {
   const start = Date.now();
   const url = `${provider.baseUrl}/chat/completions`;
-  const res = await postJSON(url, {
+  const payload = {
     model,
     messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-    max_tokens: 4000,
+    max_tokens: RUN_OPTS.max_tokens,
     temperature: 1,
-  }, { Authorization: `Bearer ${process.env[provider.envKey]}` });
+  };
+  if (RUN_OPTS.reasoning_effort) payload.reasoning = { effort: RUN_OPTS.reasoning_effort };
+  const authHeaders = { Authorization: `Bearer ${process.env[provider.envKey]}` };
+
+  const { res, error } = await postJSONWithRetry(url, payload, authHeaders);
   const elapsed = Date.now() - start;
+  if (error) return { success: false, content: `[ERROR connection: ${error.code || error.message}]`, model, latency_ms: elapsed };
   if (res.status >= 400) return { success: false, content: `[ERROR ${res.status}: ${res.body.slice(0, 300)}]`, model, latency_ms: elapsed };
   let data;
   try { data = JSON.parse(res.body); } catch (e) { return { success: false, content: `[parse-error]`, model, latency_ms: elapsed }; }
-  const content = data.choices?.[0]?.message?.content || '';
+  const content = extractContent(data);
   return { success: true, content, model, latency_ms: elapsed, tokens: data.usage || {} };
 }
 
 async function callAnthropic(provider, model, system, user) {
   const start = Date.now();
   const url = `${provider.baseUrl}/v1/messages`;
-  const res = await postJSON(url, {
+  const payload = {
     model,
-    max_tokens: 4000,
+    max_tokens: RUN_OPTS.max_tokens,
     system,
     messages: [{ role: 'user', content: user }],
-  }, {
+  };
+  if (RUN_OPTS.reasoning_effort) {
+    payload.thinking = { type: 'adaptive' };
+    payload.output_config = { effort: RUN_OPTS.reasoning_effort };
+  }
+  const authHeaders = {
     'x-api-key': process.env[provider.envKey],
     'anthropic-version': '2023-06-01',
-  });
+  };
+
+  const { res, error } = await postJSONWithRetry(url, payload, authHeaders);
   const elapsed = Date.now() - start;
+  if (error) return { success: false, content: `[ERROR connection: ${error.code || error.message}]`, model, latency_ms: elapsed };
   if (res.status >= 400) return { success: false, content: `[ERROR ${res.status}: ${res.body.slice(0, 300)}]`, model, latency_ms: elapsed };
   let data;
   try { data = JSON.parse(res.body); } catch { return { success: false, content: '[parse-error]', model, latency_ms: elapsed }; }
@@ -164,6 +236,39 @@ async function cmdRun(args) {
   const provider = PROVIDERS[providerName];
   if (!provider.baseUrl) { console.error(`provider ${providerName} requires LLM_COUNCIL_BASE_URL`); process.exit(2); }
 
+function parseIntSafe(val, name) {
+    const n = parseInt(val, 10);
+    if (isNaN(n) || n <= 0 || n !== Math.floor(n)) {
+      console.error(`Invalid --${name}: ${val} (must be a positive integer)`);
+      process.exit(2);
+    }
+    return n;
+  }
+  if (args['max-tokens']) RUN_OPTS.max_tokens = parseIntSafe(args['max-tokens'], 'max-tokens');
+  if (args.timeout) RUN_OPTS.timeout_ms = parseIntSafe(args.timeout, 'timeout');
+  if (args['max-retries']) RUN_OPTS.max_retries = parseIntSafe(args['max-retries'], 'max-retries');
+  if (args.sequential) RUN_OPTS.sequential = true;
+  if (args['reasoning-effort']) {
+    const effort = args['reasoning-effort'];
+    if (!['low', 'medium', 'high'].includes(effort)) {
+      console.error(`Invalid --reasoning-effort: ${effort} (must be low, medium, or high)`);
+      process.exit(2);
+    }
+    RUN_OPTS.reasoning_effort = effort;
+  }
+
+  // Run a list of async callables either in parallel (default) or sequentially.
+  // Sequential mode avoids concurrent-request limits on free NIM/OpenRouter endpoints.
+  async function runCalls(callables) {
+    if (!RUN_OPTS.sequential) return Promise.allSettled(callables.map(fn => fn()));
+    const results = [];
+    for (const fn of callables) {
+      try { results.push({ status: 'fulfilled', value: await fn() }); }
+      catch (e) { results.push({ status: 'rejected', reason: e }); }
+    }
+    return results;
+  }
+
   const models = (args.models ? String(args.models).split(',') : provider.defaultModels).filter(Boolean);
   const chairman = args.chairman || provider.defaultChairman;
   if (!models.length) { console.error('no models — pass --models'); process.exit(2); }
@@ -182,7 +287,7 @@ async function cmdRun(args) {
 
   // Phase 1
   const sysIndep = 'You are participating in an LLM council deliberation. Provide your best, most thoughtful response to the query. Be comprehensive but focused.';
-  const phase1Settled = await Promise.allSettled(models.map(m => provider.call(provider, m, sysIndep, query)));
+  const phase1Settled = await runCalls(models.map(m => () => provider.call(provider, m, sysIndep, query)));
   const phase1Entries = phase1Settled.map((s, i) => settledToEntry(models[i], s));
   const phase1 = Object.fromEntries(models.map((m, i) => [m, phase1Entries[i]]));
   fs.writeFileSync(path.join(sessionDir, 'phase1_responses.json'), JSON.stringify(phase1, null, 2));
@@ -193,7 +298,7 @@ async function cmdRun(args) {
   const anon = models.map(m => `=== Response ${labelOf[m]} ===\n${phase1[m].content}`).join('\n\n');
   const sysRank = (own) => `You are ranking AI responses objectively. Your own response is labeled '${own}'.`;
   const userRank = `QUERY:\n${query}\n\nRESPONSES:\n${anon}\n\nRank from BEST to WORST. Format:\nRANKINGS:\n1. [Letter] - [reason]\n2. [Letter] - [reason]\n...`;
-  const phase2Settled = await Promise.allSettled(models.map(m => provider.call(provider, m, sysRank(labelOf[m]), userRank)));
+  const phase2Settled = await runCalls(models.map(m => () => provider.call(provider, m, sysRank(labelOf[m]), userRank)));
   const phase2Entries = phase2Settled.map((s, i) => settledToEntry(models[i], s));
   const phase2 = { label_of: labelOf, rankings: Object.fromEntries(models.map((m, i) => [m, phase2Entries[i]])) };
   fs.writeFileSync(path.join(sessionDir, 'phase2_rankings.json'), JSON.stringify(phase2, null, 2));
@@ -267,8 +372,20 @@ function cmdShow(args) {
 function usage() {
   console.error(`Usage:
   council.js run "<query>" [--models id1,id2,id3] [--chairman id] [--provider name] [--wiki slug]
+                        [--max-tokens N] [--timeout ms] [--max-retries N] [--sequential]
+                        [--reasoning-effort low|medium|high]
   council.js providers
-  council.js show <session-id>`);
+  council.js show <session-id>
+
+Options:
+  --max-tokens       Max output tokens per model call (default 4000; bump to 16000+ for reasoning models)
+  --timeout          HTTP request timeout in ms (default 120000; bump to 300000+ for slow NIM endpoints)
+  --max-retries      Retry count on connection errors and 429/5xx (default 1; exponential backoff 2s, 4s, ...)
+  --sequential       Run model calls one at a time instead of in parallel (use when free endpoints
+                     like NVIDIA NIM reject concurrent requests with ETIMEDOUT / 429)
+  --reasoning-effort Pass reasoning effort (low|medium|high) for thinking models.
+                     OpenAI-compat: reasoning.effort; Anthropic Messages: thinking.type=adaptive
+                     plus output_config.effort`);
   process.exit(1);
 }
 
