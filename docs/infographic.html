@@ -720,7 +720,8 @@
     <div class="subtitle">
       Battle-tested Claude Code patterns from power users who ship production code daily.
       Self-correcting memory, persistent FTS5-indexed wikis, auto-research loop, multi-LLM council, parallel worktrees, quality gates &mdash;
-      41 Skills, 8 Agents, 24 Hook events, 23 Commands, 3 Contexts, 13 Guides.
+      auto-mode-ready permissions, optional System 1 classifier &mdash;
+      41 Skills, 8 Agents, 22 Hook events, 23 Commands, 3 Contexts, 14 Guides.
     </div>
   </div>
 
@@ -782,17 +783,18 @@
       <div class="comp-grid" style="grid-template-columns: repeat(4, 1fr);">
         <div class="comp-item"><div class="comp-num">41</div><div class="comp-label">Skills</div></div>
         <div class="comp-item"><div class="comp-num">8</div><div class="comp-label">Agents</div></div>
-        <div class="comp-item"><div class="comp-num">24</div><div class="comp-label">Hook events</div></div>
+        <div class="comp-item"><div class="comp-num">22</div><div class="comp-label">Hook events</div></div>
         <div class="comp-item"><div class="comp-num">23</div><div class="comp-label">Commands</div></div>
         <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
         <div class="comp-item"><div class="comp-num">12</div><div class="comp-label">Rules</div></div>
-        <div class="comp-item"><div class="comp-num">37</div><div class="comp-label">Scripts</div></div>
+        <div class="comp-item"><div class="comp-num">36</div><div class="comp-label">Scripts</div></div>
       </div>
       <div style="margin-top:14px;">
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
         <div class="tag-row">
           <span class="tag tag-coral">Claude Code</span>
           <span class="tag tag-coral">Cursor</span>
+          <span class="tag tag-coral">Codex</span>
           <span class="tag">skills add (32+ agents)</span>
         </div>
         <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px; margin-top:12px;">Database</div>
@@ -857,6 +859,61 @@
         </div>
       </div>
       <div style="font-size:10px; color:var(--anthro-muted); margin-top:10px;">Halt on: budget cap, depth cap, 3 consecutive non-novel pages, <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">~/.pro-workflow/STOP</code>.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROW 1.6: v3.4 Auto Mode Ready -->
+  <div class="grid">
+
+    <!-- 03d WHAT CHANGED -->
+    <div style="grid-column: span 2;">
+      <div class="section-num">v3.4 &middot; Auto Mode Ready</div>
+      <div class="section-title">Fewer Prompts, Honest Hooks</div>
+      <table>
+        <tr><th style="width:30%">Area</th><th>What changed</th></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>commit-validate</strong></td><td>Parses the shell command before checking. Only a real <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">git commit</code> is validated, so heredocs and quoted text no longer trip it. Reads <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">-m "$(cat &lt;&lt;EOF)"</code> and <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">-F -</code>.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>Hook payloads</strong></td><td>Every script reads the documented fields (<code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">tool_name</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">agent_type</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">notification_type</code>) and no longer echoes stdin. WorktreeCreate hooks removed so <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">claude -w</code> works.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>reread-tracker</strong></td><td>Counts only completed reads, one record per file, warns Claude through <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">additionalContext</code>. Blocking is opt-in.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>Permissions</strong></td><td>Settings guide, permission-analyst, and permission-tuner teach auto mode: <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">autoMode</code> entries over ask rules, denial triage by <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">toolDenialKind</code>.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>System 1 (optional)</strong></td><td>Laya (local) or Jev (hosted) spots corrections in tens of milliseconds and suggests <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">/learn</code>. Off by default. Never allows or denies.</td></tr>
+        <tr style="background:var(--anthro-light-coral);"><td><strong>Models &amp; Codex</strong></td><td>Fable 5.1, Opus 5.5, Sonnet 5, Haiku 4.5. Codex mapped to <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">~/.codex/config.toml</code>, hooks, and skills.</td></tr>
+      </table>
+    </div>
+
+    <!-- 03e PERMISSION ORDER -->
+    <div>
+      <div class="section-num">Auto mode</div>
+      <div class="section-title">Why It Still Prompts</div>
+      <div class="loop-container" style="flex-direction:column; align-items:stretch; gap:6px;">
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">1</div>
+          <div class="loop-step-text">Deny rules</div>
+          <div class="loop-step-desc">Block, always</div>
+        </div>
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">2</div>
+          <div class="loop-step-text">Ask rules</div>
+          <div class="loop-step-desc">Prompt, even in auto mode</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">3</div>
+          <div class="loop-step-text">Narrow allow rules</div>
+          <div class="loop-step-desc">Run without the classifier</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">4</div>
+          <div class="loop-step-text">Classifier</div>
+          <div class="loop-step-desc">Reads your autoMode rules</div>
+        </div>
+        <div class="loop-step loop-step-coral">
+          <div class="loop-step-num">5</div>
+          <div class="loop-step-text">Fallback</div>
+          <div class="loop-step-desc">3 blocks in a row or 20 total</div>
+        </div>
+      </div>
+      <div style="font-size:10px; color:var(--anthro-muted); margin-top:10px;">A hook that exits 2 by mistake is a block too. Keep ask rules short and hooks precise.</div>
     </div>
   </div>
 
@@ -944,7 +1001,7 @@
     <!-- 06 HOOKS & AUTOMATION -->
     <div>
       <div class="section-num">06 Hooks &amp; Automation</div>
-      <div class="section-title">24 Hook Events</div>
+      <div class="section-title">22 Hook Events</div>
       <div class="hook-grid">
         <div class="hook-item">
           <div class="hook-dot hook-dot-pre"></div>
@@ -972,7 +1029,7 @@
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PromptSubmit</div><div class="hook-desc">Drift detection at 6+ edits</div></div>
+          <div><div class="hook-name">PromptSubmit</div><div class="hook-desc">Drift + correction hints</div></div>
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
@@ -1024,11 +1081,11 @@
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">WorktreeCreate</div><div class="hook-desc">Parallel session tracking</div></div>
+          <div><div class="hook-name">StopFailure</div><div class="hook-desc">Map API error types</div></div>
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">WorktreeRemove</div><div class="hook-desc">Cleanup on removal</div></div>
+          <div><div class="hook-name">PostCompact</div><div class="hook-desc">Restore state after compact</div></div>
         </div>
         <div class="hook-item">
           <div class="hook-dot hook-dot-other"></div>
@@ -1353,7 +1410,7 @@
   <!-- FOOTER -->
   <div class="footer">
     <div class="footer-left">
-      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; May 2026<br>
+      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; September 2026<br>
       Pro Workflow v3.4 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
     </div>
     <div class="footer-right">Practice Makes Claude Perfect</div>
