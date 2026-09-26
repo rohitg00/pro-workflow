@@ -26,8 +26,13 @@ Use when:
 
 ### Step 1: Gather data
 
+Rules merge across scopes, so check every file that exists, not only the user file. `/permissions` shows the rules Claude Code actually loaded, and `claude auto-mode config` shows the effective `autoMode` (the classifier ignores `autoMode` in `.claude/settings.local.json`).
+
 ```bash
-jq '{mode: .permissions.defaultMode, allow: (.permissions.allow|length), ask: (.permissions.ask|length), deny: (.permissions.deny|length), autoMode: (.autoMode != null)}' ~/.claude/settings.json
+for f in ~/.claude/settings.json .claude/settings.json .claude/settings.local.json; do
+  [ -f "$f" ] && jq --arg f "$f" '{file: $f, mode: .permissions.defaultMode, allow: (.permissions.allow|length), ask: (.permissions.ask|length), deny: (.permissions.deny|length), autoMode: (.autoMode != null)}' "$f"
+done
+claude auto-mode config
 ls -t ~/.claude/projects/*/*.jsonl | head -20 | xargs grep -ho '"toolDenialKind":"[^"]*"' | sort | uniq -c | sort -rn
 ```
 
@@ -51,19 +56,26 @@ ls -t ~/.claude/projects/*/*.jsonl | head -20 | xargs grep -ho '"toolDenialKind"
   "permissions": {
     "allow": [
       "Bash(git status)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
       "Bash(npm test)",
       "Bash(npm run lint)"
     ],
     "ask": [
       "Bash(git push --force*)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git push *:main)",
+      "Bash(git push *:main *)",
+      "Bash(git push * master)",
+      "Bash(git push * master *)",
+      "Bash(git push *:master)",
+      "Bash(git push *:master *)",
       "Bash(gh pr merge *)",
       "Bash(npm publish*)"
     ],
     "deny": [
       "Bash(rm -rf *)",
-      "Read(**/.env)"
+      "Read(**/.env)",
+      "Read(**/.env.*)"
     ]
   },
   "autoMode": {

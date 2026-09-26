@@ -19,7 +19,7 @@ First match wins. Project settings override user settings. CLI flags override ev
 
 | Mode | What runs without asking | Best for |
 |------|--------------------------|----------|
-| `default` (Manual) | Reads only | Reviewing every action yourself |
+| `default` (Manual) | Reads only. With the sandbox on and `sandbox.autoAllowBashIfSandboxed` true (the default), sandboxed Bash commands also run without a prompt | Reviewing every action yourself |
 | `acceptEdits` | Reads, file edits, and common filesystem commands (`mkdir`, `mv`, `cp`, ...) in the working directory | Iterating on code you review |
 | `plan` | Reads, plus classifier-approved commands when auto mode is available | Exploring before changing anything |
 | `auto` | Everything, with a background classifier checking each action | Long tasks and loops, less prompt fatigue |
@@ -52,8 +52,6 @@ Rules follow `Tool` or `Tool(specifier)` format. Precedence: deny > ask > allow.
       "Bash(npm test)",
       "Bash(npm run lint)",
       "Bash(git status)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
       "WebFetch(domain:code.claude.com)",
       "mcp__github__get_*"
     ]

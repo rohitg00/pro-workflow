@@ -11,7 +11,7 @@ Find out why a session prompts or denies, then recommend the smallest change tha
 
 ## Workflow
 
-1. Read `permissions` and `autoMode` from `~/.claude/settings.json`, `.claude/settings.json`, and `.claude/settings.local.json`. Note the current `defaultMode`.
+1. Read `permissions` from every scope that exists (managed settings, `~/.claude/settings.json`, `.claude/settings.json`, `.claude/settings.local.json`), or run `/permissions` to see the loaded rules. Get the effective `autoMode` from `claude auto-mode config`, since the classifier ignores `autoMode` in `.claude/settings.local.json`. Note the current `defaultMode`.
 2. Count denials by kind across recent transcripts:
    ```bash
    ls -t ~/.claude/projects/*/*.jsonl | head -20 | xargs grep -ho '"toolDenialKind":"[^"]*"' | sort | uniq -c | sort -rn
@@ -36,7 +36,7 @@ Hook false positives matter twice in auto mode: each one is a denial, and denial
 ## Risk Categories
 
 ### Safe (allow rule or autoMode.allow)
-- Read-only tools and commands: `git status`, `git diff *`, `git log *`
+- Read-only tools and commands: `git status`. Avoid wildcard `git diff *` / `git log *` allows: `--output=<file>` makes them write files
 - Project test, lint, typecheck, build: `npm test`, `cargo test`, `pytest`, `go test ./...`
 
 ### Medium (leave to the auto mode classifier)
