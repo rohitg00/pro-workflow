@@ -3,1418 +3,543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pro Workflow — Battle-Tested Claude Code Patterns</title>
+<title>Pro Workflow: One Claude Code Session, Start to Finish</title>
+<meta name="description" content="pro-workflow v3.4.0: the hooks, skills, and agents that fire across a Claude Code session, and why auto mode still prompts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800;900&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
   :root {
-    --anthro-coral: #D97757;
-    --anthro-coral-light: #E8926F;
-    --anthro-dark: #1A1A2E;
-    --anthro-navy: #191A23;
-    --anthro-bg: #FAFAF8;
-    --anthro-card: #FFFFFF;
-    --anthro-border: #E5E5E0;
-    --anthro-text: #1A1A2E;
-    --anthro-muted: #6B7280;
-    --anthro-light-coral: #FFF5F0;
-    --anthro-tag-bg: #F3F4F6;
-    --anthro-green: #059669;
-    --anthro-yellow: #D97706;
-    --anthro-red: #DC2626;
+    --paper: #EDF0EE;
+    --surface: #F8FAF9;
+    --ink: #101B22;
+    --graphite: #56646C;
+    --rule: #C6CFCC;
+    --observe: #0E7C6B;
+    --observe-wash: #DCEDE8;
+    --warn: #B7850A;
+    --warn-wash: #F6ECCF;
+    --block: #C23B2F;
+    --block-wash: #F6DEDA;
+    --display: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    --body: 'Public Sans', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --rail-x: 188px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--anthro-bg);
-    color: var(--anthro-text);
-    line-height: 1.5;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
   }
 
-  .page {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 56px) 40px;
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  code { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+
+  .page { max-width: 1240px; margin: 0 auto; padding: 0 32px 64px; }
+
+  .masthead {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 22px 0; border-bottom: 1px solid var(--rule);
+    font-family: var(--mono); font-size: 13px; color: var(--graphite);
+  }
+  .masthead .prompt { color: var(--ink); font-weight: 700; }
+  .masthead .prompt span { color: var(--observe); }
+  .masthead nav { display: flex; gap: 20px; flex-wrap: wrap; }
+
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px;
+    padding: 64px 0 56px; border-bottom: 1px solid var(--rule); align-items: end;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--graphite); margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 900; font-size: clamp(40px, 5.6vw, 76px);
+    line-height: 0.98; letter-spacing: -0.035em; margin-bottom: 24px;
+  }
+  h1 em { font-style: normal; color: var(--observe); }
+  .lede { font-size: 18px; max-width: 34em; color: #26343C; }
+  .counts {
+    margin-top: 28px; font-family: var(--mono); font-size: 13px; color: var(--graphite);
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+  }
+  .counts b { color: var(--ink); font-weight: 700; }
+
+  .gate { background: var(--ink); color: var(--paper); border-radius: 14px; padding: 26px 26px 22px; }
+  .gate h2 { font-family: var(--display); font-size: 22px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .gate p.sub { font-size: 13px; color: #A9B6BC; margin-bottom: 18px; }
+  .gate ol { list-style: none; display: grid; gap: 6px; }
+  .gate li {
+    display: grid; grid-template-columns: 18px 150px 1fr; gap: 12px; align-items: center;
+    padding: 9px 12px; border-radius: 8px; background: #1A2932; font-size: 13.5px;
+  }
+  .gate li .n { font-family: var(--mono); font-size: 11px; color: #7D8D95; }
+  .gate li strong { font-family: var(--mono); font-weight: 500; font-size: 13px; }
+  .gate li.block strong { color: #F08C82; }
+  .gate li.warn strong { color: #EFC45A; }
+  .gate li.observe strong { color: #6ED3BF; }
+  .gate .foot { margin-top: 14px; font-size: 12.5px; color: #A9B6BC; border-top: 1px solid #2A3A44; padding-top: 12px; }
+
+  .section-head { padding: 56px 0 24px; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  h2.title { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 3.2vw, 40px); letter-spacing: -0.025em; line-height: 1.05; }
+  .section-head p { color: var(--graphite); max-width: 36em; }
+
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--graphite); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+
+  .node { width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--paper); box-shadow: 0 0 0 1.5px currentColor; background: currentColor; flex: none; }
+  .node.observe { color: var(--observe); }
+  .node.warn { color: var(--warn); }
+  .node.block { color: var(--block); }
+
+  .rail { position: relative; }
+  .rail::before {
+    content: ""; position: absolute; left: var(--rail-x); top: 8px; bottom: 8px; width: 2px;
+    background: var(--ink); transform-origin: top; animation: trace 1.4s cubic-bezier(.2,.7,.2,1) both;
+  }
+  @keyframes trace { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+  .stop { display: grid; grid-template-columns: calc(var(--rail-x) - 20px) 40px minmax(0, 1fr); padding: 22px 0; }
+  .stop + .stop { border-top: 1px dashed var(--rule); }
+  .stop .when { text-align: right; padding-top: 1px; }
+  .stop .when .ev { font-family: var(--mono); font-weight: 700; font-size: 13px; display: block; line-height: 1.5; }
+  .stop .when .hint { font-size: 12px; color: var(--graphite); display: block; margin-top: 4px; }
+  .stop .mark { display: flex; justify-content: center; padding-top: 4px; position: relative; z-index: 1; }
+  .stop .body { min-width: 0; }
+  .stop h3 { font-family: var(--display); font-weight: 800; font-size: 21px; letter-spacing: -0.015em; margin-bottom: 6px; }
+  .stop .body > p { color: #26343C; max-width: 44em; }
+
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 18px; }
+  .card h4 { font-family: var(--display); font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+  .card p, .card li { font-size: 13.5px; color: #26343C; }
+  .card ul { list-style: none; display: grid; gap: 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--graphite); padding: 0 10px 8px 0; border-bottom: 1px solid var(--rule); }
+  td { padding: 8px 10px 8px 0; border-bottom: 1px solid #DCE2E0; vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.effect { white-space: nowrap; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+  .pill.block { background: var(--block-wash); color: var(--block); }
+  .pill.warn { background: var(--warn-wash); color: #7A5700; }
+  .pill.observe { background: var(--observe-wash); color: var(--observe); }
+
+  .steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 16px; counter-reset: step; }
+  .steps li { padding: 14px 16px; border: 1px solid var(--rule); background: var(--surface); position: relative; counter-increment: step; font-size: 13.5px; }
+  .steps li + li { border-left: 0; }
+  .steps li:first-child { border-radius: 10px 0 0 10px; }
+  .steps li:last-child { border-radius: 0 10px 10px 0; }
+  .steps li::before { content: counter(step); font-family: var(--mono); font-size: 11px; color: var(--graphite); display: block; margin-bottom: 4px; }
+  .steps li strong { display: block; font-family: var(--display); font-size: 16px; }
+  .steps.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+  .agents { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+  .agent { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; }
+  .agent b { font-family: var(--display); font-size: 15px; display: block; }
+  .agent .role { font-family: var(--mono); font-size: 11px; color: var(--observe); display: block; margin-bottom: 4px; }
+  .agent p { font-size: 12.5px; color: #3A4850; }
+
+  .scout { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; }
+  .scout span { font-family: var(--mono); font-size: 12px; padding: 3px 9px; border-radius: 6px; background: var(--surface); border: 1px solid var(--rule); }
+
+  .ambient { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+  .ambient div { font-size: 13px; color: #3A4850; }
+  .ambient code { display: inline-block; margin-bottom: 3px; }
+
+  .library { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .shelf { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px; }
+  .shelf h3 { font-family: var(--display); font-weight: 800; font-size: 17px; margin-bottom: 10px; }
+  .shelf dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; font-size: 13px; }
+  .shelf dt { font-family: var(--mono); font-size: 12px; font-weight: 700; padding-top: 1px; }
+  .shelf dd { color: #3A4850; }
+  .shelf .more { margin-top: 10px; font-size: 12.5px; color: var(--graphite); }
+
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+
+  .rpi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .rpi div { border-top: 3px solid var(--ink); padding-top: 10px; font-size: 13.5px; }
+  .rpi strong { font-family: var(--display); font-size: 17px; display: block; }
+
+  blockquote { font-family: var(--display); font-weight: 700; font-size: clamp(22px, 2.6vw, 32px); line-height: 1.15; letter-spacing: -0.02em; max-width: 26em; }
+  blockquote footer { font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--graphite); margin-top: 10px; letter-spacing: 0; }
+
+  .install { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .term { background: var(--ink); color: var(--paper); border-radius: 10px; padding: 14px 16px; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; overflow-x: auto; }
+  .term .label { color: #7D8D95; display: block; margin-bottom: 4px; }
+  .term .c { color: #6ED3BF; }
+
+  .closing { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: start; padding: 56px 0 8px; border-top: 1px solid var(--rule); margin-top: 56px; }
+
+  .foot { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--mono); font-size: 12px; color: var(--graphite); }
+
+  @media (max-width: 1000px) {
+    .hero, .closing { grid-template-columns: 1fr; gap: 36px; }
+    .library, .install { grid-template-columns: 1fr 1fr; }
+    .agents, .ambient { grid-template-columns: 1fr 1fr; }
   }
 
-  /* ---- HEADER ---- */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-  }
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .header-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--anthro-coral);
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .header-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--anthro-coral);
-  }
-  .header-sub {
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-  .header-right {
-    text-align: right;
-  }
-  .star-count {
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--anthro-dark);
-    line-height: 1;
-  }
-  .star-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--anthro-muted);
+  @media (max-width: 720px) {
+    .page { padding: 0 16px 48px; }
+    :root { --rail-x: 6px; }
+    .stop { grid-template-columns: 26px minmax(0, 1fr); }
+    .stop .mark { grid-column: 1; grid-row: 1; justify-content: flex-start; }
+    .stop .when { grid-column: 2; grid-row: 1; text-align: left; margin-bottom: 8px; }
+    .stop .body { grid-column: 2; }
+    .cols, .split, .library, .install, .agents, .ambient, .rpi { grid-template-columns: 1fr; }
+    .steps, .steps.five { grid-template-columns: 1fr; }
+    .steps li + li { border-left: 1px solid var(--rule); border-top: 0; }
+    .steps li:first-child { border-radius: 10px 10px 0 0; }
+    .steps li:last-child { border-radius: 0 0 10px 10px; }
+    .gate li { grid-template-columns: 18px 1fr; }
+    .gate li span:last-child { grid-column: 2; }
+    .masthead { flex-direction: column; align-items: flex-start; }
+    td.effect { white-space: normal; }
   }
 
-  /* ---- TITLE ---- */
-  .title-block {
-    margin: 20px 0 12px;
-  }
-  .title {
-    font-size: 52px;
-    font-weight: 900;
-    line-height: 1.05;
-    color: var(--anthro-dark);
-    letter-spacing: -1.5px;
-  }
-  .subtitle {
-    font-size: 16px;
-    color: var(--anthro-muted);
-    margin-top: 10px;
-    max-width: 780px;
-    line-height: 1.6;
-  }
-
-  /* ---- DIVIDER ---- */
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: var(--anthro-border);
-    margin: 28px 0 28px;
-  }
-
-  /* ---- GRID ---- */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 28px;
-    margin-bottom: 28px;
-  }
-  .grid-2 {
-    grid-template-columns: 1fr 1fr;
-  }
-  .grid-span-2 {
-    grid-column: span 2;
-  }
-
-  /* ---- SECTION ---- */
-  .section-num {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--anthro-muted);
-    margin-bottom: 8px;
-  }
-  .section-title {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--anthro-dark);
-    margin-bottom: 14px;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
-  }
-  .section-title-lg {
-    font-size: 28px;
-  }
-
-  /* ---- TABLE ---- */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-  table th {
-    text-align: left;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--anthro-muted);
-    padding: 0 0 8px 0;
-    border-bottom: 1px solid var(--anthro-border);
-  }
-  table td {
-    padding: 7px 8px 7px 0;
-    border-bottom: 1px solid #F0F0EC;
-    vertical-align: top;
-    color: var(--anthro-text);
-    font-size: 12px;
-    line-height: 1.4;
-  }
-  table tr:last-child td {
-    border-bottom: none;
-  }
-  td strong {
-    font-weight: 700;
-    color: var(--anthro-dark);
-  }
-
-  /* ---- BULLET LIST ---- */
-  .bullet-list {
-    list-style: none;
-    padding: 0;
-  }
-  .bullet-list li {
-    position: relative;
-    padding-left: 16px;
-    font-size: 12.5px;
-    line-height: 1.55;
-    margin-bottom: 6px;
-    color: var(--anthro-text);
-  }
-  .bullet-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 7px;
-    width: 5px;
-    height: 5px;
-    background: var(--anthro-coral);
-    border-radius: 1px;
-  }
-
-  /* ---- FLOW DIAGRAM ---- */
-  .flow {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin-bottom: 16px;
-    background: var(--anthro-card);
-    border: 1px solid var(--anthro-border);
-    border-radius: 10px;
-    padding: 20px 24px;
-  }
-  .flow-step {
-    text-align: center;
-    flex: 1;
-  }
-  .flow-step-name {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--anthro-dark);
-    letter-spacing: -0.3px;
-  }
-  .flow-step-desc {
-    font-size: 10px;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-  .flow-arrow {
-    font-size: 22px;
-    color: var(--anthro-coral);
-    font-weight: 300;
-    padding: 0 6px;
-    flex-shrink: 0;
-  }
-
-  /* ---- CARDS ---- */
-  .card {
-    background: var(--anthro-card);
-    border: 1px solid var(--anthro-border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .card-coral {
-    border-left: 3px solid var(--anthro-coral);
-  }
-
-  /* ---- QUOTE ---- */
-  .quote-block {
-    background: var(--anthro-light-coral);
-    border-left: 3px solid var(--anthro-coral);
-    border-radius: 0 8px 8px 0;
-    padding: 16px 20px;
-    margin: 16px 0;
-  }
-  .quote-text {
-    font-size: 14px;
-    font-style: italic;
-    color: var(--anthro-dark);
-    line-height: 1.5;
-    font-weight: 500;
-  }
-  .quote-attr {
-    font-size: 11px;
-    color: var(--anthro-muted);
-    margin-top: 6px;
-    font-style: normal;
-  }
-
-  /* ---- TAGS ---- */
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .tag {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--anthro-tag-bg);
-    color: var(--anthro-muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .tag-coral {
-    background: var(--anthro-light-coral);
-    color: var(--anthro-coral);
-  }
-
-  /* ---- STAT BOXES ---- */
-  .stats-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .stat-box {
-    background: var(--anthro-card);
-    border: 1px solid var(--anthro-border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    text-align: center;
-  }
-  .stat-num {
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--anthro-coral);
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-  .stat-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--anthro-muted);
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1.3;
-  }
-
-  /* ---- MEMORY DIAGRAM ---- */
-  .memory-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .mem-box {
-    border: 1px solid var(--anthro-border);
-    border-radius: 6px;
-    padding: 10px 12px;
-    text-align: center;
-  }
-  .mem-box-coral {
-    border-color: var(--anthro-coral);
-    background: var(--anthro-light-coral);
-  }
-  .mem-title {
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--anthro-dark);
-  }
-  .mem-desc {
-    font-size: 10px;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-
-  /* ---- SCORING BAR ---- */
-  .score-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .score-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--anthro-text);
-    width: 130px;
-    flex-shrink: 0;
-  }
-  .score-bar-bg {
-    flex: 1;
-    height: 8px;
-    background: #F0F0EC;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .score-bar-fill {
-    height: 100%;
-    background: var(--anthro-coral);
-    border-radius: 4px;
-  }
-  .score-pts {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--anthro-muted);
-    width: 24px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  /* ---- VERDICT BADGES ---- */
-  .verdict-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .verdict {
-    flex: 1;
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-  }
-  .verdict-go {
-    background: #ECFDF5;
-    border: 1px solid #A7F3D0;
-  }
-  .verdict-hold {
-    background: #FFF7ED;
-    border: 1px solid #FED7AA;
-  }
-  .verdict-label {
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 2px;
-  }
-  .verdict-go .verdict-label { color: var(--anthro-green); }
-  .verdict-hold .verdict-label { color: var(--anthro-yellow); }
-  .verdict-desc {
-    font-size: 10px;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-
-  /* ---- LOOP DIAGRAM ---- */
-  .loop-container {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin: 12px 0;
-    position: relative;
-  }
-  .loop-step {
-    flex: 1;
-    text-align: center;
-    padding: 12px 8px;
-    border: 1px solid var(--anthro-border);
-    border-radius: 8px;
-    background: var(--anthro-card);
-    position: relative;
-    z-index: 1;
-  }
-  .loop-step-coral {
-    border-color: var(--anthro-coral);
-    background: var(--anthro-light-coral);
-  }
-  .loop-step-num {
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--anthro-coral);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .loop-step-text {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--anthro-dark);
-    margin-top: 2px;
-  }
-  .loop-step-desc {
-    font-size: 9.5px;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-  .loop-arrow {
-    font-size: 16px;
-    color: var(--anthro-coral);
-    flex-shrink: 0;
-    padding: 0 3px;
-    z-index: 2;
-  }
-
-  /* ---- CONTEXT MODES ---- */
-  .mode-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-  }
-  .mode-card {
-    border: 1px solid var(--anthro-border);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-  }
-  .mode-icon {
-    font-size: 24px;
-    margin-bottom: 4px;
-  }
-  .mode-name {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--anthro-dark);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .mode-desc {
-    font-size: 10px;
-    color: var(--anthro-muted);
-    margin-top: 3px;
-  }
-
-  /* ---- INSTALL BOX ---- */
-  .install-box {
-    background: var(--anthro-navy);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-top: 10px;
-  }
-  .install-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--anthro-coral-light);
-    margin-bottom: 6px;
-  }
-  .install-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    color: #E5E7EB;
-    line-height: 1.6;
-  }
-  .install-code .cmd {
-    color: var(--anthro-coral-light);
-  }
-  .install-code .comment {
-    color: #6B7280;
-  }
-
-  /* ---- FOOTER ---- */
-  .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: 32px;
-    padding-top: 20px;
-    border-top: 1px solid var(--anthro-border);
-  }
-  .footer-left {
-    font-size: 11px;
-    color: var(--anthro-muted);
-  }
-  .footer-right {
-    font-size: 16px;
-    font-weight: 900;
-    color: var(--anthro-coral);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
-  /* ---- HOOK TYPES MINI ---- */
-  .hook-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .hook-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    border: 1px solid var(--anthro-border);
-    border-radius: 6px;
-    background: var(--anthro-card);
-  }
-  .hook-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .hook-dot-pre { background: var(--anthro-coral); }
-  .hook-dot-post { background: var(--anthro-green); }
-  .hook-dot-session { background: #8B5CF6; }
-  .hook-dot-other { background: var(--anthro-yellow); }
-  .hook-name {
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--anthro-dark);
-  }
-  .hook-desc {
-    font-size: 9.5px;
-    color: var(--anthro-muted);
-  }
-
-  /* ---- PHASE BADGES ---- */
-  .phase-row {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 12px;
-  }
-  .phase {
-    display: flex;
-    align-items: stretch;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--anthro-border);
-  }
-  .phase-badge {
-    width: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 900;
-    color: white;
-    flex-shrink: 0;
-  }
-  .phase-badge-r { background: var(--anthro-coral); }
-  .phase-badge-p { background: #8B5CF6; }
-  .phase-badge-i { background: var(--anthro-green); }
-  .phase-body {
-    padding: 10px 14px;
-    flex: 1;
-  }
-  .phase-name {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--anthro-dark);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .phase-desc {
-    font-size: 10.5px;
-    color: var(--anthro-muted);
-    margin-top: 2px;
-  }
-  .phase-note {
-    font-size: 10px;
-    color: var(--anthro-coral);
-    margin-top: 8px;
-    font-weight: 600;
-  }
-
-  /* ---- COMPONENT COUNT ---- */
-  .comp-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .comp-item {
-    text-align: center;
-    padding: 12px 4px;
-    border: 1px solid var(--anthro-border);
-    border-radius: 8px;
-    background: var(--anthro-card);
-  }
-  .comp-num {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--anthro-coral);
-    line-height: 1;
-  }
-  .comp-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--anthro-muted);
-    margin-top: 4px;
-  }
-  /* ---- RESPONSIVE ---- */
-  @media (max-width: 1080px) {
-    .grid { grid-template-columns: 1fr 1fr; }
-    .grid-span-2 { grid-column: span 2; }
-    .title { font-size: 44px; }
-  }
-  @media (max-width: 760px) {
-    .title { font-size: 34px; letter-spacing: -1px; }
-    .subtitle { font-size: 13.5px; }
-    .section-title { font-size: 19px; }
-    .section-title-lg { font-size: 23px; }
-    .grid, .grid-2 { grid-template-columns: 1fr !important; gap: 20px; }
-    .grid-span-2 { grid-column: span 1 !important; }
-    [style*="grid-column: span 2"] { grid-column: span 1 !important; }
-    .mode-cards, .stats-row, .hook-grid, .memory-grid { grid-template-columns: 1fr 1fr !important; }
-    .comp-grid { grid-template-columns: repeat(3, 1fr) !important; }
-    .loop-container, .flow > div[style*="flex"] { flex-direction: column !important; align-items: stretch !important; }
-    .flow-arrow, .loop-arrow { transform: rotate(90deg); padding: 4px 0; align-self: center; }
-    .verdict-row { flex-direction: column; }
-    .header { flex-wrap: wrap; gap: 10px; }
-    .footer { flex-direction: column; align-items: flex-start; gap: 12px; }
-    table { font-size: 11.5px; }
-  }
-  @media (max-width: 460px) {
-    .title { font-size: 28px; }
-    .mode-cards, .stats-row, .hook-grid, .memory-grid, .comp-grid { grid-template-columns: 1fr 1fr !important; }
-    .star-count { font-size: 24px; }
+  @media (prefers-reduced-motion: reduce) {
+    .rail::before { animation: none; }
   }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- HEADER -->
-  <div class="header">
+  <header class="masthead">
+    <div class="prompt"><span>&#10095;</span> pro-workflow <span style="color:var(--graphite); font-weight:400;">v3.4.0 &middot; September 2026</span></div>
+    <nav>
+      <a href="https://github.com/rohitg00/pro-workflow">GitHub</a>
+      <a href="https://rohitg00-pro-workflow.mintlify.app/">Docs</a>
+      <a href="https://www.npmjs.com/package/pro-workflow">npm</a>
+    </nav>
+  </header>
+
+  <section class="hero">
     <div>
-      <div class="header-left">
-        <div class="header-dot"></div>
-        <span class="header-label">Claude Code Plugin / Open Source</span>
+      <div class="eyebrow">Claude Code plugin &middot; open source</div>
+      <h1>Claude Code that <em>learns</em> from your corrections and checks its own work.</h1>
+      <p class="lede">pro-workflow is a set of hooks, skills, and agents distilled from how power users ship. This page follows one session from start to finish and shows where each part runs.</p>
+      <div class="counts">
+        <span><b>41</b> skills</span><span><b>8</b> agents</span><span><b>22</b> hook events</span><span><b>23</b> commands</span><span><b>36</b> scripts</span><span><b>12</b> rules</span><span><b>3</b> contexts</span><span><b>14</b> guides</span>
       </div>
-      <div class="header-sub" style="margin-left: 18px;">github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">docs</a></div>
     </div>
-    <div class="header-right">
-      <div class="star-count">v3.4</div>
-      <div class="star-label">Latest Release</div>
+
+    <aside class="gate" aria-labelledby="gate-title">
+      <h2 id="gate-title">Why auto mode still prompts</h2>
+      <p class="sub">Claude Code checks every tool call in this order. The first match decides.</p>
+      <ol>
+        <li class="block"><span class="n">1</span><strong>deny rule</strong><span>Blocked, every time</span></li>
+        <li class="warn"><span class="n">2</span><strong>ask rule</strong><span>Prompts you, even in auto mode</span></li>
+        <li class="observe"><span class="n">3</span><strong>narrow allow</strong><span>Runs, no classifier</span></li>
+        <li class="observe"><span class="n">4</span><strong>classifier</strong><span>Judges it against your <code style="background:#23343E; border-color:#2F4350; color:inherit;">autoMode</code> rules</span></li>
+        <li class="warn"><span class="n">5</span><strong>fallback</strong><span>3 blocks in a row or 20 in a session turn prompts back on</span></li>
+      </ol>
+      <p class="foot">A hook that exits 2 by mistake counts as a block. v3.4 fixes the hooks that did that and teaches the permission tools to prefer <code style="background:#23343E; border-color:#2F4350; color:inherit;">autoMode</code> over ask rules.</p>
+    </aside>
+  </section>
+
+  <div class="section-head">
+    <h2 class="title">One session, start to finish</h2>
+    <div class="legend" aria-label="What each hook can do">
+      <span><i class="node observe"></i>Observes and records</span>
+      <span><i class="node warn"></i>Warns Claude or you</span>
+      <span><i class="node block"></i>Can block the action</span>
     </div>
   </div>
 
-  <!-- TITLE -->
-  <div class="title-block">
-    <div class="title">Pro Workflow</div>
-    <div class="subtitle">
-      Battle-tested Claude Code patterns from power users who ship production code daily.
-      Self-correcting memory, persistent FTS5-indexed wikis, auto-research loop, multi-LLM council, parallel worktrees, quality gates &mdash;
-      auto-mode-ready permissions, optional System 1 classifier &mdash;
-      41 Skills, 8 Agents, 22 Hook events, 23 Commands, 3 Contexts, 14 Guides.
-    </div>
-  </div>
+  <div class="rail">
 
-  <div class="divider"></div>
-
-  <!-- ROW 1: Core Architecture + 8 Patterns + Components -->
-  <div class="grid">
-
-    <!-- 01 CORE ARCHITECTURE -->
-    <div>
-      <div class="section-num">01 Core Architecture</div>
-      <div class="section-title">Command &rarr; Agent &rarr; Skill</div>
-      <div class="flow" style="flex-direction: column; gap: 0; padding: 16px;">
-        <div style="display:flex; align-items:center; gap:0; width:100%;">
-          <div class="flow-step">
-            <div class="flow-step-name" style="font-size:16px;">Command</div>
-            <div class="flow-step-desc">User input<br>Slash commands</div>
+    <article class="stop">
+      <div class="when"><span class="ev">Setup</span><span class="ev">SessionStart</span><span class="hint">Session opens</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Load what you taught it last time</h3>
+        <p><code>session-start</code> loads recent learnings from the SQLite store and shows session stats. <code>setup-hook</code> detects the project type.</p>
+        <div class="cols">
+          <div class="card">
+            <h4>Split memory</h4>
+            <table>
+              <tr><td><code>CLAUDE.md</code></td><td>Entry point, imports the rest</td></tr>
+              <tr><td><code>AGENTS.md</code></td><td>Workflow rules</td></tr>
+              <tr><td><code>SOUL.md</code></td><td>Style preferences</td></tr>
+              <tr><td><code>LEARNED.md</code></td><td>Filled in from your corrections</td></tr>
+            </table>
           </div>
-          <div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">
-            <div class="flow-step-name" style="font-size:16px;">Agent</div>
-            <div class="flow-step-desc">Orchestrate<br>Plan &amp; Review</div>
-          </div>
-          <div class="flow-arrow">&rarr;</div>
-          <div class="flow-step">
-            <div class="flow-step-name" style="font-size:16px;">Skill</div>
-            <div class="flow-step-desc">Execute<br>Domain logic</div>
+          <div class="card">
+            <h4>Context modes</h4>
+            <table>
+              <tr><td><b>Dev</b></td><td>Code first, iterate quickly</td></tr>
+              <tr><td><b>Review</b></td><td>Security focus, read-only audit</td></tr>
+              <tr><td><b>Research</b></td><td>Explore broadly, summarize findings</td></tr>
+            </table>
           </div>
         </div>
       </div>
-      <ul class="bullet-list" style="margin-top:12px;">
-        <li>Agents <strong>cannot</strong> call each other directly &mdash; use <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">Task(subagent_type=...)</code></li>
-        <li>Progressive skill disclosure: only surface what&rsquo;s needed now</li>
-        <li>Skills use <strong>context: fork</strong> for isolation</li>
-      </ul>
-    </div>
+    </article>
 
-    <!-- 02 THE 8 PATTERNS -->
-    <div>
-      <div class="section-num">02 The 8 Patterns</div>
-      <div class="section-title">Karpathy&rsquo;s 80/20 Ratio</div>
-      <table>
-        <tr><th style="width:35%">Pattern</th><th>What It Does</th></tr>
-        <tr><td><strong>Self-Correction</strong></td><td>Claude learns from corrections automatically</td></tr>
-        <tr><td><strong>Parallel Worktrees</strong></td><td>Zero dead time &mdash; native <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">claude -w</code></td></tr>
-        <tr><td><strong>Wrap-Up Ritual</strong></td><td>End sessions with intention, capture learnings</td></tr>
-        <tr><td><strong>Split Memory</strong></td><td>Modular CLAUDE.md for complex projects</td></tr>
-        <tr><td><strong>80/20 Review</strong></td><td>Batch reviews at checkpoints, not every change</td></tr>
-        <tr><td><strong>Model Selection</strong></td><td>Opus 5.5 &amp; Sonnet 5, effort routing</td></tr>
-        <tr><td><strong>Context Discipline</strong></td><td>Manage your context budget</td></tr>
-        <tr><td><strong>Learning Log</strong></td><td>Auto-document insights from sessions</td></tr>
-      </table>
-    </div>
-
-    <!-- 03 COMPONENTS AT A GLANCE -->
-    <div>
-      <div class="section-num">03 Components</div>
-      <div class="section-title">Everything Included</div>
-      <div class="comp-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="comp-item"><div class="comp-num">41</div><div class="comp-label">Skills</div></div>
-        <div class="comp-item"><div class="comp-num">8</div><div class="comp-label">Agents</div></div>
-        <div class="comp-item"><div class="comp-num">22</div><div class="comp-label">Hook events</div></div>
-        <div class="comp-item"><div class="comp-num">23</div><div class="comp-label">Commands</div></div>
-        <div class="comp-item"><div class="comp-num">3</div><div class="comp-label">Contexts</div></div>
-        <div class="comp-item"><div class="comp-num">12</div><div class="comp-label">Rules</div></div>
-        <div class="comp-item"><div class="comp-num">36</div><div class="comp-label">Scripts</div></div>
-      </div>
-      <div style="margin-top:14px;">
-        <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px;">Platforms</div>
-        <div class="tag-row">
-          <span class="tag tag-coral">Claude Code</span>
-          <span class="tag tag-coral">Cursor</span>
-          <span class="tag tag-coral">Codex</span>
-          <span class="tag">skills add (32+ agents)</span>
-        </div>
-        <div style="font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--anthro-muted); margin-bottom:6px; margin-top:12px;">Database</div>
-        <div class="tag-row">
-          <span class="tag">SQLite + FTS5</span>
-          <span class="tag">10 Categories</span>
-          <span class="tag">Full-Text Search</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ROW 1.5: v3.3 Knowledge Plane -->
-  <div class="grid">
-
-    <!-- 03b WIKI BUILDER -->
-    <div style="grid-column: span 2;">
-      <div class="section-num">v3.3 &middot; Knowledge Plane</div>
-      <div class="section-title">Persistent FTS5 Wiki + Auto-Research Loop</div>
-      <table>
-        <tr><th style="width:34%">Skill</th><th>What it does</th></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-builder</strong></td><td>Scaffold + register FTS5-indexed research wikis. 9 flavors: research, paper, domain, product, person, organization, project, codebase, incident.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-query</strong></td><td>BM25 retrieval with snippets. <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">/wiki ask</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">related</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">show</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">hybrid</code> (BM25 + vector RRF).</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-research-loop</strong></td><td>Budget-capped BFS over pluggable fetchers (web/arXiv/GitHub + custom). Convergence detection, kill-switch, atomic seed claim.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>llm-council</strong></td><td>Provider-agnostic 3-phase deliberation. Anthropic/OpenAI/OpenRouter/Fireworks/custom. <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">Promise.allSettled</code> so one bad provider does not abort the run.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>survey-generator</strong></td><td>Provider-agnostic literature survey. Output target = wiki markdown page. Bibliography validation + citation alignment.</td></tr>
-      </table>
-      <div style="font-size:11px; color:var(--anthro-muted); margin-top:8px;">All five plug into the same SQLite store as the learning rules. Same FTS5 index, same auto-load on <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">UserPromptSubmit</code>.</div>
-    </div>
-
-    <!-- 03c LOOP DIAGRAM -->
-    <div>
-      <div class="section-num">Auto-research loop</div>
-      <div class="section-title">Budget-Capped BFS</div>
-      <div class="loop-container" style="flex-direction:column; align-items:stretch; gap:6px;">
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">1</div>
-          <div class="loop-step-text">Claim seed</div>
-          <div class="loop-step-desc">UPDATE...RETURNING (atomic)</div>
-        </div>
-        <div class="loop-step">
-          <div class="loop-step-num">2</div>
-          <div class="loop-step-text">Fetch sources</div>
-          <div class="loop-step-desc">web &middot; arXiv &middot; GitHub</div>
-        </div>
-        <div class="loop-step">
-          <div class="loop-step-num">3</div>
-          <div class="loop-step-text">Compile page</div>
-          <div class="loop-step-desc">Cite, score novelty</div>
-        </div>
-        <div class="loop-step">
-          <div class="loop-step-num">4</div>
-          <div class="loop-step-text">FTS-index</div>
-          <div class="loop-step-desc">wiki_pages_fts upsert</div>
-        </div>
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">5</div>
-          <div class="loop-step-text">Enqueue follow-ups</div>
-          <div class="loop-step-desc">depth + 1, MMR-eligible</div>
-        </div>
-      </div>
-      <div style="font-size:10px; color:var(--anthro-muted); margin-top:10px;">Halt on: budget cap, depth cap, 3 consecutive non-novel pages, <code style="font-size:10px; background:#f3f4f6; padding:1px 3px; border-radius:2px;">~/.pro-workflow/STOP</code>.</div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ROW 1.6: v3.4 Auto Mode Ready -->
-  <div class="grid">
-
-    <!-- 03d WHAT CHANGED -->
-    <div style="grid-column: span 2;">
-      <div class="section-num">v3.4 &middot; Auto Mode Ready</div>
-      <div class="section-title">Fewer Prompts, Honest Hooks</div>
-      <table>
-        <tr><th style="width:30%">Area</th><th>What changed</th></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>commit-validate</strong></td><td>Parses the shell command before checking. Only a real <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">git commit</code> is validated, so heredocs and quoted text no longer trip it. Reads <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">-m "$(cat &lt;&lt;EOF)"</code> and <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">-F -</code>.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>Hook payloads</strong></td><td>Every script reads the documented fields (<code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">tool_name</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">agent_type</code>, <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">notification_type</code>) and no longer echoes stdin. WorktreeCreate hooks removed so <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">claude -w</code> works.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>reread-tracker</strong></td><td>Counts only completed reads, one record per file, warns Claude through <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">additionalContext</code>. Blocking is opt-in.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>Permissions</strong></td><td>Settings guide, permission-analyst, and permission-tuner teach auto mode: <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">autoMode</code> entries over ask rules, denial triage by <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">toolDenialKind</code>.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>System 1 (optional)</strong></td><td>Laya (local) or Jev (hosted) spots corrections in tens of milliseconds and suggests <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">/learn</code>. Off by default. Never allows or denies.</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>Models &amp; Codex</strong></td><td>Fable 5.1, Opus 5.5, Sonnet 5, Haiku 4.5. Codex mapped to <code style="font-size:11px; background:#f3f4f6; padding:1px 4px; border-radius:3px;">~/.codex/config.toml</code>, hooks, and skills.</td></tr>
-      </table>
-    </div>
-
-    <!-- 03e PERMISSION ORDER -->
-    <div>
-      <div class="section-num">Auto mode</div>
-      <div class="section-title">Why It Still Prompts</div>
-      <div class="loop-container" style="flex-direction:column; align-items:stretch; gap:6px;">
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">1</div>
-          <div class="loop-step-text">Deny rules</div>
-          <div class="loop-step-desc">Block, always</div>
-        </div>
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">2</div>
-          <div class="loop-step-text">Ask rules</div>
-          <div class="loop-step-desc">Prompt, even in auto mode</div>
-        </div>
-        <div class="loop-step">
-          <div class="loop-step-num">3</div>
-          <div class="loop-step-text">Narrow allow rules</div>
-          <div class="loop-step-desc">Run without the classifier</div>
-        </div>
-        <div class="loop-step">
-          <div class="loop-step-num">4</div>
-          <div class="loop-step-text">Classifier</div>
-          <div class="loop-step-desc">Reads your autoMode rules</div>
-        </div>
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">5</div>
-          <div class="loop-step-text">Fallback</div>
-          <div class="loop-step-desc">3 blocks in a row or 20 total</div>
-        </div>
-      </div>
-      <div style="font-size:10px; color:var(--anthro-muted); margin-top:10px;">A hook that exits 2 by mistake is a block too. Keep ask rules short and hooks precise.</div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ROW 2: Self-Correction + Split Memory + Hooks -->
-  <div class="grid">
-
-    <!-- 04 SELF-CORRECTION LOOP -->
-    <div>
-      <div class="section-num">04 Self-Correction Loop</div>
-      <div class="section-title">Compounding Improvements</div>
-      <div class="loop-container">
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">1</div>
-          <div class="loop-step-text">Correct</div>
-          <div class="loop-step-desc">User fixes mistake</div>
-        </div>
-        <div class="loop-arrow">&rarr;</div>
-        <div class="loop-step">
-          <div class="loop-step-num">2</div>
-          <div class="loop-step-text">Propose</div>
-          <div class="loop-step-desc">[LEARN] rule</div>
-        </div>
-        <div class="loop-arrow">&rarr;</div>
-        <div class="loop-step">
-          <div class="loop-step-num">3</div>
-          <div class="loop-step-text">Approve</div>
-          <div class="loop-step-desc">User confirms</div>
-        </div>
-        <div class="loop-arrow">&rarr;</div>
-        <div class="loop-step loop-step-coral">
-          <div class="loop-step-num">4</div>
-          <div class="loop-step-text">Persist</div>
-          <div class="loop-step-desc">LEARNED.md / DB</div>
-        </div>
-      </div>
-      <div class="quote-block">
-        <div class="quote-text">&ldquo;Small corrections compound into massive accuracy gains over time.&rdquo;</div>
-      </div>
-      <div class="tag-row">
-        <span class="tag">Remember this</span>
-        <span class="tag">Add to rules</span>
-        <span class="tag">Don&rsquo;t do that again</span>
-      </div>
-    </div>
-
-    <!-- 05 SPLIT MEMORY -->
-    <div>
-      <div class="section-num">05 Split Memory</div>
-      <div class="section-title">Modular CLAUDE.md</div>
-      <div class="memory-grid" style="grid-template-columns: 1fr;">
-        <div class="mem-box mem-box-coral">
-          <div class="mem-title">CLAUDE.md</div>
-          <div class="mem-desc">Entry point &mdash; imports all modules</div>
-        </div>
-      </div>
-      <div class="memory-grid" style="margin-top:8px;">
-        <div class="mem-box">
-          <div class="mem-title">AGENTS.md</div>
-          <div class="mem-desc">Workflow rules</div>
-        </div>
-        <div class="mem-box">
-          <div class="mem-title">SOUL.md</div>
-          <div class="mem-desc">Style prefs</div>
-        </div>
-        <div class="mem-box">
-          <div class="mem-title">LEARNED.md</div>
-          <div class="mem-desc">Auto-populated</div>
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <div class="section-num" style="margin-bottom:6px;">Context Discipline</div>
-        <table>
-          <tr><th>Rule</th><th>Why</th></tr>
-          <tr><td><strong>Read before edit</strong></td><td>Understand context</td></tr>
-          <tr><td><strong>Compact at boundaries</strong></td><td>Free token budget</td></tr>
-          <tr><td><strong>&lt;10 MCPs, &lt;80 tools</strong></td><td>Reduce noise</td></tr>
-          <tr><td><strong>Subagents isolate</strong></td><td>Protect main context</td></tr>
-          <tr><td><strong>CLAUDE.md &le; 150 lines</strong></td><td>Avoid instruction drift</td></tr>
-        </table>
-      </div>
-    </div>
-
-    <!-- 06 HOOKS & AUTOMATION -->
-    <div>
-      <div class="section-num">06 Hooks &amp; Automation</div>
-      <div class="section-title">22 Hook Events</div>
-      <div class="hook-grid">
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-pre"></div>
-          <div><div class="hook-name">PreToolUse</div><div class="hook-desc">Edit tracking, quality gates</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-pre"></div>
-          <div><div class="hook-name">Pre-Commit</div><div class="hook-desc">Lint &amp; typecheck reminder</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-post"></div>
-          <div><div class="hook-name">PostToolUse</div><div class="hook-desc">console.log, secrets scan</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-post"></div>
-          <div><div class="hook-name">Test Failure</div><div class="hook-desc">Auto-learn from failures</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-session"></div>
-          <div><div class="hook-name">SessionStart</div><div class="hook-desc">Load learnings, show stats</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-session"></div>
-          <div><div class="hook-name">SessionEnd</div><div class="hook-desc">Save stats to SQLite</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PromptSubmit</div><div class="hook-desc">Drift + correction hints</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PreCompact</div><div class="hook-desc">Save state before compact</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">Stop</div><div class="hook-desc">Context-aware reminders</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">ConfigChange</div><div class="hook-desc">Detect settings drift</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">Notification</div><div class="hook-desc">Permission logging</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">SubagentStart</div><div class="hook-desc">Agent lifecycle logging</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">SubagentStop</div><div class="hook-desc">Collect agent results</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">TaskCompleted</div><div class="hook-desc">Quality gate on completion</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PermissionRequest</div><div class="hook-desc">Flag dangerous ops</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PostToolUseFailure</div><div class="hook-desc">Track failures</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">TeammateIdle</div><div class="hook-desc">Detect blockers</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">Setup</div><div class="hook-desc">Auto-detect project type</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PermissionDenied</div><div class="hook-desc">Track denial patterns</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">StopFailure</div><div class="hook-desc">Map API error types</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">PostCompact</div><div class="hook-desc">Restore state after compact</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">CwdChanged</div><div class="hook-desc">Env injection on cd</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-other"></div>
-          <div><div class="hook-name">TaskCreated</div><div class="hook-desc">Validate task quality</div></div>
-        </div>
-        <div class="hook-item">
-          <div class="hook-dot hook-dot-pre"></div>
-          <div><div class="hook-name">LLM Gate</div><div class="hook-desc">AI commit &amp; secret scan</div></div>
-        </div>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-pre" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Pre</span></div>
-        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-post" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Post</span></div>
-        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-session" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Session</span></div>
-        <div style="display:flex; align-items:center; gap:4px;"><div class="hook-dot hook-dot-other" style="width:6px;height:6px;"></div><span style="font-size:9px; color:var(--anthro-muted);">Other</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ROW 3: Agents + Scout + Workflow Phases -->
-  <div class="grid">
-
-    <!-- 07 THREE AGENTS -->
-    <div>
-      <div class="section-num">07 Specialized Agents</div>
-      <div class="section-title">8 Specialized Agents</div>
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Planner</div>
-            <span class="tag">Read-Only</span>
+    <article class="stop">
+      <div class="when"><span class="ev">UserPromptSubmit</span><span class="hint">You send a message</span></div>
+      <div class="mark"><i class="node warn"></i></div>
+      <div class="body">
+        <h3>Notice a correction, pull in what it knows</h3>
+        <p><code>prompt-submit</code> spots corrections like &ldquo;don&rsquo;t do that again&rdquo; and suggests <code>/learn</code>, and loads relevant wiki pages. <code>drift-detector</code> restates your original goal when, after 6 or more edits, a new prompt looks unrelated to it.</p>
+        <ol class="steps" aria-label="Self-correction loop">
+          <li><strong>Correct</strong>You fix a mistake</li>
+          <li><strong>Propose</strong>Claude drafts a <code>[LEARN]</code> rule</li>
+          <li><strong>Approve</strong>You confirm it</li>
+          <li><strong>Persist</strong>Saved to <code>LEARNED.md</code> and the database</li>
+        </ol>
+        <div class="cols">
+          <div class="card">
+            <h4>Optional: System 1 classifier</h4>
+            <p>Turn on Laya (local) or Jev (hosted) to catch corrections the keyword check misses, in tens of milliseconds. Off by default. It only suggests <code>/learn</code>; it never allows or denies anything.</p>
           </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Break down complex tasks into step-by-step plans. Never edits &mdash; only reads and proposes.</div>
-          <div class="tag-row" style="margin-top:8px;">
-            <span class="tag">Multi-file changes</span>
-            <span class="tag">Architecture</span>
-            <span class="tag">&gt;10 tool calls</span>
-          </div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Reviewer</div>
-            <span class="tag">Quality Gate</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Logic, edge cases, error handling, security, performance, and test coverage audit.</div>
-          <div class="tag-row" style="margin-top:8px;">
-            <span class="tag tag-coral">Critical</span>
-            <span class="tag tag-coral">High</span>
-            <span class="tag">Medium</span>
-            <span class="tag">Low</span>
-          </div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Scout</div>
-            <span class="tag">Confidence Gate</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Assess readiness with worktree isolation. Scores 0&ndash;100 across 5 dimensions.</div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Orchestrator</div>
-            <span class="tag">Memory-Enabled</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Multi-phase feature development. Research &gt; Plan &gt; Implement &gt; Review workflow.</div>
-          <div class="tag-row" style="margin-top:8px;">
-            <span class="tag">/develop</span>
-            <span class="tag">Multi-Phase</span>
-            <span class="tag">Validation Gates</span>
-          </div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Debugger</div>
-            <span class="tag">Hypothesis-Driven</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Systematic bug investigation with root cause analysis and fix verification.</div>
-          <div class="tag-row" style="margin-top:8px;">
-            <span class="tag">Root Cause</span>
-            <span class="tag">Reproduce</span>
-            <span class="tag">Verify Fix</span>
-          </div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Context Engineer</div>
-            <span class="tag">Token-Aware</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Audit context window: CLAUDE.md size, skill overhead, MCP tool counts.</div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Permission Analyst</div>
-            <span class="tag">v3.2</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Analyze denial patterns and generate optimized allow/deny rules by risk tier.</div>
-        </div>
-        <div class="card card-coral">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:15px; font-weight:800; color:var(--anthro-dark);">Cost Analyst</div>
-            <span class="tag">v3.2</span>
-          </div>
-          <div style="font-size:11px; color:var(--anthro-muted); margin-top:4px;">Token usage analysis, cache optimization, and model selection recommendations.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 08 SCOUT SCORING -->
-    <div>
-      <div class="section-num">08 Scout: Confidence Scoring</div>
-      <div class="section-title">5 Dimensions &times; 20 pts</div>
-      <div style="margin-top:8px;">
-        <div class="score-row">
-          <div class="score-label">Scope Clarity</div>
-          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
-          <div class="score-pts">20</div>
-        </div>
-        <div class="score-row">
-          <div class="score-label">Pattern Familiarity</div>
-          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
-          <div class="score-pts">20</div>
-        </div>
-        <div class="score-row">
-          <div class="score-label">Dependency Aware</div>
-          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
-          <div class="score-pts">20</div>
-        </div>
-        <div class="score-row">
-          <div class="score-label">Edge Case Coverage</div>
-          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
-          <div class="score-pts">20</div>
-        </div>
-        <div class="score-row">
-          <div class="score-label">Test Strategy</div>
-          <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%"></div></div>
-          <div class="score-pts">20</div>
-        </div>
-      </div>
-      <div class="verdict-row">
-        <div class="verdict verdict-go">
-          <div class="verdict-label">GO</div>
-          <div class="verdict-desc">&ge;70 &mdash; Proceed with confidence</div>
-        </div>
-        <div class="verdict verdict-hold">
-          <div class="verdict-label">HOLD</div>
-          <div class="verdict-desc">&lt;70 &mdash; Identify gaps first</div>
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <div class="section-num" style="margin-bottom:6px;">Context Modes</div>
-        <div class="mode-cards">
-          <div class="mode-card">
-            <div class="mode-name" style="color:var(--anthro-coral);">Dev</div>
-            <div class="mode-desc">Code first<br>Iterate quickly</div>
-          </div>
-          <div class="mode-card">
-            <div class="mode-name" style="color:#8B5CF6;">Review</div>
-            <div class="mode-desc">Security focus<br>Read-only audit</div>
-          </div>
-          <div class="mode-card">
-            <div class="mode-name" style="color:var(--anthro-green);">Research</div>
-            <div class="mode-desc">Explore broadly<br>Summarize findings</div>
+          <div class="card">
+            <h4>Knowledge plane</h4>
+            <p>Research wikis in the same SQLite store with full-text search, built by <code>wiki-builder</code> and grown by a budget-capped research loop over web, arXiv, and GitHub.</p>
           </div>
         </div>
       </div>
-    </div>
+    </article>
 
-    <!-- 09 WORKFLOW PHASES -->
-    <div>
-      <div class="section-num">09 Development Workflow</div>
-      <div class="section-title">Research &rarr; Plan &rarr; Implement</div>
-      <div class="phase-row">
-        <div class="phase">
-          <div class="phase-badge phase-badge-r">R</div>
-          <div class="phase-body">
-            <div class="phase-name">Research</div>
-            <div class="phase-desc">Feasibility analysis. Scout scores readiness.<br>Output: GO / HOLD decision</div>
-          </div>
-        </div>
-        <div class="phase">
-          <div class="phase-badge phase-badge-p">P</div>
-          <div class="phase-body">
-            <div class="phase-name">Plan</div>
-            <div class="phase-desc">Product requirements + architecture.<br>Planner agent breaks down steps</div>
-          </div>
-        </div>
-        <div class="phase">
-          <div class="phase-badge phase-badge-i">I</div>
-          <div class="phase-body">
-            <div class="phase-name">Implement</div>
-            <div class="phase-desc">Phased execution with frequent commits.<br>Reviewer validates at checkpoints</div>
-          </div>
+    <article class="stop">
+      <div class="when"><span class="ev">PreToolUse</span><span class="hint">Before each tool call</span></div>
+      <div class="mark"><i class="node block"></i></div>
+      <div class="body">
+        <h3>Check the action before it runs</h3>
+        <p>The only stop that can block. Every blocker in v3.4 parses the real command first, so heredocs and quoted text no longer trip it.</p>
+        <div class="card" style="margin-top:16px;">
+          <table>
+            <tr><th>When Claude calls</th><th>Script</th><th>What happens</th><th>Effect</th></tr>
+            <tr><td><code>Bash</code></td><td><code>git-blast-radius</code></td><td>Stops destructive git: force-pushes, hard resets, branch deletes, history rewrites</td><td class="effect"><span class="pill block">blocks</span></td></tr>
+            <tr><td><code>Bash</code></td><td><code>commit-validate</code></td><td>Requires a conventional commit message on a real <code>git commit</code></td><td class="effect"><span class="pill block">blocks</span></td></tr>
+            <tr><td><code>Edit</code> <code>Write</code></td><td><code>secret-scan</code></td><td>Refuses to write keys, tokens, or secret-like files</td><td class="effect"><span class="pill block">blocks</span></td></tr>
+            <tr><td><code>Read</code></td><td><code>reread-tracker</code></td><td>Tells Claude it already read an unchanged file. Blocking is opt-in</td><td class="effect"><span class="pill warn">warns</span></td></tr>
+            <tr><td><code>Edit</code> <code>Write</code></td><td><code>read-before-write</code></td><td>Flags edits to files Claude has not read</td><td class="effect"><span class="pill warn">warns</span></td></tr>
+            <tr><td><code>Edit</code> <code>Write</code></td><td><code>quality-gate</code></td><td>Calls a review checkpoint every few edits</td><td class="effect"><span class="pill warn">warns</span></td></tr>
+            <tr><td><code>Bash</code></td><td><code>pre-commit-check</code> <code>pre-push-check</code></td><td>Reminds Claude to lint, typecheck, and test first</td><td class="effect"><span class="pill warn">warns</span></td></tr>
+            <tr><td>any tool</td><td><code>tool-call-budget</code></td><td>Suggests wrapping up as tool calls pile up</td><td class="effect"><span class="pill warn">warns</span></td></tr>
+          </table>
         </div>
       </div>
-      <div class="phase-note">Validation gate between each phase &mdash; must pass before proceeding.</div>
-      <div class="quote-block" style="margin-top:14px;">
-        <div class="quote-text">&ldquo;80% of my code is written by AI, 20% is spent reviewing and correcting it.&rdquo;</div>
-        <div class="quote-attr">&mdash; Andrej Karpathy</div>
+    </article>
+
+    <article class="stop">
+      <div class="when"><span class="ev">PermissionRequest</span><span class="ev">PermissionDenied</span><span class="hint">A prompt or a denial</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Record why it asked</h3>
+        <p>Each prompt and denial is logged. <b>permission-analyst</b> and <code>/permission-tuner</code> read those logs with the transcript&rsquo;s <code>toolDenialKind</code> and suggest the smallest fix: a narrower ask rule, a hook repair, or an <code>autoMode</code> entry.</p>
       </div>
-    </div>
-  </div>
+    </article>
 
-  <div class="divider"></div>
+    <article class="stop">
+      <div class="when"><span class="ev">PostToolUse</span><span class="ev">PostToolUseFailure</span><span class="hint">After each tool call</span></div>
+      <div class="mark"><i class="node warn"></i></div>
+      <div class="body">
+        <h3>Look at what just changed</h3>
+        <p><code>post-edit-check</code> flags leftover <code>console.log</code> calls and other issues in edited files. <code>test-failure-check</code> turns a failing test into a learning. <code>reread-tracker</code> records each completed read, and <code>tool-failure</code> tracks errors.</p>
+      </div>
+    </article>
 
-  <!-- ROW 4: Skills + Model Selection + Installation -->
-  <div class="grid">
+    <article class="stop">
+      <div class="when"><span class="ev">SubagentStart</span><span class="ev">SubagentStop</span><span class="ev">TaskCreated</span><span class="ev">TaskCompleted</span><span class="ev">TeammateIdle</span><span class="hint">Work is handed off</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Eight agents, each with one job</h3>
+        <p>Lifecycle hooks log each agent and task, check task quality, and flag idle teammates.</p>
+        <div class="agents">
+          <div class="agent"><span class="role">read-only</span><b>Planner</b><p>Breaks work into steps. Reads and proposes, never edits.</p></div>
+          <div class="agent"><span class="role">quality gate</span><b>Reviewer</b><p>Logic, edge cases, errors, security, performance, tests.</p></div>
+          <div class="agent"><span class="role">confidence gate</span><b>Scout</b><p>Scores readiness 0 to 100 in an isolated worktree.</p></div>
+          <div class="agent"><span class="role">multi-phase</span><b>Orchestrator</b><p>Research, plan, implement, review, with <code>/develop</code>.</p></div>
+          <div class="agent"><span class="role">hypothesis-driven</span><b>Debugger</b><p>Reproduces, finds the root cause, verifies the fix.</p></div>
+          <div class="agent"><span class="role">token-aware</span><b>Context Engineer</b><p>Audits CLAUDE.md size, skill overhead, MCP tool count.</p></div>
+          <div class="agent"><span class="role">auto-mode aware</span><b>Permission Analyst</b><p>Turns denials into narrow rules and <code>autoMode</code> entries.</p></div>
+          <div class="agent"><span class="role">spend</span><b>Cost Analyst</b><p>Token use, cache hits, model choice.</p></div>
+        </div>
+        <p style="margin-top:14px; font-size:13.5px; color:#26343C;"><b>Scout scores five areas, 20 points each:</b></p>
+        <div class="scout"><span>scope clarity</span><span>pattern familiarity</span><span>dependencies</span><span>edge cases</span><span>test strategy</span><span class="pill observe" style="border:0;">GO at 70+</span><span class="pill warn" style="border:0;">HOLD below 70</span></div>
+      </div>
+    </article>
 
-    <!-- 10 SKILLS -->
-    <div>
-      <div class="section-num">10 Skills Library</div>
-      <div class="section-title">41 Skills</div>
-      <table>
-        <tr><th>Skill</th><th>What It Does</th></tr>
-        <tr><td><strong>pro-workflow</strong></td><td>Core 8 patterns</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-builder</strong></td><td>Persistent FTS5-indexed research wikis (9 flavors)</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-query</strong></td><td>BM25 retrieval, snippets, related/show</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-research-loop</strong></td><td>Budget-capped BFS auto-research over web/arXiv/GH</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>llm-council</strong></td><td>Provider-agnostic 3-phase multi-LLM deliberation</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>survey-generator</strong></td><td>Provider-agnostic literature survey to wiki page</td></tr>
-        <tr style="background:var(--anthro-light-coral);"><td><strong>wiki-viewer</strong></td><td>Single-file HTML viewer (pages, sources, seeds, link graph, search)</td></tr>
-        <tr><td><strong>smart-commit</strong></td><td>Quality gates + conventional commits</td></tr>
-        <tr><td><strong>wrap-up</strong></td><td>Session ritual with learning capture</td></tr>
-        <tr><td><strong>learn-rule</strong></td><td>Persist corrections to memory (wiki-scoped)</td></tr>
-        <tr><td><strong>parallel-worktrees</strong></td><td>Git worktree setup for zero dead time</td></tr>
-        <tr><td><strong>replay-learnings</strong></td><td>Surface relevant past patterns</td></tr>
-        <tr><td><strong>session-handoff</strong></td><td>Resume docs for next session</td></tr>
-        <tr><td><strong>insights</strong></td><td>Analytics, heatmaps, trends</td></tr>
-        <tr><td><strong>deslop</strong></td><td>Remove AI code slop before commit</td></tr>
-        <tr><td><strong>context-optimizer</strong></td><td>Token management and MCP audit</td></tr>
-        <tr><td><strong>orchestrate</strong></td><td>Multi-phase dev workflow</td></tr>
-        <tr><td><strong>permission-tuner</strong></td><td>Optimize allow/deny rules</td></tr>
-        <tr><td><strong>compact-guard</strong></td><td>Protect context through compaction</td></tr>
-        <tr><td><strong>cost-tracker</strong></td><td>Session cost awareness + budgets</td></tr>
-        <tr><td><strong>auto-setup</strong></td><td>Auto-configure quality gates</td></tr>
-        <tr><td><strong>mcp-audit</strong></td><td>MCP overhead analysis</td></tr>
-        <tr><td><strong>llm-gate</strong></td><td>AI-powered quality gates</td></tr>
-        <tr><td><strong>file-watcher</strong></td><td>Reactive file change workflows</td></tr>
-      </table>
-      <div style="font-size:10px; color:var(--anthro-muted); margin-top:6px;">Coral rows = knowledge plane. New: skill-router, tdd, domain-modeling, design-engineering, writing-guidelines, improve-architecture. + more: context-engineering, batch-orchestration, thoroughness-scoring, sprint-status, agent-teams, safe-mode, token-efficiency, skill-optimizer, bug-capture, module-map</div>
-    </div>
+    <article class="stop">
+      <div class="when"><span class="ev">PreCompact</span><span class="ev">PostCompact</span><span class="hint">Context fills up</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Keep the thread through compaction</h3>
+        <p><code>pre-compact</code> saves edit and prompt counts and the current goal; <code>post-compact</code> restores them from the summary.</p>
+        <div class="card" style="margin-top:16px;">
+          <table>
+            <tr><th>Context rule</th><th>Why</th></tr>
+            <tr><td>Read before you edit</td><td>Understand the code first</td></tr>
+            <tr><td>Compact at task boundaries</td><td>Free the token budget cleanly</td></tr>
+            <tr><td>Fewer than 10 MCP servers, 80 tools</td><td>Less noise in every request</td></tr>
+            <tr><td>Use subagents for reading-heavy work</td><td>Protect the main context</td></tr>
+            <tr><td>Keep CLAUDE.md under 150 lines</td><td>Avoid instruction drift</td></tr>
+          </table>
+        </div>
+      </div>
+    </article>
 
-    <!-- 11 MODEL SELECTION -->
-    <div>
-      <div class="section-num">11 Model Selection</div>
-      <div class="section-title">Right Model, Right Task</div>
-      <table>
-        <tr><th>Task</th><th>Model</th></tr>
-        <tr><td><strong>Quick fixes</strong></td><td>Haiku 4.5 &middot; low</td></tr>
-        <tr><td><strong>Features</strong></td><td>Sonnet 5 &middot; high</td></tr>
-        <tr><td><strong>Refactors</strong></td><td>Opus 5.5 &middot; xhigh</td></tr>
-        <tr><td><strong>Architecture</strong></td><td>Opus 5.5 &middot; xhigh</td></tr>
-        <tr><td><strong>Long-horizon</strong></td><td>Fable 5.1 &middot; high</td></tr>
-      </table>
-      <div style="margin-top:16px;">
-        <div class="section-num" style="margin-bottom:6px;">Wrap-Up Ritual (5 Steps)</div>
-        <ol style="list-style:none; padding:0; counter-reset:step;">
-          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
-            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">1</span>
-            <span style="font-size:12px; color:var(--anthro-text);"><strong>Changes audit</strong> &mdash; git status, uncommitted, TODOs</span>
-          </li>
-          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
-            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">2</span>
-            <span style="font-size:12px; color:var(--anthro-text);"><strong>Quality check</strong> &mdash; lint, typecheck, tests</span>
-          </li>
-          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
-            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">3</span>
-            <span style="font-size:12px; color:var(--anthro-text);"><strong>Learning capture</strong> &mdash; mistakes, patterns</span>
-          </li>
-          <li style="display:flex; gap:8px; margin-bottom:6px; align-items:flex-start;">
-            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">4</span>
-            <span style="font-size:12px; color:var(--anthro-text);"><strong>Next session</strong> &mdash; blockers, what&rsquo;s next</span>
-          </li>
-          <li style="display:flex; gap:8px; margin-bottom:0; align-items:flex-start;">
-            <span style="font-size:12px; font-weight:900; color:var(--anthro-coral); min-width:16px;">5</span>
-            <span style="font-size:12px; color:var(--anthro-text);"><strong>Summary</strong> &mdash; one paragraph handoff</span>
-          </li>
+    <article class="stop">
+      <div class="when"><span class="ev">Stop</span><span class="ev">StopFailure</span><span class="hint">Claude finishes a turn</span></div>
+      <div class="mark"><i class="node warn"></i></div>
+      <div class="body">
+        <h3>Capture the lesson before it is lost</h3>
+        <p><code>learn-capture</code> saves any <code>[LEARN]</code> block Claude wrote to the database. <code>session-check</code> adds reminders based on what happened. <code>stop-failure</code> names the API error when a turn fails: rate limit, overload, auth, or server error.</p>
+      </div>
+    </article>
+
+    <article class="stop">
+      <div class="when"><span class="ev">SessionEnd</span><span class="hint">Session closes</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Wrap up with intention</h3>
+        <p><code>session-end</code> saves the session&rsquo;s stats. The <code>/wrap-up</code> ritual closes the loop:</p>
+        <ol class="steps five" aria-label="Wrap-up ritual">
+          <li><strong>Audit</strong><code>git status</code>, uncommitted work, TODOs</li>
+          <li><strong>Check</strong>Lint, typecheck, tests</li>
+          <li><strong>Learn</strong>Mistakes and patterns</li>
+          <li><strong>Next</strong>Blockers and what&rsquo;s next</li>
+          <li><strong>Hand off</strong>A one-paragraph summary</li>
         </ol>
       </div>
-    </div>
+    </article>
 
-    <!-- 12 INSTALLATION -->
+    <article class="stop">
+      <div class="when"><span class="ev">ConfigChange</span><span class="ev">CwdChanged</span><span class="ev">FileChanged</span><span class="ev">Notification</span><span class="hint">Any time</span></div>
+      <div class="mark"><i class="node observe"></i></div>
+      <div class="body">
+        <h3>Watch the surroundings</h3>
+        <div class="ambient">
+          <div><code>config-watcher</code><br>Spots settings drift</div>
+          <div><code>cwd-changed</code><br>Loads environment on <code>cd</code></div>
+          <div><code>file-changed</code><br>Reacts to <code>.env</code>, <code>package.json</code>, and other config files</div>
+          <div><code>notification-handler</code><br>Logs prompts waiting for you</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="section-head">
+    <h2 class="title">Between sessions</h2>
+    <p>Skills you call on demand, and the habits the hooks reinforce.</p>
+  </div>
+
+  <div class="library">
+    <div class="shelf">
+      <h3>Ship</h3>
+      <dl>
+        <dt>smart-commit</dt><dd>Quality gates, then a conventional commit</dd>
+        <dt>deslop</dt><dd>Strip AI code slop before commit</dd>
+        <dt>llm-gate</dt><dd>AI-powered quality gates</dd>
+        <dt>auto-setup</dt><dd>Configure quality gates for the project</dd>
+        <dt>parallel-worktrees</dt><dd>Zero dead time with <code>claude -w</code></dd>
+        <dt>orchestrate</dt><dd>Multi-phase feature workflow</dd>
+      </dl>
+    </div>
+    <div class="shelf">
+      <h3>Remember</h3>
+      <dl>
+        <dt>learn-rule</dt><dd>Persist a correction, scoped to a wiki</dd>
+        <dt>replay-learnings</dt><dd>Surface relevant past patterns</dd>
+        <dt>wrap-up</dt><dd>Session ritual with learning capture</dd>
+        <dt>session-handoff</dt><dd>Resume notes for next time</dd>
+        <dt>insights</dt><dd>Analytics, heatmaps, trends</dd>
+        <dt>file-watcher</dt><dd>Workflows that react to file changes</dd>
+      </dl>
+    </div>
+    <div class="shelf">
+      <h3>Research</h3>
+      <dl>
+        <dt>wiki-builder</dt><dd>Full-text research wikis, 9 flavors</dd>
+        <dt>wiki-query</dt><dd>BM25 retrieval, related pages, hybrid search</dd>
+        <dt>wiki-research-loop</dt><dd>Budget-capped research over web, arXiv, GitHub</dd>
+        <dt>wiki-viewer</dt><dd>Single-file HTML viewer with link graph</dd>
+        <dt>llm-council</dt><dd>Three-phase multi-LLM deliberation</dd>
+        <dt>survey-generator</dt><dd>Literature survey written to a wiki page</dd>
+      </dl>
+    </div>
+    <div class="shelf">
+      <h3>Budget</h3>
+      <dl>
+        <dt>context-optimizer</dt><dd>Token management and MCP audit</dd>
+        <dt>compact-guard</dt><dd>Protect context through compaction</dd>
+        <dt>cost-tracker</dt><dd>Session cost awareness and budgets</dd>
+        <dt>mcp-audit</dt><dd>MCP overhead analysis</dd>
+        <dt>permission-tuner</dt><dd>Fewer prompts, safely</dd>
+      </dl>
+    </div>
+    <div class="shelf" style="grid-column: span 2;">
+      <h3>Pick the model for the task</h3>
+      <table>
+        <tr><th>Task</th><th>Model</th><th>Effort</th></tr>
+        <tr><td>Quick fixes, read-only exploration</td><td>Haiku 4.5</td><td class="mono">low</td></tr>
+        <tr><td>Features</td><td>Sonnet 5</td><td class="mono">high</td></tr>
+        <tr><td>Refactors and architecture</td><td>Opus 5.5</td><td class="mono">xhigh</td></tr>
+        <tr><td>Long-horizon work</td><td>Fable 5.1</td><td class="mono">high</td></tr>
+      </table>
+      <p class="more">Also in the library: skill-router, tdd, domain-modeling, design-engineering, writing-guidelines, improve-architecture, context-engineering, batch-orchestration, thoroughness-scoring, sprint-status, agent-teams, safe-mode, token-efficiency, skill-optimizer, bug-capture, module-map, and more. 41 skills in all.</p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <h4>The eight patterns</h4>
+      <table>
+        <tr><td><b>Self-correction</b></td><td>Claude learns from your corrections</td></tr>
+        <tr><td><b>Parallel worktrees</b></td><td>No waiting on builds or tests</td></tr>
+        <tr><td><b>Wrap-up ritual</b></td><td>End each session with intention</td></tr>
+        <tr><td><b>Split memory</b></td><td>Modular CLAUDE.md for big projects</td></tr>
+        <tr><td><b>80/20 review</b></td><td>Review at checkpoints, not every change</td></tr>
+        <tr><td><b>Model selection</b></td><td>Route by task and effort</td></tr>
+        <tr><td><b>Context discipline</b></td><td>Spend the context budget on purpose</td></tr>
+        <tr><td><b>Learning log</b></td><td>Write down what each session taught</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4>Research, plan, implement</h4>
+      <div class="rpi">
+        <div><strong>Research</strong>Scout scores readiness and returns GO or HOLD.</div>
+        <div><strong>Plan</strong>Planner turns requirements into steps.</div>
+        <div><strong>Implement</strong>Phased commits; Reviewer checks each one.</div>
+      </div>
+      <p style="margin-top:14px; font-size:13.5px; color:#26343C;">Each phase has to pass its gate before the next starts. Commands, agents, and skills chain the same way: a command starts an agent, the agent runs skills, and agents hand off through <code>Task</code>, never directly.</p>
+    </div>
+  </div>
+
+  <section class="closing">
+    <blockquote>
+      &ldquo;80% of my code is written by AI, 20% is spent reviewing and correcting it.&rdquo;
+      <footer>Andrej Karpathy. pro-workflow is built for the 20%.</footer>
+    </blockquote>
     <div>
-      <div class="section-num">12 Get Started</div>
-      <div class="section-title">Install in Seconds</div>
-      <div class="install-box">
-        <div class="install-label">Cursor</div>
-        <div class="install-code"><span class="cmd">/add-plugin</span> pro-workflow</div>
-      </div>
-      <div class="install-box" style="margin-top:8px;">
-        <div class="install-label">Claude Code</div>
-        <div class="install-code">
-          <span class="comment"># Add marketplace</span><br>
-          <span class="cmd">/plugin marketplace add</span> rohitg00/pro-workflow<br><br>
-          <span class="comment"># Install plugin</span><br>
-          <span class="cmd">/plugin install</span> pro-workflow@pro-workflow
-        </div>
-      </div>
-      <div class="install-box" style="margin-top:8px;">
-        <div class="install-label">skills add (32+ agents)</div>
-        <div class="install-code">
-          <span class="cmd">npx skills add</span> rohitg00/pro-workflow
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <div class="section-num" style="margin-bottom:6px;">Philosophy</div>
-        <ul class="bullet-list">
-          <li><strong>Compound improvements</strong> &mdash; Small corrections &rarr; big gains</li>
-          <li><strong>Trust but verify</strong> &mdash; Let AI work, review at checkpoints</li>
-          <li><strong>Zero dead time</strong> &mdash; Parallel sessions keep momentum</li>
-          <li><strong>Memory is precious</strong> &mdash; Both yours and Claude&rsquo;s</li>
-        </ul>
+      <div class="eyebrow">Install</div>
+      <div class="install" style="grid-template-columns: 1fr;">
+        <div class="term"><span class="label"># Claude Code</span><span class="c">/plugin marketplace add</span> rohitg00/pro-workflow<br><span class="c">/plugin install</span> pro-workflow@pro-workflow</div>
+        <div class="term"><span class="label"># Cursor</span><span class="c">/add-plugin</span> pro-workflow</div>
+        <div class="term"><span class="label"># 32+ agents, including Codex</span><span class="c">npx skills add</span> rohitg00/pro-workflow</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-left">
-      By <strong>Rohit Ghumare</strong> &middot; github.com/rohitg00/pro-workflow &middot; <a href="https://rohitg00-pro-workflow.mintlify.app/" style="color:var(--anthro-coral); text-decoration:none;">Mintlify Docs</a> &middot; September 2026<br>
-      Pro Workflow v3.4 &mdash; Battle-tested patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users
-    </div>
-    <div class="footer-right">Practice Makes Claude Perfect</div>
-  </div>
+  <footer class="foot">
+    <span>By Rohit Ghumare &middot; github.com/rohitg00/pro-workflow</span>
+    <span>Patterns from Boris Cherny, Andrej Karpathy, and Claude Code power users</span>
+  </footer>
 
 </div>
 </body>
