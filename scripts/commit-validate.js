@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const TYPES = ['feat', 'fix', 'refactor', 'test', 'docs', 'chore', 'perf', 'ci', 'style', 'build', 'revert'];
-const PATTERN = new RegExp(`^(${TYPES.join('|')})(\\([\\w\\-.,/ ]+\\))?!?: .+`);
+const PATTERN = new RegExp(`^(?:\\([A-Z][A-Z0-9]*-\\d+\\) )?(${TYPES.join('|')})(\\([\\w\\-.,/ ]+\\))?!?: .+`);
 const MAX_SUMMARY = 72;
 
 function readStdin() {
@@ -12,42 +12,51 @@ function readStdin() {
   });
 }
 
+const GIT_COMMIT = /(?:^|[\s;&|(])git(?:\s+(?:-C|-c)\s+\S+|\s+--?[\w-]+(?:=\S+)?)*\s+commit(?=\s|$)/m;
+const HEREDOC = /<<-?\s*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1[^\n]*\n([\s\S]*?)\n\s*\2\s*(?:\n|$)/;
+
+function heredocFirstLine(text) {
+  const m = text.match(HEREDOC);
+  return m ? m[3].split('\n')[0] : null;
+}
+
+function unquote(match) {
+  const raw = match[1] ?? match[2] ?? match[3] ?? '';
+  return raw.replace(/\\"/g, '"').replace(/\\'/g, "'");
+}
+
 function extractMessage(command) {
   if (!command) return { msg: null, form: 'empty' };
 
-  const shortFlag = command.match(/(?:^|\s)-m\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
-  if (shortFlag) {
-    const raw = shortFlag[1] || shortFlag[2] || shortFlag[3] || '';
-    return { msg: raw.replace(/\\"/g, '"').replace(/\\'/g, "'"), form: '-m' };
+  const commit = command.match(GIT_COMMIT);
+  if (!commit) return { msg: null, form: 'empty' };
+  const args = command.slice(commit.index + commit[0].length);
+
+  const flag = args.match(/(?:^|\s)(?:-[a-zA-Z]*m|--message(?==|\s))[=\s]*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
+  if (flag) {
+    const msg = unquote(flag);
+    if (/^\$\(\s*cat\s+<</.test(msg)) {
+      const body = heredocFirstLine(msg);
+      return body === null ? { msg: null, form: 'unknown' } : { msg: body, form: 'heredoc' };
+    }
+    return { msg, form: '-m' };
   }
 
-  const longFlag = command.match(/--message(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))/);
-  if (longFlag) {
-    const raw = longFlag[1] || longFlag[2] || longFlag[3] || '';
-    return { msg: raw.replace(/\\"/g, '"').replace(/\\'/g, "'"), form: '--message' };
+  if (/(?:^|\s)(?:-F\s*-|--file(?:=|\s+)-)(?=\s|$)/.test(args)) {
+    const body = heredocFirstLine(args);
+    return body === null ? { msg: null, form: 'unknown' } : { msg: body, form: 'heredoc' };
   }
 
-  const heredocAny = command.match(/<<-?\s*'?([A-Za-z_][A-Za-z0-9_]*)'?\s*\n([\s\S]*?)\n\s*\1\s*$/m);
-  if (heredocAny) return { msg: heredocAny[2].split('\n')[0], form: 'heredoc' };
+  if (/(?:^|\s)(?:-F|--file)(?:=|\s*)\S/.test(args)) return { msg: null, form: 'file' };
+  if (/(?:^|\s)(?:--amend|--no-edit|-C|-c|--reuse-message|--fixup|--squash)\b/.test(args)) return { msg: null, form: 'unknown' };
 
-  if (/(?:^|\s)-F(?:\s+\S+|=\S+)/.test(command) || /--file(?:=|\s+)\S+/.test(command)) {
-    return { msg: null, form: 'file' };
-  }
-
-  if (/\bgit\s+(?:-[^\s]+\s+)*commit\b/.test(command)) {
-    const afterCommit = command.split(/\bcommit\b/)[1] || '';
-    const hasExplicitFlag = /(?:-m|--message|-F|--file|--amend)\b/.test(afterCommit);
-    if (!hasExplicitFlag) return { msg: null, form: 'editor' };
-    return { msg: null, form: 'unknown' };
-  }
-
-  return { msg: null, form: 'empty' };
+  return { msg: null, form: 'editor' };
 }
 
 function validate(msg) {
   const firstLine = msg.split('\n')[0].trim();
   if (!PATTERN.test(firstLine)) {
-    return { ok: false, reason: `Commit message must follow conventional commits: <type>(<scope>): <summary>. Valid types: ${TYPES.join(', ')}.` };
+    return { ok: false, reason: `Commit message must follow conventional commits: [(TICKET-123) ]<type>(<scope>): <summary>. Valid types: ${TYPES.join(', ')}.` };
   }
   const summary = firstLine.split(':').slice(1).join(':').trim();
   if (summary.length > MAX_SUMMARY) {
@@ -56,7 +65,9 @@ function validate(msg) {
   return { ok: true };
 }
 
-(async () => {
+module.exports = { extractMessage, validate };
+
+if (require.main === module) (async () => {
   const raw = await readStdin();
   let input = {};
   try { input = JSON.parse(raw); } catch {}
