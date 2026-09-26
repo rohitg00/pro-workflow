@@ -52,5 +52,5 @@ Adjust per flavor.
 
 ## Auto-research
 
-Loop is opt-in. Set `auto_research.enabled: true` once Phase 3.3.1 ships.
+Loop is opt-in. Set `auto_research.enabled: true` to enable it.
 Budget caps are enforced; loop halts on cap or convergence.

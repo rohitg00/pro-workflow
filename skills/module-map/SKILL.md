@@ -1,6 +1,6 @@
 ---
 name: module-map
-description: Produce a one-screen map of an unfamiliar area of the codebase: entry points, modules, data flow, callers. Designed to be read in fifteen seconds. Use when the user says "I do not know this area", "give me the map", "zoom out", "orient me".
+description: 'Produce a one-screen map of an unfamiliar area of the codebase: entry points, modules, data flow, callers. Designed to be read in fifteen seconds. Use when the user says "I do not know this area", "give me the map", "zoom out", "orient me".'
 ---
 
 # module-map

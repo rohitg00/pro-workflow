@@ -1,6 +1,6 @@
 ---
 name: token-efficiency
-description: Reduce token waste by 40-60% through anti-sycophancy rules, tool-call budgets, one-pass coding, task profiles, and read-before-write enforcement. Inspired by drona23/claude-token-efficient.
+description: Reduce token waste by 40-60% through anti-sycophancy rules, one-pass coding, task profiles, and read-before-write enforcement. Inspired by drona23/claude-token-efficient.
 ---
 
 # Token Efficiency
@@ -15,45 +15,13 @@ Use when:
 - Claude is re-reading files or iterating unnecessarily
 - Setting up a new project for token-efficient work
 
-## Anti-Sycophancy Rules
+## Anti-Sycophancy
 
-These patterns waste 30-60% of output tokens:
-
-| Pattern | Example | Fix |
-|---------|---------|-----|
-| Sycophantic opener | "Sure! Great question!" | Delete. Lead with answer. |
-| Prompt restatement | "You're asking about X..." | Delete. Answer directly. |
-| Closing fluff | "Let me know if you need anything!" | Delete. Stop after the answer. |
-| Unsolicited suggestions | "You might also want to..." | Delete unless asked. |
-| AI disclaimers | "As an AI model..." | Delete entirely. |
-| Verbose preambles | "I'll help you with that..." | Delete. Start with the action. |
-
-## Tool-Call Budgets
-
-Set explicit budgets by task complexity:
-
-| Task Type | Tool-Call Budget | Wrap-Up At |
-|-----------|-----------------|------------|
-| Quick fix / lookup | 20 calls | 15 |
-| Bug fix | 30 calls | 25 |
-| Feature (small) | 50 calls | 40 |
-| Feature (large) | 80 calls | 65 |
-| Refactor | 50 calls | 40 |
-| Exploration / research | 30 calls | 25 |
-
-At the wrap-up threshold: commit progress, assess remaining work, decide whether to continue or start fresh.
+Lead with the answer or the action. Skip preamble, restating the prompt, unsolicited follow-up suggestions, and sign-offs - they cost tokens and give the reader nothing.
 
 ## One-Pass Coding Discipline
 
-For simple-to-medium tasks:
-
-1. **Read all relevant files** including tests first
-2. **Understand what tests assert** before coding
-3. **Write complete solution in one pass** — not incrementally
-4. **Run tests once** — if pass, STOP immediately
-5. **If fail**: read the error, fix once, retest
-6. **Never iterate** more than twice on the same failure — rethink approach
-7. **Never refactor, improve, or polish passing code**
+For simple-to-medium tasks, read the relevant files and tests first, then write the complete solution rather than building it up incrementally. Once the tests pass and the request is met, stop - polishing working code is out of scope unless the user asks. If the same fix fails twice, step back and rethink the approach instead of retrying variations.
 
 ## Task Profiles
 
@@ -71,7 +39,6 @@ Switch profiles based on what you're doing:
 - Structured output only: JSON, bullets, tables
 - No prose unless targeting a human reader
 - Every output must be parseable without post-processing
-- Execute task, do not narrate actions
 - Never invent file paths, API endpoints, or function names
 - If unknown: return null or "UNKNOWN", never guess
 
@@ -80,7 +47,7 @@ Switch profiles based on what you're doing:
 - Tables and bullets over prose
 - Numbers must include units
 - Never fabricate data points
-- Summary first (3 bullets max), caveats last
+- Summary first, caveats last
 
 ## Read-Before-Write Enforcement
 
@@ -105,7 +72,6 @@ This ensures clean copy-paste for code and compatibility with downstream systems
 
 Track these metrics to measure token savings:
 - **Output length**: average words per response (target: 30-50% reduction)
-- **Tool calls per task**: should stay within budget tier
 - **Re-read count**: should be near zero
 - **Write-without-read count**: should be zero
 - **Iteration cycles**: tests should pass in 1-2 attempts, not 5+

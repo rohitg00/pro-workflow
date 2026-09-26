@@ -223,33 +223,33 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Current lineup (2026):** Fable 5, Opus 4.8, Sonnet 5, and Haiku 4.5. The flagship tiers carry a 1M-token context; Haiku 4.5 is 200K. Frontier models converged, so the harness and the effort setting decide output quality more than the model choice. See [`references/models-2026.md`](../../references/models-2026.md) for strings, prices, and routing.
+Route by tier, not by version: lineups change every few months, so check the current models with `/model` instead of pinning version numbers here. The harness and the effort setting often decide output quality more than the model choice.
 
-| Task | Model | Effort |
-|------|-------|--------|
-| Quick fixes, lookups | Haiku 4.5 | low |
-| Features, balanced work | Sonnet 5 | high |
-| Refactors, architecture, hard debug | Opus 4.8 | xhigh |
-| Long-horizon autonomous builds | Fable 5 | high / xhigh |
+| Task | Tier | Effort |
+|------|------|--------|
+| Quick fixes, lookups | Haiku | low |
+| Features, balanced work | Sonnet | high |
+| Refactors, architecture, hard debug | Opus | xhigh |
+| Long-horizon autonomous builds | Most capable tier | high / xhigh |
 
 ### Effort and adaptive thinking
 
-Fixed thinking budgets are retired on the current tiers. Control depth with `effort` (`low` through `xhigh` to `max`); `xhigh` is the default for coding and agentic work. Adaptive thinking lets the model calibrate reasoning per step with no fixed budget. Run grunt subagents at `low` effort on Haiku and keep the reasoning path on the capable tier.
+Fixed thinking budgets are retired on current models. Control depth with `effort` (`low` through `xhigh` to `max`); defaults differ by model, so set it explicitly for coding and agentic work. Adaptive thinking lets the model calibrate reasoning per step with no fixed budget. Run grunt subagents at `low` effort on Haiku and keep the reasoning path on the capable tier.
 
 ### Add to CLAUDE.md
 
 ```markdown
 ## Model Hints
-Route by task: Haiku 4.5 for lookups, Sonnet 5 for features, Opus 4.8 for
-architecture and hard debugging, Fable 5 for long-horizon builds.
-Effort is the lever, not thinking budgets: xhigh for coding, low for subagents.
+Route by tier: Haiku for lookups, Sonnet for features, Opus for
+architecture and hard debugging.
+Effort is the lever, not thinking budgets: set it by model and task; reserve xhigh for work that needs its additional capability, and use low for subagents.
 ```
 
 ---
 
 ## 7. Context Discipline
 
-200k tokens is precious. Manage it.
+Context is finite and quality drops as it fills. Manage it.
 
 ### Rules
 
@@ -447,9 +447,9 @@ Command (user-facing entry point)
 
 For features touching >5 files or needing architecture decisions:
 
-1. **Research** → orchestrator agent explores codebase, scores confidence (0-100)
+1. **Research** → orchestrator agent explores codebase, reports open questions
 2. **Plan** → presents approach, files to change, risks. Waits for approval.
-3. **Implement** → executes plan step by step with quality gates every 5 edits
+3. **Implement** → executes the plan, running quality gates at milestones
 4. **Review** → reviewer agent checks for security, logic, quality
 
 All four phases run in order. Each phase requires explicit user approval before the next phase begins.
@@ -484,7 +484,7 @@ Skills with `user-invocable: true` are called via `/skill-name`. Use `context: f
 ### Every Session
 - Run `/doctor` if things feel off
 - Manual `/compact` at 50% — don't wait for auto-compact
-- `ultrathink` in prompts for maximum reasoning
+- Raise the effort setting for hard problems instead of relying on prompt keywords
 - Name sessions with `/rename` for easy `/resume`
 - End with `/wrap-up` to capture learnings
 

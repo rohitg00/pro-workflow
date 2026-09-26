@@ -90,11 +90,11 @@ Wikis with `private: true` in config never get fetched from web sources by `wiki
 
 ## Auto-research opt-in
 
-Phase 3.3.0 ships builder + query only. Loop arrives in 3.3.1. To prep, `wiki.config.md` may include:
+`wiki-research-loop` reads this block from `wiki.config.md`:
 
 ```yaml
 auto_research:
-  enabled: false        # flip in 3.3.1
+  enabled: false        # set true to let wiki-research-loop grow this wiki
   max_pages_per_run: 5
   max_depth: 3
   budget_usd: 0.50

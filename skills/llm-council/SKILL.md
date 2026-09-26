@@ -74,9 +74,9 @@ Console prints the markdown bundle. Pipe to `pbcopy` / `tee` as needed.
 
 ## Cost awareness
 
-The script logs per-call latency + tokens on supported providers. Multiply by your provider rate to estimate. Council cost grows linearly with `len(models)^2` (each model ranks all others) plus the chairman.
+The script logs per-call latency + tokens on supported providers. Multiply by your provider rate to estimate. A run makes 2N+1 calls for N models (N answers, N rankings, 1 synthesis); each ranking call reads all N answers, so token cost grows roughly with N².
 
-Default council size: 3-5 models. More models = exponentially more ranking calls.
+Default council size: 3-5 models.
 
 ## Use with wiki
 

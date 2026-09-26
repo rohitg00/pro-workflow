@@ -96,7 +96,7 @@ Don't load everything into one context. Split work across independent execution 
 | Worktrees (`claude -w`) | Full repo copy | Parallel features, competing approaches |
 | `/btw` (built-in Claude Code) | Temporary overlay | Quick questions without entering conversation history |
 | Agent teams | Independent sessions | Cross-layer changes, parallel reviews |
-| Fresh session (`/resume`) | Clean slate | Unrelated work, degraded context |
+| Fresh session (`/clear`) | Clean slate | Unrelated work, degraded context |
 
 **Pattern — Subagent delegation:**
 ```text
@@ -131,7 +131,7 @@ Example baseline (calibrate with `/context`): ~200K total window, ~20K overhead 
 | Situation | Action |
 |-----------|--------|
 | Task boundary, want to keep learnings | `/compact` with focus |
-| Context degraded, Claude repeating itself | `/compact`, then `/resume` if still bad |
+| Context degraded, Claude repeating itself | `/compact`, then `/clear` if still bad |
 | Starting unrelated work | `/clear` or new session |
 | Heavy read/search operation | Delegate to subagent |
 | Quick side question | `/btw` (doesn't pollute main context) |

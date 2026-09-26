@@ -65,8 +65,8 @@ When `pro-workflow`'s SessionStart hook detects wiki-relevant terms in the user 
 
 Helps Claude recall existing knowledge instead of redoing research.
 
-## Limits (Phase 3.3.0)
+## Limits
 
-- BM25 only. Vector search arrives 3.3.2 with sqlite-vec.
-- No re-ranking. MMR diversity arrives with the research loop in 3.3.1.
+- BM25 only; no vector search.
+- No re-ranking or MMR diversity.
 - Snippet window is 16 tokens around match — tune via `--snippet-len`.

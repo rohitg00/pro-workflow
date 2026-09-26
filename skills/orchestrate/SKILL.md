@@ -14,7 +14,7 @@ Build features through structured phases with validation gates.
 /develop <feature>
   │
   ├── Phase 1: Research (orchestrator agent)
-  │   └── Score confidence → GO/HOLD
+  │   └── Open questions resolved? → GO/HOLD
   │
   ├── Phase 2: Plan (orchestrator agent)
   │   └── Present plan → wait for approval
@@ -31,10 +31,10 @@ Build features through structured phases with validation gates.
 When asked to build a feature:
 
 1. **Start with research**: Delegate to the orchestrator agent or scout agent to explore the codebase
-2. **Wait for GO/HOLD**: Don't proceed if confidence is below 70
+2. **Wait for GO/HOLD**: Proceed once research has answered the open questions; otherwise report what is missing
 3. **Present a plan**: List all files to change, the approach, and risks
 4. **Get approval**: Never implement without explicit "proceed"
-5. **Implement step by step**: Quality gates every 5 edits
+5. **Implement**: Run quality gates at milestones
 6. **Review before commit**: Run the reviewer agent on changes
 
 ## When to Use This

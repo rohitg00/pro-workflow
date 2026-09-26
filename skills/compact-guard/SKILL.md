@@ -6,25 +6,18 @@ user-invocable: true
 
 # Compact Guard
 
-Protect important context through compaction cycles. Based on Claude Code internals: compaction restores max 5 files with 5K tokens each, within a 50K total budget.
+Protect important context through compaction cycles. Compaction restores only a few recently read files, so write down anything else the next turn needs.
 
 ## Trigger
 
 Use before `/compact` or when auto-compact warning appears.
-
-## Key Constants (from Claude Code source)
-
-- `POST_COMPACT_MAX_FILES_TO_RESTORE = 5` — only 5 files survive
-- `POST_COMPACT_TOKEN_BUDGET = 50K` — total restore budget
-- `POST_COMPACT_MAX_TOKENS_PER_FILE = 5K` — per-file limit
-- Auto-compact fires at `context_window - 13K` buffer
 
 ## Pre-Compact Checklist
 
 Before compacting, save these to memory or a scratch file:
 
 1. **Current task** — What are you working on? One sentence.
-2. **Files in progress** — Which files are being edited? (max 5 — compaction only restores 5)
+2. **Files in progress** — Which files are being edited? Most important first
 3. **Decisions made** — Any architectural choices made this session
 4. **Blockers** — What's preventing progress?
 5. **Next steps** — What to do immediately after compact
@@ -52,14 +45,14 @@ After compaction, immediately:
 | Delegate grep/search to subagent | 30-60% per search | Always for broad searches |
 | Read only needed lines (`offset`/`limit`) | 50-90% per read | Large files |
 | Compact at task boundaries | Preserves coherence | Between logical steps |
-| Use `/resume` for fresh start | 100% | Unrelated new task |
+| Use `/clear` for fresh start | 100% | Unrelated new task |
 
 ## Output
 
 After running compact-guard:
 ```text
 COMPACT GUARD
-  Files to preserve: [list top 5]
+  Files to preserve: [priority order]
   Task state: [one sentence]
   Decisions: [key choices]
   Next step: [immediate action after compact]

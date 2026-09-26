@@ -23,7 +23,7 @@ Every option gets a Thoroughness score (T:X/10):
 
 ## How to Present Options
 
-When presenting choices, follow this format every time:
+When presenting choices, use this format:
 
 ### 1. Re-State Context
 
@@ -56,7 +56,7 @@ worth it — Option B creates debt you'll pay back at 10x.
 
 ### 3. Recommend
 
-Always recommend the higher-thoroughness option. State the delta — what the user gains for the additional time.
+Recommend the option whose thoroughness fits the stakes - for contained scope that is usually the higher-rated one. State the delta — what the user gains for the additional time.
 
 If the lower option is genuinely appropriate (prototype, throwaway script, time-boxed spike), say so explicitly with reasoning.
 
@@ -111,7 +111,7 @@ Is the scope contained?
   NO  → Break it into contained pieces. Score each piece.
 
 Is the T:8+ option significantly more effort with AI?
-  NO  → Always pick it. The marginal cost is near-zero.
+  NO  → Pick it. The marginal cost is near-zero.
   YES → Explain why. It's rare, but prototypes and spikes exist.
 
 Is the user asking for a quick hack explicitly?
@@ -130,7 +130,7 @@ Say "skipping thoroughness scoring — this is a spike/one-off" so the user know
 
 ## Anti-Patterns
 
-- Scoring everything the same (if all options are T:7, you aren't thinking hard enough)
+- Scoring everything the same (if all options are T:7, the ratings aren't distinguishing them)
 - Using low scores to justify shortcuts ("it's only T:4, so it's fine" — no, raise it)
 - Scoring without the effort comparison (the whole point is that AI closes the gap)
 - Treating T:10 as the default target (T:10 on unbounded scope is a trap)

@@ -23,7 +23,7 @@ Manage your context window and token budget effectively.
 | `/compact` | 30-50% context | At task boundaries |
 | Disable unused MCPs | ~5% per MCP | When switching domains |
 | Use subagents for exploration | Keeps main context clean | Heavy search/read tasks |
-| Fresh session via `/resume` | 100% reset | When starting unrelated work |
+| Fresh session via `/clear` | 100% reset | When starting unrelated work |
 
 ### Configuration
 
@@ -65,19 +65,12 @@ The main session stays clean while subagents handle the volume.
 
 ## Context Budget Planning
 
-| Phase | Target Usage | Action If Over |
-|-------|-------------|----------------|
-| Planning | < 20% | Keep plans concise |
-| Implementation | < 60% | Compact between files |
-| Testing | < 80% | Delegate to subagent |
-| Review | < 90% | Start fresh session |
+Per-phase context targets live in `context-engineering` (Context Budget Planning).
 
 ## Token Efficiency
 
 ### Output Reduction (40-60% savings)
-- No sycophantic openers ("Sure!", "Great question!")
-- No closing fluff ("Let me know if you need anything!")
-- No prompt restatement before answering
+- Lead with the answer; skip preamble, prompt restatement, and sign-offs
 - Code first, explanation only if non-obvious
 - Structured output (tables, bullets) over prose
 - ASCII only: -- not em dashes, straight quotes not smart quotes
@@ -86,8 +79,7 @@ The main session stays clean while subagents handle the volume.
 - One-pass coding: complete solution, test once, stop if green
 - Read before write: never modify unread files
 - No re-reads: don't re-read unchanged files
-- Tool-call budgets: 20 (quick fix) to 80 (large feature)
-- Never iterate more than twice on the same failure
+- If the same fix fails twice, rethink the approach
 
 ### Task Profiles
 Switch response style based on context:
@@ -111,5 +103,5 @@ Signs:
 
 Fix:
 1. Manual `/compact`
-2. If still bad: new session with `/resume`
+2. If still bad: fresh context with `/clear` (or a new session)
 3. For recurring issues: reduce CLAUDE.md size, disable MCPs

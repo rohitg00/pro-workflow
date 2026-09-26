@@ -18,7 +18,7 @@ Use when:
 
 ## Key Insight
 
-Each MCP server adds ALL its tool descriptions to every API request. A server with 20 tools adds ~2K-4K tokens per request, regardless of whether you use those tools.
+Every always-loaded MCP tool adds its schema to every API request - a server with 20 tools can add ~2K-4K tokens whether or not you use them. When Claude Code defers MCP tools behind tool search, the per-request cost is much lower, so check `/context` for the actual overhead before recommending a server be disabled.
 
 ## Audit Steps
 
