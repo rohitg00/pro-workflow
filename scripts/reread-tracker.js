@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { readHookInput } = require('./lib/hook-input');
 
 function getTempDir() {
   return path.join(os.tmpdir(), 'pro-workflow');
@@ -13,34 +14,28 @@ function ensureDir(dir) {
   }
 }
 
+function shouldBlock() {
+  const env = process.env.PRO_WORKFLOW_REREAD_BLOCK;
+  if (env !== undefined) return env === '1' || env === 'true';
+  try {
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config.json'), 'utf8'));
+    return Boolean(config.reread_tracker && config.reread_tracker.block);
+  } catch (e) {
+    return false;
+  }
+}
+
 async function main() {
-  const rawSessionId = process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
-  // Sanitize sessionId to prevent path traversal
-  const sessionId = rawSessionId.replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
+  const input = await readHookInput();
+  const rawSessionId = input.session_id || process.env.CLAUDE_SESSION_ID || String(process.ppid) || 'default';
+  const sessionId = String(rawSessionId).replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
+
+  const filePath = (input.tool_input && input.tool_input.file_path) || '';
+  if (!filePath) return;
+
   const tempDir = getTempDir();
   ensureDir(tempDir);
-
   const trackFile = path.join(tempDir, `read-track-${sessionId}.json`);
-
-  let input = '';
-  try {
-    input = fs.readFileSync(0, 'utf8');
-  } catch (e) {
-    process.exit(0);
-  }
-
-  let parsed;
-  try {
-    parsed = JSON.parse(input);
-  } catch (e) {
-    process.exit(0);
-  }
-
-  const toolInput = parsed.tool_input || {};
-  const filePath = toolInput.file_path || '';
-  if (!filePath) {
-    process.exit(0);
-  }
 
   let tracked = {};
   if (fs.existsSync(trackFile)) {
@@ -52,13 +47,11 @@ async function main() {
   }
 
   const lastRead = tracked[filePath];
-  const now = Date.now();
 
   if (lastRead) {
     let modified = false;
     try {
-      const stat = fs.statSync(filePath);
-      modified = stat.mtimeMs > lastRead;
+      modified = fs.statSync(filePath).mtimeMs > lastRead;
     } catch (e) {
       modified = true;
     }
@@ -66,17 +59,15 @@ async function main() {
     if (!modified) {
       const readCount = (tracked[`${filePath}:count`] || 1) + 1;
       tracked[`${filePath}:count`] = readCount;
-      if (readCount >= 2) {
-        console.error(`[TokenEfficiency] Hard rule violation: Re-reading ${path.basename(filePath)} (${readCount}x) — file unchanged since last read. Consider using cached knowledge.`);
-        process.exit(1);
-      }
+      fs.writeFileSync(trackFile, JSON.stringify(tracked));
+      console.error(`[TokenEfficiency] Re-reading ${path.basename(filePath)} (${readCount}x), file unchanged since last read. Use what you already read.`);
+      process.exit(shouldBlock() ? 2 : 1);
     }
   }
 
-  tracked[filePath] = now;
+  tracked[filePath] = Date.now();
+  delete tracked[`${filePath}:count`];
   fs.writeFileSync(trackFile, JSON.stringify(tracked));
-
-  process.exit(0);
 }
 
 main().catch(() => process.exit(0));

@@ -60,5 +60,8 @@
       "long_horizon": "high",
       "grunt_subagent": "low"
     }
+  },
+  "reread_tracker": {
+    "block": false
   }
 }

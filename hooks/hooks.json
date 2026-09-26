@@ -319,28 +319,6 @@
         ]
       }
     ],
-    "WorktreeCreate": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-create.js\""
-          }
-        ]
-      }
-    ],
-    "WorktreeRemove": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/worktree-remove.js\""
-          }
-        ]
-      }
-    ],
     "CwdChanged": [
       {
         "matcher": "*",

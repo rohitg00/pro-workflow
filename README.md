@@ -15,7 +15,7 @@
 <p align="center">
   Self-correcting memory + persistent FTS5-indexed wikis + auto-research loop, all on one SQLite store.<br/>
   Correct Claude once &mdash; it never repeats the mistake. Build a wiki on a topic &mdash; it grows itself overnight.<br/>
-  <b>41 skills</b> &bull; <b>8 agents</b> &bull; <b>23 commands</b> &bull; <b>37 hook scripts across 24 events</b><br/>
+  <b>41 skills</b> &bull; <b>8 agents</b> &bull; <b>23 commands</b> &bull; <b>33 hook scripts across 22 events</b><br/>
   Works with <b>Claude Code</b>, <b>Cursor</b>, and <b>32+ agents</b> via skills add.
 </p>
 
@@ -198,7 +198,7 @@ Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, sc
 | Skills | 34 | 14 | 140+ | 18+ | 0 |
 | Agents | 8 | 5 | 36 | 0 | 18 |
 | Commands | 22 | 3 | 60+ | 5+ | 57 |
-| Hook events | 24 | 8 | 18 | 0 | 0 |
+| Hook events | 22 | 8 | 18 | 0 | 0 |
 
 ---
 
@@ -298,9 +298,9 @@ Plus: `/wiki` command (now with `view`), `learn-rule` `Wiki: <slug>` scoping, sc
 | `/mcp-audit` | Audit MCP servers for token overhead |
 | `/permission-tuner` | Generate allow/deny rules from denial patterns |
 
-### 37 hook scripts across 24 events
+### 33 hook scripts across 22 events
 
-`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, `Stop`, `PreCompact`, `PostCompact`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `PermissionRequest`, `PermissionDenied`, `PostToolUseFailure`, `TeammateIdle`, `StopFailure`, `FileChanged`, `ConfigChange`, `Notification`, `Setup`, `WorktreeCreate`, `WorktreeRemove`, `CwdChanged`.
+`SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, `Stop`, `PreCompact`, `PostCompact`, `SubagentStart`, `SubagentStop`, `TaskCreated`, `TaskCompleted`, `PermissionRequest`, `PermissionDenied`, `PostToolUseFailure`, `TeammateIdle`, `StopFailure`, `FileChanged`, `ConfigChange`, `Notification`, `Setup`, `CwdChanged`.
 
 Selected high-leverage hooks:
 
@@ -313,6 +313,7 @@ Selected high-leverage hooks:
 | `PreToolUse(Bash)` | `commit-validate.js`, `git-blast-radius.js`, `pre-push-check.js` | Conventional commit + destructive op + push guardrails |
 | `PreToolUse(Write)` | `secret-scan.js` | LLM-powered secret detection |
 | `PreCompact` / `PostCompact` | `pre-compact.js`, `post-compact.js` | Save and re-inject critical context summary |
+| `PreToolUse(Read)` | `reread-tracker.js` | Warns when an unchanged file is read again; set `reread_tracker.block: true` in `config.json` or `PRO_WORKFLOW_REREAD_BLOCK=1` to block the read |
 
 ### Reference guides
 
@@ -438,7 +439,7 @@ pro-workflow/
 ├── skills/           # 41 skills
 ├── agents/           # 8 agents
 ├── commands/         # 23 slash commands
-├── scripts/          # 37 hook scripts (24 events)
+├── scripts/          # 33 hook scripts (22 events)
 ├── references/       # workflow, model, and skill reference guides
 ├── docs/             # GitHub Pages infographic
 ├── rules/            # rule packs (Cursor + universal)

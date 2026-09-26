@@ -7,9 +7,7 @@ process.stdin.on('end', () => {
     const input = JSON.parse(data);
     console.error('[ProWorkflow] Pushing to remote...');
     console.error('[ProWorkflow] Consider /wrap-up to capture learnings from this session');
-    console.log(data);
   } catch (err) {
     console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
   }
 });

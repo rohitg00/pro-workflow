@@ -118,9 +118,7 @@ async function main() {
         fs.writeFileSync(countFile, String(count));
       }
 
-      console.log(data);
     } catch (err) {
-      console.log(data);
     }
   });
 }

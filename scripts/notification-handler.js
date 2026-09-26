@@ -1,16 +1,11 @@
 #!/usr/bin/env node
-process.stdin.setEncoding('utf8');
-let data = '';
-process.stdin.on('data', chunk => { data += chunk; });
-process.stdin.on('end', () => {
-  try {
-    const input = JSON.parse(data);
-    if (input.type === 'PermissionRequest') {
-      console.error('[ProWorkflow] Permission requested: ' + (input.tool ?? 'unknown'));
-    }
-    console.log(data);
-  } catch (err) {
-    console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
+const { readHookInput } = require('./lib/hook-input');
+
+readHookInput().then(input => {
+  const type = input.notification_type || 'unknown';
+  if (type === 'permission_prompt') {
+    console.error('[ProWorkflow] Permission prompt waiting: ' + (input.message || 'Claude needs your permission'));
+  } else if (type === 'idle_prompt') {
+    console.error('[ProWorkflow] Claude is idle and waiting for input');
   }
 });

@@ -8,7 +8,7 @@ process.stdin.on('data', chunk => { data += chunk; });
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(data);
-    const newCwd = input.cwd || process.cwd();
+    const newCwd = input.new_cwd || input.cwd || process.cwd();
 
     const hasGit = fs.existsSync(path.join(newCwd, '.git'));
     const hasPackageJson = fs.existsSync(path.join(newCwd, 'package.json'));
@@ -32,8 +32,6 @@ process.stdin.on('end', () => {
       }
     }
 
-    console.log(data);
   } catch (err) {
-    console.log(data || '{}');
   }
 });
