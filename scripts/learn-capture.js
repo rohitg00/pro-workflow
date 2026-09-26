@@ -19,9 +19,8 @@ async function main() {
   process.stdin.on('end', () => {
     try {
       const input = JSON.parse(data);
-      const response = input.assistant_response || '';
+      const response = input.last_assistant_message || '';
       if (!response) {
-        console.log(data);
         return;
       }
 
@@ -58,7 +57,6 @@ async function main() {
     } catch (err) {
       console.error(`[ProWorkflow] Learn-capture error: ${err.message}`);
     }
-    console.log(data);
   });
 }
 

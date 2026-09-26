@@ -5,7 +5,7 @@ process.stdin.on('data', chunk => { data += chunk; });
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(data);
-    const filePath = input.file_path || input.path || '';
+    const filePath = input.file_path || '';
 
     const importantPatterns = [
       /package\.json$/,
@@ -24,7 +24,6 @@ process.stdin.on('end', () => {
 
     const isImportant = importantPatterns.some(p => p.test(filePath));
 
-    // Reactive wiki seed enqueue: edits inside a wiki/ tree spawn a verify seed.
     const wikiMatch = filePath.match(/(?:^|\/)\.claude\/wikis\/([^/]+)\/wiki\/.+\.md$/) ||
                       filePath.match(/(?:^|\/)\.pro-workflow\/wikis\/([^/]+)\/wiki\/.+\.md$/);
     if (wikiMatch) {
@@ -45,7 +44,7 @@ process.stdin.on('end', () => {
             }
           } finally { store.close(); }
         }
-      } catch (e) { /* never break the hook */ }
+      } catch (e) { }
     }
 
     if (isImportant) {
@@ -76,9 +75,7 @@ process.stdin.on('end', () => {
       }
     }
 
-    console.log(data);
   } catch (err) {
     console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
   }
 });

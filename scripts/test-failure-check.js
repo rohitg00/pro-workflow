@@ -7,7 +7,6 @@ process.stdin.on('end', () => {
     const input = JSON.parse(data);
     const command = (input.tool_input && input.tool_input.command) || '';
     if (!/(npm test|pnpm test|yarn test|bun test|pytest|go test|cargo test|vitest|jest)\b/.test(command)) {
-      console.log(data);
       return;
     }
     const response = input.tool_response || {};
@@ -21,9 +20,7 @@ process.stdin.on('end', () => {
         console.error('[ProWorkflow] Consider: [LEARN] Testing: ' + failLine.slice(0, 80));
       }
     }
-    console.log(data);
   } catch (err) {
     console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
   }
 });

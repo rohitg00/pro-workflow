@@ -19,8 +19,8 @@ process.stdin.on('end', () => {
       if (files.length > 0) {
         const saved = JSON.parse(fs.readFileSync(path.join(compactsDir, files[0]), 'utf8'));
         console.error('[ProWorkflow] Context restored after compaction:');
-        if (saved.summary) {
-          console.error('[ProWorkflow]   Summary: ' + saved.summary);
+        if (saved.trigger) {
+          console.error('[ProWorkflow]   Trigger: ' + saved.trigger);
         }
         if (saved.edits_before_compact) {
           console.error('[ProWorkflow]   Edits before compact: ' + saved.edits_before_compact);
@@ -34,13 +34,14 @@ process.stdin.on('end', () => {
         restored = true;
       }
     }
+    if (input.compact_summary) {
+      console.error('[ProWorkflow]   Summary: ' + String(input.compact_summary).slice(0, 200));
+    }
     if (!restored) {
       console.error('[ProWorkflow] Post-compact: no saved context found (pre-compact may not have run)');
     }
 
-    console.log(data);
   } catch (err) {
     console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
   }
 });

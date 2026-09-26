@@ -25,7 +25,6 @@ async function main() {
       const filePath = input.tool_input?.file_path;
 
       if (!filePath || !/\.(ts|tsx|js|jsx|mjs|cjs|py|go|rs)$/.test(filePath) || !fs.existsSync(filePath)) {
-        console.log(data);
         return;
       }
 
@@ -67,9 +66,7 @@ async function main() {
         log('[ProWorkflow] Consider: [LEARN] to remember patterns');
       }
 
-      console.log(data);
     } catch (err) {
-      console.log(data);
     }
   });
 }

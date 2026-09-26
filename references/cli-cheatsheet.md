@@ -35,6 +35,9 @@ claude --teammate-mode           # Launch as a teammate in agent teams
 
 ```bash
 claude --permission-mode plan    # Force plan mode
+claude --permission-mode auto    # Classifier reviews actions instead of prompting
+claude auto-mode config         # Print effective autoMode rules
+claude auto-mode critique       # Review your custom autoMode rules
 claude --allowedTools Read,Grep  # Whitelist specific tools
 claude --disallowedTools Bash    # Blacklist tools
 ```
@@ -127,7 +130,8 @@ claude --ide vscode       # Set IDE context
 
 | Command | Purpose |
 |---------|---------|
-| `/permissions` | Manage tool permissions |
+| `/permissions` | Manage tool permissions; Recently denied tab, `r` to retry |
+| `/auto-mode-setup` | Draft `autoMode.environment` entries from your project |
 | `/agents` | Create and manage subagents |
 | `/memory` | View/edit auto memory |
 | `/doctor` | Diagnose configuration issues |

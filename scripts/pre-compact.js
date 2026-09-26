@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * PreCompact Hook
- *
- * Runs before context compaction.
- * Saves important state that should survive compaction.
- *
- * Input (stdin): { session_id, summary }
- * Output (stdout): Same JSON
- */
-
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -47,7 +37,6 @@ async function main() {
       const input = JSON.parse(data);
       const sessionId = input.session_id || 'default';
 
-      // Save pre-compact state
       const tempDir = getTempDir();
       const compactDir = path.join(tempDir, 'compacts');
       ensureDir(compactDir);
@@ -57,16 +46,15 @@ async function main() {
       const state = {
         timestamp: new Date().toISOString(),
         session_id: sessionId,
-        summary: input.summary || 'No summary provided'
+        trigger: input.trigger || 'unknown',
+        custom_instructions: input.custom_instructions || null
       };
 
-      // Read edit count if exists
       const editCountFile = path.join(tempDir, `edit-count-${sessionId}`);
       if (fs.existsSync(editCountFile)) {
         state.edits_before_compact = parseInt(fs.readFileSync(editCountFile, 'utf8').trim(), 10);
       }
 
-      // Read prompt count if exists
       const promptCountFile = path.join(tempDir, `prompt-count-${sessionId}`);
       if (fs.existsSync(promptCountFile)) {
         state.prompts_before_compact = parseInt(fs.readFileSync(promptCountFile, 'utf8').trim(), 10);
@@ -77,7 +65,6 @@ async function main() {
       log('[ProWorkflow] Context compacting - state saved');
       log(`[ProWorkflow] Edits: ${state.edits_before_compact || 0}, Prompts: ${state.prompts_before_compact || 0}`);
 
-      // Reset counters after compact
       if (fs.existsSync(editCountFile)) {
         fs.writeFileSync(editCountFile, '0');
       }
@@ -85,9 +72,7 @@ async function main() {
         fs.writeFileSync(promptCountFile, '0');
       }
 
-      console.log(data);
     } catch (err) {
-      console.log(data);
     }
   });
 }

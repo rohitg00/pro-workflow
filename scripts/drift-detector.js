@@ -46,7 +46,6 @@ async function main() {
             editsSinceLastTouch: 0
           }));
         }
-        console.log(data);
         return;
       }
 
@@ -76,9 +75,7 @@ async function main() {
       }
 
       fs.writeFileSync(intentFile, JSON.stringify(state));
-      console.log(data);
     } catch (err) {
-      console.log(data);
     }
   });
 }

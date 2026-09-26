@@ -89,7 +89,7 @@ To compare providers:
 
 ```bash
 node build-survey.js --bundle bundle.json --wiki agent-memory --provider openai --model gpt-4o
-node build-survey.js --bundle bundle.json --wiki agent-memory --provider anthropic --model claude-opus-4-7
+node build-survey.js --bundle bundle.json --wiki agent-memory --provider anthropic --model claude-opus-5-5
 ```
 
 Each writes a separate versioned file; diff them.

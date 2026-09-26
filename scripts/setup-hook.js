@@ -48,8 +48,6 @@ process.stdin.on('end', () => {
       }
     }
 
-    console.log(data);
   } catch (err) {
-    console.log('{}');
   }
 });

@@ -31,7 +31,7 @@ Run an offline, budget-capped optimization loop over a skill's accumulated `lear
 ```text
 /skill-optimize pro-workflow
 /skill-optimize wiki-research-loop --budget-usd 1.0 --epochs 5
-/skill-optimize wrap-up --optimizer-model claude-opus-4-7 --evaluator-model gpt-4o-mini
+/skill-optimize wrap-up --optimizer-model claude-opus-5-5 --evaluator-model gpt-4o-mini
 ```
 
 The third example mixes providers. The CLI infers the provider from the model id (`claude-*` → anthropic, `gpt-*` / `o*` → openai), so you do not need `--evaluator-provider openai` for `gpt-4o-mini`. Pass an explicit `--optimizer-provider` / `--evaluator-provider` to override inference.

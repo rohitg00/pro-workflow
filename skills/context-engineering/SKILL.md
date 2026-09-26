@@ -110,7 +110,7 @@ Main context stays clean. Subagents handle the volume.
 
 ## Context Budget Planning
 
-Example baseline (calibrate with `/context`): ~200K total window, ~20K overhead (CLAUDE.md, tool definitions, MCP schemas). Plan around **~180K usable** — actual budgets vary by model and configuration.
+Example baseline (calibrate with `/context`): a 200K window (Haiku 4.5; Fable 5.1, Opus 5.5, and Sonnet 5 carry 1M) with ~20K overhead (CLAUDE.md, tool definitions, MCP schemas) leaves **~180K usable**. Quality still drops as context fills, so keep the same discipline on 1M tiers. Actual budgets vary by model and configuration.
 
 | Allocation | Budget | What Goes Here |
 |------------|--------|----------------|

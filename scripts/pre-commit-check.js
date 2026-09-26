@@ -7,9 +7,7 @@ process.stdin.on('end', () => {
     JSON.parse(data);
     console.error('[ProWorkflow] Before commit: lint, typecheck, test?');
     console.error('[ProWorkflow] Run quality gates first: npm run lint && npm run typecheck');
-    console.log(data);
   } catch (err) {
     console.error('[ProWorkflow] JSON parse error:', err.message);
-    console.log(data || '{}');
   }
 });

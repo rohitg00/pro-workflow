@@ -1,52 +1,103 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
+    "defaultMode": "auto",
     "deny": [
       "Bash(rm -rf *)",
       "Bash(curl * | bash)",
       "Bash(wget * | sh)",
       "Edit(/vendor/**)",
-      "Edit(/node_modules/**)"
+      "Edit(/node_modules/**)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
     ],
     "ask": [
-      "Bash(git push *)",
-      "Bash(git reset *)",
-      "Bash(docker *)",
-      "Bash(npm publish *)",
-      "Bash(npx * deploy *)"
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * main)",
+      "Bash(git push * main *)",
+      "Bash(git push *:main)",
+      "Bash(git push *:main *)",
+      "Bash(git push *:refs/heads/main*)",
+      "Bash(git push * master)",
+      "Bash(git push * master *)",
+      "Bash(git push *:master)",
+      "Bash(git push *:master *)",
+      "Bash(git push *:refs/heads/master*)",
+      "Bash(gh pr merge *)",
+      "Bash(npm publish*)",
+      "Bash(pnpm publish*)",
+      "Bash(cargo publish*)",
+      "Bash(vercel --prod*)",
+      "Bash(vercel deploy*)"
     ],
     "allow": [
-      "Read",
-      "Glob",
-      "Grep",
-      "Edit",
-      "Write",
-      "Bash(npm run *)",
-      "Bash(pnpm *)",
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run build)",
       "Bash(git status)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
       "Bash(git branch *)",
-      "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git commit *)",
-      "Bash(ls *)",
-      "Bash(cat *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(wc *)",
-      "Bash(find *)",
-      "Bash(grep *)",
-      "Bash(node *)",
-      "Bash(npx jest *)",
-      "Bash(npx vitest *)",
       "Bash(npx tsc *)",
+      "Bash(npx vitest *)",
       "Bash(npx eslint *)",
-      "MCP(github:*)",
-      "MCP(context7:*)",
-      "Task(*)",
-      "Agent(*)"
+      "mcp__github__get_*",
+      "mcp__github__list_*",
+      "mcp__context7"
     ]
+  },
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "Source control: every repository under github.com/your-org is trusted; pushes to feature branches are routine.",
+      "Package registries: registry.npmjs.org and pypi.org are normal read sources; publishing always needs an explicit request.",
+      "Local services: dev servers and test databases on localhost are disposable development infrastructure."
+    ],
+    "allow": [
+      "$defaults",
+      "Running the project's own test, lint, typecheck, and build scripts is routine."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Outward writes need explicit intent: opening or commenting on pull requests and issues, sending messages, creating releases, and deploying, unless the user asked for that specific action in this session.",
+      "Merging a pull request needs the user to approve that specific merge in this session."
+    ],
+    "hard_deny": [
+      "$defaults"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": true,
+    "excludedCommands": [
+      "docker *",
+      "gh *"
+    ],
+    "filesystem": {
+      "allowWrite": [
+        "/tmp",
+        "~/.npm",
+        "~/.cache"
+      ]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "*.githubusercontent.com",
+        "registry.npmjs.org"
+      ],
+      "allowLocalBinding": true
+    },
+    "credentials": {
+      "files": [
+        { "path": "~/.ssh", "mode": "deny" },
+        { "path": "~/.aws", "mode": "deny" }
+      ]
+    }
   },
   "outputStyle": "Explanatory",
   "statusLine": "model branch tokens",
@@ -69,11 +120,12 @@
   ],
   "spinnerTipsOverride": [
     "Use /compact at task boundaries to keep context fresh",
-    "Shift+Tab cycles modes: Normal > Auto > Plan",
+    "Shift+Tab cycles modes: Manual > Accept edits > Plan",
+    "Auto mode blocked something? /permissions > Recently denied, press r to retry",
+    "Ask rules always prompt, even in auto mode",
     "Ctrl+B sends the current task to background",
     "Use subagents for parallel exploration",
     "claude -w creates an instant parallel worktree session",
-    "Voice mode: /voice then hold spacebar to talk",
     "Esc Esc rewinds to the last checkpoint",
     "Write tests alongside code for better AI output",
     "/doctor diagnoses configuration issues"

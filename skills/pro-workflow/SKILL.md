@@ -223,14 +223,14 @@ Between: proceed with confidence.
 
 ## 6. Model Selection
 
-**Current lineup (2026):** Fable 5, Opus 4.8, Sonnet 5, and Haiku 4.5. The flagship tiers carry a 1M-token context; Haiku 4.5 is 200K. Frontier models converged, so the harness and the effort setting decide output quality more than the model choice. See [`references/models-2026.md`](../../references/models-2026.md) for strings, prices, and routing.
+**Current lineup (2026):** Fable 5.1, Opus 5.5, Sonnet 5, and Haiku 4.5. The flagship tiers carry a 1M-token context; Haiku 4.5 is 200K. Frontier models converged, so the harness and the effort setting decide output quality more than the model choice. See [`references/models-2026.md`](../../references/models-2026.md) for strings, prices, and routing.
 
 | Task | Model | Effort |
 |------|-------|--------|
 | Quick fixes, lookups | Haiku 4.5 | low |
 | Features, balanced work | Sonnet 5 | high |
-| Refactors, architecture, hard debug | Opus 4.8 | xhigh |
-| Long-horizon autonomous builds | Fable 5 | high / xhigh |
+| Refactors, architecture, hard debug | Opus 5.5 | xhigh |
+| Long-horizon autonomous builds | Fable 5.1 | high / xhigh |
 
 ### Effort and adaptive thinking
 
@@ -240,8 +240,8 @@ Fixed thinking budgets are retired on the current tiers. Control depth with `eff
 
 ```markdown
 ## Model Hints
-Route by task: Haiku 4.5 for lookups, Sonnet 5 for features, Opus 4.8 for
-architecture and hard debugging, Fable 5 for long-horizon builds.
+Route by task: Haiku 4.5 for lookups, Sonnet 5 for features, Opus 5.5 for
+architecture and hard debugging, Fable 5.1 for long-horizon builds.
 Effort is the lever, not thinking budgets: xhigh for coding, low for subagents.
 ```
 
@@ -249,7 +249,7 @@ Effort is the lever, not thinking budgets: xhigh for coding, low for subagents.
 
 ## 7. Context Discipline
 
-200k tokens is precious. Manage it.
+Context is finite even at 1M tokens (200K on Haiku 4.5). Manage it.
 
 ### Rules
 

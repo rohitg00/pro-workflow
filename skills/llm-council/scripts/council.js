@@ -11,8 +11,8 @@ const PROVIDERS = {
   anthropic: {
     envKey: 'ANTHROPIC_API_KEY',
     baseUrl: 'https://api.anthropic.com',
-    defaultModels: ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
-    defaultChairman: 'claude-opus-4-7',
+    defaultModels: ['claude-opus-5-5', 'claude-sonnet-5', 'claude-haiku-4-5'],
+    defaultChairman: 'claude-opus-5-5',
     call: callAnthropic,
   },
   openai: {

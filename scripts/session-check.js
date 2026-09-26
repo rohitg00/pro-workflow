@@ -104,10 +104,8 @@ async function main() {
         log('[ProWorkflow]   /compact - preserve context');
       }
 
-      console.log(data);
     } catch (err) {
       console.error('[ProWorkflow] session-check error:', err.message);
-      console.log(data || '{}');
     }
   });
 }

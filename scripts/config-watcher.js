@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * ConfigChange Hook (Claude Code 2.1.49+)
- *
- * Fires when configuration files change during a session.
- * Detects when quality gates, hooks, or permissions are modified.
- *
- * Input (stdin): { config_file, changes }
- * Output (stdout): Same JSON (pass-through)
- */
-
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -37,8 +27,9 @@ async function main() {
   process.stdin.on('end', () => {
     try {
       const input = JSON.parse(data);
-      const configFile = input.config_file || input.file || '';
-      const fileName = path.basename(configFile);
+      const configFile = input.file_path || '';
+      const source = input.source || '';
+      const fileName = configFile ? path.basename(configFile) : '';
 
       const sensitiveFiles = [
         'settings.json',
@@ -47,16 +38,16 @@ async function main() {
         '.claudeignore'
       ];
 
-      const isSensitive = sensitiveFiles.some(f => fileName === f);
+      const isSensitive = sensitiveFiles.some(f => fileName === f) || (!fileName && /settings$/.test(source));
 
       if (isSensitive) {
-        log(`[ProWorkflow] Config changed: ${fileName}`);
+        log(`[ProWorkflow] Config changed: ${fileName || source}`);
 
         if (fileName === 'hooks.json') {
           log('[ProWorkflow] Hooks configuration modified — quality gates may be affected');
         }
 
-        if (fileName === 'settings.json' || fileName === 'settings.local.json') {
+        if (fileName === 'settings.json' || fileName === 'settings.local.json' || (!fileName && /settings$/.test(source))) {
           log('[ProWorkflow] Settings changed mid-session — verify permissions are as expected');
         }
 
@@ -70,16 +61,13 @@ async function main() {
             fs.writeFileSync(logFile, '');
           }
         } catch (_e) {
-          // File doesn't exist yet
         }
-        const entry = `${new Date().toISOString()} ${configFile}\n`;
+        const entry = `${new Date().toISOString()} ${configFile || source}\n`;
         fs.appendFileSync(logFile, entry);
       }
 
-      console.log(data);
     } catch (err) {
       console.error('[ProWorkflow] config-watcher error:', err.message);
-      console.log(data || '{}');
     }
   });
 }

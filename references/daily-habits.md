@@ -114,7 +114,7 @@ Primary editor (Cursor/VS Code)
 | Don't | Do Instead |
 |-------|-----------|
 | Skip quality gates to save time | Gates prevent more corrections later |
-| Use `dontAsk` permission mode daily | Use `default` with specific allow rules |
+| Use `bypassPermissions` outside a container, or stack dozens of ask rules | Use `auto` mode with `autoMode.environment` entries and a short ask list |
 | Load 15+ MCP servers | Keep <10 active, disable unused |
 | Compact mid-task | Compact at task boundaries |
 | Fight the AI on style | Add rules to CLAUDE.md instead |

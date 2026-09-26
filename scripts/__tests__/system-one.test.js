@@ -173,14 +173,14 @@ test('unreachable server returns null', async () => {
   assert.equal(await classify('s', QUESTIONS, { config: laya('http://127.0.0.1:1/v1/systemone', { timeout_ms: 500 }), env: {} }), null);
 });
 
-test('prompt-submit output is unchanged and sends nothing when disabled', async () => {
+test('prompt-submit stays quiet on stdout and sends nothing when disabled', async () => {
   const { server, hits, url } = await startServer(reply(200, { answers: { correction: { noul: 0.99 } } }));
   try {
     const home = tempHome({ enabled: false, laya_url: url });
     const input = JSON.stringify({ prompt: 'please look at the tests again', session_id: 's1' });
     const out = await runHook(input, home);
     assert.equal(out.code, 0);
-    assert.equal(out.stdout.trim(), input);
+    assert.equal(out.stdout, '');
     assert.doesNotMatch(out.stderr, /Correction detected/);
     assert.equal(hits.length, 0);
 
@@ -199,7 +199,7 @@ test('prompt-submit flags a classifier correction when enabled', async () => {
     const input = JSON.stringify({ prompt: 'that is the wrong branch, use the release one', session_id: 's2' });
     const out = await runHook(input, home);
     assert.equal(out.code, 0);
-    assert.equal(out.stdout.trim(), input);
+    assert.equal(out.stdout, '');
     assert.match(out.stderr, /system-one classifier \(p=0\.97\)/);
     assert.equal(hits.length, 1);
   } finally {
