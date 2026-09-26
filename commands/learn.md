@@ -117,8 +117,9 @@ Coordinate multiple Claude Code instances working together as a team.
 ### Adaptive Thinking
 Claude calibrates reasoning depth to each task automatically.
 - Lightweight tasks get quick responses, complex tasks get deep analysis.
-- No configuration needed. Current tiers think adaptively by default; tune depth with `effort`.
-- Extended thinking is built-in — no need to toggle a separate mode.
+- No configuration needed on Fable 5.1, Opus 5.5, and Sonnet 5: they think adaptively by default; tune depth with `effort`.
+- Extended thinking is built-in on those tiers — no need to toggle a separate mode.
+- Haiku 4.5 is different: it uses manual extended thinking (`budget_tokens`), does not support adaptive thinking, and rejects `effort`.
 
 ### Model Selection
 - Current lineup: Fable 5.1, Opus 5.5, Sonnet 5, Haiku 4.5. Switch with `/model`.
