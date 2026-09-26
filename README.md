@@ -313,7 +313,7 @@ Selected high-leverage hooks:
 | `PreToolUse(Bash)` | `commit-validate.js`, `git-blast-radius.js`, `pre-push-check.js` | Conventional commit + destructive op + push guardrails |
 | `PreToolUse(Write)` | `secret-scan.js` | LLM-powered secret detection |
 | `PreCompact` / `PostCompact` | `pre-compact.js`, `post-compact.js` | Save and re-inject critical context summary |
-| `PreToolUse(Read)` | `reread-tracker.js` | Warns when an unchanged file is read again; set `reread_tracker.block: true` in `config.json` or `PRO_WORKFLOW_REREAD_BLOCK=1` to block the read |
+| `PreToolUse(Read)`, `PostToolUse(Read)` | `reread-tracker.js` | Records each completed Read and tells Claude when an unchanged file is read again; set `reread_tracker.block: true` in `config.json` or `PRO_WORKFLOW_REREAD_BLOCK=1` to block the read |
 
 ### Reference guides
 

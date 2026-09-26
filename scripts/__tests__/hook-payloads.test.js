@@ -174,16 +174,56 @@ test('reread-tracker warns by default and blocks only when opted in', () => {
   fs.writeFileSync(file, 'x');
   const past = new Date(Date.now() - 60000);
   fs.utimesSync(file, past, past);
-  const payload = { hook_event_name: 'PreToolUse', tool_name: 'Read', tool_input: { file_path: file } };
+  const pre = { hook_event_name: 'PreToolUse', tool_name: 'Read', tool_input: { file_path: file } };
+  const post = { ...pre, hook_event_name: 'PostToolUse', tool_response: {} };
   const env = { TMPDIR: tmp, PRO_WORKFLOW_REREAD_BLOCK: '0' };
-  assert.equal(run('reread-tracker.js', payload, env).code, 0);
-  const second = run('reread-tracker.js', payload, env);
-  assert.equal(second.code, 1);
-  assert.match(second.stderr, /Re-reading a.txt \(2x\)/);
-  const third = run('reread-tracker.js', payload, env);
-  assert.match(third.stderr, /\(3x\)/);
-  const blocked = run('reread-tracker.js', payload, { ...env, PRO_WORKFLOW_REREAD_BLOCK: '1' });
+  const context = r => JSON.parse(r.stdout).hookSpecificOutput.additionalContext;
+
+  const first = run('reread-tracker.js', pre, env);
+  assert.equal(first.code, 0);
+  quiet(first);
+  run('reread-tracker.js', post, env);
+
+  const second = run('reread-tracker.js', pre, env);
+  assert.equal(second.code, 0);
+  assert.equal(second.stderr, '');
+  assert.equal(JSON.parse(second.stdout).hookSpecificOutput.hookEventName, 'PreToolUse');
+  assert.match(context(second), /Re-reading a.txt \(2x\)/);
+  run('reread-tracker.js', post, env);
+  assert.match(context(run('reread-tracker.js', pre, env)), /\(3x\)/);
+
+  const blocked = run('reread-tracker.js', pre, { ...env, PRO_WORKFLOW_REREAD_BLOCK: '1' });
   assert.equal(blocked.code, 2);
+  assert.match(blocked.stderr, /Re-reading a.txt/);
+});
+
+test('reread-tracker ignores a Read that never completed', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-reread-'));
+  const file = path.join(tmp, 'b.txt');
+  fs.writeFileSync(file, 'x');
+  const pre = { hook_event_name: 'PreToolUse', tool_name: 'Read', tool_input: { file_path: file } };
+  const env = { TMPDIR: tmp, PRO_WORKFLOW_REREAD_BLOCK: '1' };
+  assert.equal(run('reread-tracker.js', pre, env).code, 0);
+  const retry = run('reread-tracker.js', pre, env);
+  assert.equal(retry.code, 0);
+  quiet(retry);
+});
+
+test('reread-tracker keeps parallel reads of different files', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-reread-'));
+  const past = new Date(Date.now() - 60000);
+  const files = ['c.txt', 'd.txt'].map(name => {
+    const f = path.join(tmp, name);
+    fs.writeFileSync(f, 'x');
+    fs.utimesSync(f, past, past);
+    return f;
+  });
+  const env = { TMPDIR: tmp, PRO_WORKFLOW_REREAD_BLOCK: '0' };
+  for (const f of files) run('reread-tracker.js', { hook_event_name: 'PostToolUse', tool_name: 'Read', tool_input: { file_path: f } }, env);
+  for (const f of files) {
+    const r = run('reread-tracker.js', { hook_event_name: 'PreToolUse', tool_name: 'Read', tool_input: { file_path: f } }, env);
+    assert.match(r.stdout, new RegExp(`Re-reading ${path.basename(f)}`));
+  }
 });
 
 test('scripts tolerate empty and invalid stdin', () => {
