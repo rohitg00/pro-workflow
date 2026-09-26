@@ -46,6 +46,32 @@ test('reads heredoc fed to -F -', () => {
   assert.equal(blocks("git commit -F - <<'EOF'\nbump\nEOF"), true);
 });
 
+test('ignores git commit that only appears inside quoted text', () => {
+  assert.equal(blocks(`echo "git commit -m 'wip'"`), false);
+  assert.equal(blocks(`printf '%s' 'git commit -m wip' && ls`), false);
+});
+
+test('handles quoted paths and later segments', () => {
+  assert.equal(blocks(`git -C '/tmp/my repo' commit -m 'wip'`), true);
+  assert.equal(blocks(`git -C "/tmp/my repo" commit -m "fix: ok"`), false);
+  assert.equal(blocks(`echo start; git commit -m "wip"`), true);
+  assert.equal(blocks(`FOO=1 /usr/bin/git commit -m "wip"`), true);
+});
+
+test('attaches -F - heredoc to the commit segment', () => {
+  assert.equal(blocks("git commit -F - <<'EOF' && echo done\nbad subject\nEOF"), true);
+  assert.equal(blocks("git commit -F - <<'EOF' && echo done\nfeat: good\nEOF"), false);
+});
+
+test('skips fixup and squash even with -m', () => {
+  assert.equal(extractMessage('git commit --fixup=HEAD -m "wip"').form, 'unknown');
+  assert.equal(extractMessage('git commit --squash HEAD~1 -m "wip"').form, 'unknown');
+});
+
+test('skips messages built from other substitutions', () => {
+  assert.equal(extractMessage('git commit -m "$(cat msg.txt)"').form, 'unknown');
+});
+
 test('skips file, editor, and amend forms', () => {
   assert.equal(extractMessage('git commit -F /tmp/msg.txt').form, 'file');
   assert.equal(extractMessage('git commit').form, 'editor');
