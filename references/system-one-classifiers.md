@@ -35,11 +35,13 @@ Install it in its own virtual environment. pro-workflow does not add a Python de
 ```bash
 python3.12 -m venv ~/.pro-workflow/laya-venv
 ~/.pro-workflow/laya-venv/bin/pip install "laya[serve]==0.3.20"
-LAYA_DEVICE=cpu LAYA_PRELOAD=1 LAYA_MODELS=multilingual LAYA_PORT=8791 \
+LAYA_HOST=127.0.0.1 LAYA_DEVICE=cpu LAYA_PRELOAD=1 LAYA_MODELS=multilingual LAYA_PORT=8791 \
   ~/.pro-workflow/laya-venv/bin/laya-serve
 ```
 
 Keep the server running in its own terminal or as a login service. The hook never starts it.
+
+`LAYA_HOST=127.0.0.1` matters. `laya-serve` binds to `0.0.0.0` by default and accepts unauthenticated requests when `LAYA_API_KEY` is unset, so without it any machine on your network can use your model.
 
 Then turn the layer on with one of:
 
@@ -53,7 +55,7 @@ or `~/.pro-workflow/config.json`:
 { "system_one": { "enabled": true, "provider": "laya" } }
 ```
 
-If you set `LAYA_API_KEY` on the server, export the same value for Claude Code. The client sends it as a bearer token.
+If you set `LAYA_API_KEY` on the server, export the same value for Claude Code. The client sends it as a bearer token only to an `https:` URL or a loopback host (`127.0.0.1`, `localhost`, `::1`). For any other `http:` URL it drops the key, so the request fails with 401 and the hook carries on without the classifier.
 
 ## Enable Jev (hosted)
 

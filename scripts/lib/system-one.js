@@ -52,6 +52,17 @@ function resolveTarget(cfg, env = process.env) {
   return null;
 }
 
+const LOOPBACK = new Set(['127.0.0.1', 'localhost', '[::1]', '::1']);
+
+function canSendKey(url) {
+  try {
+    const { protocol, hostname } = new URL(url);
+    return protocol === 'https:' || (protocol === 'http:' && LOOPBACK.has(hostname));
+  } catch {
+    return false;
+  }
+}
+
 async function classify(state, questions, options = {}) {
   const env = options.env || process.env;
   const cfg = options.config || loadConfig(env);
@@ -65,7 +76,7 @@ async function classify(state, questions, options = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const headers = { 'content-type': 'application/json' };
-  if (target.key) headers.authorization = `Bearer ${target.key}`;
+  if (target.key && canSendKey(target.url)) headers.authorization = `Bearer ${target.key}`;
 
   try {
     const res = await doFetch(target.url, {
@@ -84,4 +95,4 @@ async function classify(state, questions, options = {}) {
   }
 }
 
-module.exports = { DEFAULTS, loadConfig, resolveTarget, classify };
+module.exports = { DEFAULTS, loadConfig, resolveTarget, canSendKey, classify };

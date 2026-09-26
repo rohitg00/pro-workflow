@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync, spawn } = require('node:child_process');
-const { classify, loadConfig, resolveTarget, DEFAULTS } = require('../lib/system-one.js');
+const { classify, loadConfig, resolveTarget, canSendKey, DEFAULTS } = require('../lib/system-one.js');
 
 const QUESTIONS = { correction: { type: 'noul', instructions: 'Is this a correction?' } };
 const PROMPT_SUBMIT = path.join(__dirname, '..', 'prompt-submit.js');
@@ -107,6 +107,27 @@ test('jev with a key sends a pinned model and bearer auth', async () => {
   assert.equal(seen.url, DEFAULTS.jev_url);
   assert.equal(seen.init.headers.authorization, 'Bearer k-test');
   assert.equal(JSON.parse(seen.init.body).model, 'jev-1.13.0');
+});
+
+test('bearer key only goes to https or loopback', async () => {
+  assert.equal(canSendKey('https://api.typesafe.ai/v1/systemone'), true);
+  assert.equal(canSendKey('http://127.0.0.1:8791/v1/systemone'), true);
+  assert.equal(canSendKey('http://localhost:8791/v1/systemone'), true);
+  assert.equal(canSendKey('http://[::1]:8791/v1/systemone'), true);
+  assert.equal(canSendKey('http://10.0.0.5:8791/v1/systemone'), false);
+  assert.equal(canSendKey('http://laya.lan/v1/systemone'), false);
+  assert.equal(canSendKey('not a url'), false);
+
+  let seen;
+  await classify('state', QUESTIONS, {
+    config: { ...DEFAULTS, enabled: true, provider: 'laya', laya_url: 'http://10.0.0.5:8791/v1/systemone' },
+    env: { LAYA_API_KEY: 'lk' },
+    fetch: (url, init) => {
+      seen = init;
+      return Promise.resolve({ ok: false });
+    },
+  });
+  assert.equal(seen.headers.authorization, undefined);
 });
 
 test('enabled laya parses answers from the server', async () => {
