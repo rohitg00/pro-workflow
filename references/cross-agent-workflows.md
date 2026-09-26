@@ -37,16 +37,33 @@ The overlap in capabilities is worth the combined cost.
 | `hooks.json` | Not supported (use rules instead) |
 | `.mcp.json` | `.cursor/mcp.json` |
 
-### Claude Code → Codex CLI
+### Claude Code → Codex (CLI, IDE extension, app)
 
 | Claude Code | Codex Equivalent |
 |-------------|-----------------|
 | `CLAUDE.md` | `AGENTS.md` |
-| Settings | `codex.json` |
-| Agents | Not supported |
-| Skills | Not supported |
-| Hooks | Not supported |
-| MCP | Supported via config |
+| `~/.claude/settings.json` | `~/.codex/config.toml` (TOML) |
+| `.claude/settings.json` | `.codex/config.toml`, loaded only when the project is trusted |
+| `.claude/agents/*.md` | `[agents.<role>]` tables in `config.toml` (`description`, `config_file`) |
+| `.claude/skills/*/SKILL.md` | `.agents/skills/*/SKILL.md` in the repo, `~/.agents/skills` for the user |
+| `hooks.json` | `~/.codex/hooks.json`, `.codex/hooks.json`, or inline `[hooks]` tables in `config.toml` |
+| `permissions` + permission modes | `approval_policy` and `sandbox_mode` in `config.toml` |
+| `.mcp.json` | `[mcp_servers.<name>]` tables in `config.toml` |
+| Plugins | Codex plugins package skills and apps for install |
+
+Codex hooks use the same event shape as Claude Code, for example:
+
+```toml
+[[hooks.PreToolUse]]
+matcher = "^Bash$"
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "node ~/.codex/hooks/commit-validate.js"
+timeout = 30
+```
+
+Check the event list and payload fields in the Codex hooks docs before you port a pro-workflow script: https://developers.openai.com/codex/config-advanced and https://developers.openai.com/codex/skills.
 
 ### Claude Code → Gemini CLI
 

@@ -33,8 +33,8 @@ Analyze token usage patterns and recommend cost optimizations.
 
 ### Model Selection Impact
 Current tiers (see [`references/models-2026.md`](../references/models-2026.md) for strings, prices, and routing):
-- Fable 5: most capable, highest cost - hardest long-horizon runs only
-- Opus 4.8: flagship reasoning - architecture, refactors, deep debugging
+- Fable 5.1: most capable, highest cost - hardest long-horizon runs only
+- Opus 5.5: flagship reasoning - architecture, refactors, deep debugging
 - Sonnet 5: near-Opus coding at lower cost - most feature work
 - Haiku 4.5: fast and cheap - lookups, scans, grunt subagent work
 

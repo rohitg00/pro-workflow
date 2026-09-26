@@ -1,6 +1,6 @@
 {
   "name": "pro-workflow",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Complete AI coding workflow system. Self-correcting memory + persistent FTS5-indexed research wikis + auto-research loop + multi-LLM council on a single SQLite store. 41 skills, 8 agents, 23 commands, 37 hook scripts across 24 events. Cross-agent via skills add.",
   "author": {
     "name": "Rohit Ghumare",

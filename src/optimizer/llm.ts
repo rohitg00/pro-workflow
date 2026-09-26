@@ -28,8 +28,14 @@ const PROVIDER_CFG: Record<Provider, { host: string; path: string; envKey: strin
 };
 
 const PRICE_PER_M_TOKENS: Record<string, { input: number; output: number }> = {
-  'claude-opus-4-7': { input: 15, output: 75 },
+  'claude-fable-5-1': { input: 10, output: 50 },
+  'claude-opus-5-5': { input: 4, output: 20 },
+  'claude-opus-5': { input: 5, output: 25 },
+  'claude-opus-4-8': { input: 5, output: 25 },
+  'claude-opus-4-7': { input: 5, output: 25 },
+  'claude-sonnet-5': { input: 2, output: 10 },
   'claude-sonnet-4-6': { input: 3, output: 15 },
+  'claude-haiku-4-5': { input: 1, output: 5 },
   'claude-haiku-4-5-20251001': { input: 1, output: 5 },
   'gpt-4o': { input: 2.5, output: 10 },
   'gpt-4o-mini': { input: 0.15, output: 0.6 },
@@ -70,7 +76,6 @@ function buildAnthropicBody(req: LLMRequest): string {
   return JSON.stringify({
     model: req.model,
     max_tokens: req.maxTokens ?? 4096,
-    temperature: req.temperature ?? 0.2,
     system: req.system,
     messages: [{ role: 'user', content: req.user }],
   });

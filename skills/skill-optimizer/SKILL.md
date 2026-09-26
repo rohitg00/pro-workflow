@@ -50,8 +50,8 @@ Options (all optional; sensible defaults shown):
 | `--minibatches N` | 2 | Minibatches per epoch |
 | `--holdout N` | 6 | Validation items reserved (max ~25% of trajectories) |
 | `--budget-usd X` | 0.50 | Hard cap; loop aborts when spent |
-| `--optimizer-model M` | `claude-sonnet-4-6` | Reflect + slow-update model |
-| `--evaluator-model M` | `claude-haiku-4-5-20251001` | Gate model (cheaper) |
+| `--optimizer-model M` | `claude-sonnet-5` | Reflect + slow-update model |
+| `--evaluator-model M` | `claude-haiku-4-5` | Gate model (cheaper) |
 | `--max-adds N` | 3 | LR budget per step |
 | `--max-deletes N` | 2 | |
 | `--max-replaces N` | 3 | |

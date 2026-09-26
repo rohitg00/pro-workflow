@@ -44,12 +44,12 @@
     "architecture": "opus",
     "debugging": "opus",
     "long_horizon": "fable",
-    "verified": "2026-07",
+    "verified": "2026-09",
     "current_models": {
       "haiku": "claude-haiku-4-5",
       "sonnet": "claude-sonnet-5",
-      "opus": "claude-opus-4-8",
-      "fable": "claude-fable-5"
+      "opus": "claude-opus-5-5",
+      "fable": "claude-fable-5-1"
     },
     "effort": {
       "quick_fixes": "low",
