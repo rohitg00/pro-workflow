@@ -407,7 +407,7 @@ Supported: Claude Code, Cursor, Codex CLI, Gemini CLI, Windsurf, OpenCode, Kiro,
 
 ### Settings
 
-See [`settings.example.json`](settings.example.json) for production-ready configuration: permission rules, output style, auto-compaction, custom spinner verbs.
+See [`settings.example.json`](settings.example.json) for production-ready configuration: permission rules, an `autoMode` block, sandbox settings, output style, auto-compaction, custom spinner verbs. The classifier reads `autoMode` only from `~/.claude/settings.json`, so put that block there.
 
 ### MCP
 
