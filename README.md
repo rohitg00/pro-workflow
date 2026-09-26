@@ -429,6 +429,10 @@ Rule: start with three MCPs, add only for concrete needs.
 | `WIKI_LOOP_BUDGET_USD` / `WIKI_LOOP_MAX_PAGES` / `WIKI_LOOP_MAX_DEPTH` | Per-run loop overrides |
 | `GH_TOKEN` / `GITHUB_TOKEN` | Lifts GitHub-fetcher rate limit |
 
+### Optional: System 1 classifiers
+
+Off by default. Set `PRO_WORKFLOW_SYSTEM_ONE=laya` (local Laya server) or `=jev` (with `TYPESAFE_API_KEY`) to add fast correction hints and risk suggestions. The classifier never allows or denies a tool call. See [`references/system-one-classifiers.md`](references/system-one-classifiers.md).
+
 ---
 
 ## Structure

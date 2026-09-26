@@ -60,5 +60,14 @@
       "long_horizon": "high",
       "grunt_subagent": "low"
     }
+  },
+  "system_one": {
+    "enabled": false,
+    "provider": "laya",
+    "laya_url": "http://127.0.0.1:8791/v1/systemone",
+    "laya_model": "multilingual",
+    "jev_model": "jev-1.13.0",
+    "timeout_ms": 150,
+    "correction_threshold": 0.9
   }
 }

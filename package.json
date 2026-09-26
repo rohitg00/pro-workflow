@@ -9,7 +9,7 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
     "db:init": "node dist/db/index.js",
-    "test": "tsx --test src/optimizer/__tests__/*.test.ts"
+    "test": "tsx --test src/optimizer/__tests__/*.test.ts && node --test scripts/__tests__/*.test.js"
   },
   "keywords": [
     "claude-code",
