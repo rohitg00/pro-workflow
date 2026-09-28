@@ -18,7 +18,7 @@ Intercepts Bash commands and warns before destructive operations:
 - `git push --force`, `git reset --hard`, `git clean -f`
 - `chmod 777`, `curl|sh`
 
-Warns on stderr. You decide whether to proceed.
+Asks you before the command runs, even in auto mode. You decide whether to proceed.
 
 ### Lockdown Mode
 ```text
@@ -26,7 +26,7 @@ Warns on stderr. You decide whether to proceed.
 ```
 Restricts Edit/Write operations to the specified directory. Blocks changes to files outside the path.
 
-Session-scoped. Prevents accidental edits to unrelated code during focused work.
+Keyed to the project. Prevents accidental edits to unrelated code during focused work. Lift it with `/safe-mode clear`.
 
 ### Both Together
 ```text

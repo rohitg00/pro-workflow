@@ -4,8 +4,10 @@ description: Prevent destructive operations using Claude Code hooks. Three modes
 user-invocable: true
 hooks:
   PreToolUse:
-    - matcher: "Bash"
-    - matcher: "Edit|Write"
+    - matcher: "Bash|Edit|Write"
+      hooks:
+        - type: command
+          command: "node \"${CLAUDE_PLUGIN_ROOT}/scripts/safe-mode-guard.js\""
 ---
 
 # Safe Mode
@@ -41,18 +43,7 @@ Intercepts Bash commands before execution. Warns on dangerous patterns but does 
 | `:(){ :\|:& };:` | Fork bombs |
 | `sudo rm` | Elevated deletion |
 
-**What happens:**
-
-```text
-WARNING: Destructive operation detected
-  Command: rm -rf ./build
-  Pattern: rm -rf (recursive forced deletion)
-  Risk: Permanently deletes ./build and all contents
-
-  Proceed? The command will execute as-is if you continue.
-```
-
-The warning goes to stderr. Claude sees it and asks for confirmation before proceeding.
+**What happens:** the hook returns a permission `ask`, so Claude Code shows you a prompt that names the pattern, for example `Safe mode: rm with -r or -f`. You approve or reject the command. This prompt appears even in auto mode.
 
 ### Lockdown Mode
 
@@ -84,7 +75,7 @@ LOCKDOWN ACTIVE: Edits restricted to src/api/
 - Junior developer guardrail — scope the blast radius
 - Code review session — only edit the files under review
 
-**Scope:** Session-scoped. Resets when the session ends.
+**Scope:** Keyed to the project root. It stays set until `/safe-mode clear`, and only enforces in sessions where `/safe-mode` was invoked.
 
 ### Clear
 
@@ -100,58 +91,37 @@ SAFE MODE: All restrictions cleared for this session.
 
 ## Implementation
 
-### PreToolUse Hook — Bash (Cautious Mode)
+Invoking this skill registers one `PreToolUse` hook for `Bash|Edit|Write` that runs `scripts/safe-mode-guard.js`. Skill hooks stay registered for the rest of the session. The guard does nothing until a mode is set.
 
-The hook inspects `tool_input.command` before every Bash execution:
+### Set the mode
 
-```javascript
-const DANGEROUS_PATTERNS = [
-  { pattern: /\brm\s+(-[a-zA-Z]*[rf][a-zA-Z]*\s|--recursive|--force)/, label: "rm with -rf flags" },
-  { pattern: /\bDROP\s+(TABLE|DATABASE|INDEX|VIEW)\b/i, label: "DROP SQL statement" },
-  { pattern: /\bTRUNCATE\b/i, label: "TRUNCATE SQL statement" },
-  { pattern: /\bgit\s+push\s+(-[a-zA-Z]*f|--force)/, label: "git force-push" },
-  { pattern: /\bgit\s+reset\s+--hard\b/, label: "git hard reset" },
-  { pattern: /\bgit\s+clean\s+-[a-zA-Z]*f/, label: "git clean -f" },
-  { pattern: /\bgit\s+(checkout|restore)\s+\./, label: "git discard all changes" },
-  { pattern: /\bchmod\s+777\b/, label: "chmod 777" },
-  { pattern: /\bcurl\b.*\|\s*(sh|bash)\b/, label: "piped remote execution" },
-  { pattern: /\bwget\b.*\|\s*(sh|bash)\b/, label: "piped remote execution" },
-  { pattern: /\bsudo\s+rm\b/, label: "elevated deletion" },
-];
+When the user runs `/safe-mode <mode>`, run the guard's setter from the project root:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/safe-mode-guard.js" set cautious
+node "${CLAUDE_PLUGIN_ROOT}/scripts/safe-mode-guard.js" set lockdown src/api/
+node "${CLAUDE_PLUGIN_ROOT}/scripts/safe-mode-guard.js" set clear
 ```
 
-Match found → emit warning to stderr. No match → pass through silently.
+Then report the line the setter prints.
 
-### PreToolUse Hook — Edit/Write (Lockdown Mode)
+### Cautious (Bash)
 
-The hook checks `tool_input.file_path` against the lockdown path:
+The guard checks `tool_input.command` against a fixed list of destructive patterns: recursive or forced `rm`, `DROP` and `TRUNCATE`, force-push, hard reset, `git clean -f`, discarding all changes, `chmod 777`, piping `curl` or `wget` to a shell, disk-level writes, fork bombs, and `sudo rm`. A match returns `permissionDecision: "ask"` with the pattern as the reason. No match passes through.
 
-```javascript
-function isInsideLockdown(filePath, lockdownPath) {
-  const resolved = fs.realpathSync(path.resolve(filePath));
-  const allowed = fs.realpathSync(path.resolve(lockdownPath));
-  const rel = path.relative(allowed, resolved);
-  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
-}
-```
+### Lockdown (Edit and Write)
 
-Inside lockdown path → pass through. Outside → block with explanation.
+The guard resolves `tool_input.file_path` against the project root, follows symlinks, and checks that it sits inside the lockdown path. Inside passes through. Outside exits 2, which blocks the edit and tells Claude why.
 
 ### State
 
-Mode state lives in a session-scoped temp file (keyed by session ID to avoid cross-session leaks):
+The mode lives in `$TMPDIR/pro-workflow/safe-mode-<hash>.json`, keyed by the project root, so two projects never share it:
 
-```text
-$TMPDIR/pro-workflow/safe-mode-<sessionId>.json
-{
-  "mode": "lockdown",
-  "lockdownPath": "/Users/dev/project/src/api",
-  "sessionId": "abc123",
-  "activatedAt": "2026-03-28T10:00:00Z"
-}
+```json
+{ "cautious": true, "lockdownPath": "/Users/dev/project/src/api", "root": "/Users/dev/project" }
 ```
 
-Cleared by `/safe-mode clear`. State persists until explicitly cleared or the temp file is manually removed. Each session has its own state file.
+`set clear` deletes the file. The file outlives the session, so clear it when you are done; a new session only enforces it again after `/safe-mode` is invoked, because the hook is skill-scoped.
 
 ## Combining Modes
 
