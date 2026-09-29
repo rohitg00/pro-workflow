@@ -37,8 +37,10 @@ function loadFetchers(names) {
   const fetchers = {};
   const dirs = [
     path.join(SKILL_ROOT, 'scripts', 'source-fetchers'),
-    path.join(os.homedir(), '.pro-workflow', 'fetchers'),
   ];
+  if (process.env.PRO_WORKFLOW_BUNDLED_FETCHERS_ONLY !== '1') {
+    dirs.push(path.join(os.homedir(), '.pro-workflow', 'fetchers'));
+  }
   for (const dir of dirs) {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir)) {

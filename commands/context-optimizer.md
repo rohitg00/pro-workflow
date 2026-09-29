@@ -1,3 +1,7 @@
+---
+description: Diagnose context usage and reduce unnecessary token consumption.
+---
+
 # /context-optimizer - Optimize Token Usage
 
 Diagnose and fix context window problems.

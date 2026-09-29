@@ -1,3 +1,7 @@
+---
+description: Capture a lesson as a reusable rule after user approval.
+---
+
 # /learn-rule - Extract Correction to Memory
 
 Capture a lesson from this session into permanent memory.

@@ -2,7 +2,6 @@
 name: survey-generator
 description: Compile a structured literature survey on any AI/ML topic. Agent curates a research bundle (taxonomy + sections + bibliography of real papers) from a public anchor resource, then a chosen LLM generates the survey artifact. Output target is a wiki page (markdown), not a one-off HTML — survey lands in `<wiki>/derived/surveys/<slug>.md` with full bibliography rows in `sources.md`. Provider-agnostic (Anthropic/OpenAI/OpenRouter/Fireworks/custom OpenAI-compat). Use when the user asks for a "survey", "literature review", "lit review", or "deep dive" on a technical topic.
 user-invocable: true
-allowed-tools: Read, Write, Bash, WebFetch, AskUserQuestion
 ---
 
 # Survey Generator
@@ -34,7 +33,7 @@ Provider-agnostic literature-survey artifact generator. Output flows into a pro-
 | `--wiki <slug>` | yes | Target wiki for the artifact |
 | `--bibliography-size N` | no | Default 20. 40-50 comprehensive, 80-100 exhaustive |
 | `--section-count N` | no | Default 6-10 numbered sections |
-| `--provider name` | no | Override provider (default: first env var found) |
+| `--provider name` | no | Override provider (default: first explicitly configured provider) |
 | `--model id` | no | Override model |
 
 ## Workflow (the agent runs these in order)
@@ -65,6 +64,10 @@ Use `templates/research_bundle.template.json` as scaffold. Required keys:
 - 6-10 numbered sections covering: introduction → foundations → methods → evaluation → open problems.
 
 ### Step 3 — Run the generator
+
+In a plugin session, call the `providers` MCP server's `run_provider_task` tool with `task: "survey"` and `args: ["--bundle", "/absolute/path/research_bundle.json", "--wiki", "<slug>", "--provider", "openai"]`. Keys come from the plugin configuration dialog. Never request keys in chat or retrieve existing machine credentials.
+
+The direct commands below are for standalone CLI use with explicit `PRO_WORKFLOW_*_API_KEY` variables. See [provider configuration](../../references/provider-configuration.md).
 
 ```bash
 node $SKILL_ROOT/scripts/build-survey.js \

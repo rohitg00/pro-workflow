@@ -1,3 +1,7 @@
+---
+description: Search saved learnings with full-text keyword matching
+---
+
 # /search <query> - Search Learnings
 
 Search the pro-workflow learnings database using full-text search (BM25).

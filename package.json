@@ -43,6 +43,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "better-sqlite3": "^12.6.2"
   },
   "devDependencies": {

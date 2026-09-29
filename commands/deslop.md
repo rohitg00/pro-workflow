@@ -1,3 +1,7 @@
+---
+description: Remove unnecessary AI-generated code while preserving behavior.
+---
+
 # /deslop - Remove AI Code Slop
 
 Strip AI-generated slop from the current branch.

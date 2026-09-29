@@ -6,6 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync, spawn } = require('node:child_process');
 const { classify, loadConfig, resolveTarget, canSendKey, DEFAULTS } = require('../lib/system-one.js');
+const { CREDENTIAL_NAMES } = require('../lib/credentials.js');
 
 const QUESTIONS = { correction: { type: 'noul', instructions: 'Is this a correction?' } };
 const PROMPT_SUBMIT = path.join(__dirname, '..', 'prompt-submit.js');
@@ -47,11 +48,17 @@ function tempHome(systemOne) {
   return home;
 }
 
-function runHook(input, home) {
+function runHook(input, home, overrides = {}) {
   return new Promise(resolve => {
     const env = { ...process.env, HOME: home, TMPDIR: home };
     delete env.PRO_WORKFLOW_SYSTEM_ONE;
-    delete env.TYPESAFE_API_KEY;
+    for (const name of CREDENTIAL_NAMES) {
+      delete env[name];
+      delete env[`PRO_WORKFLOW_${name}`];
+      delete env[`CLAUDE_PLUGIN_OPTION_${name}`];
+    }
+    delete env.GH_TOKEN;
+    Object.assign(env, overrides);
     const child = spawn(process.execPath, [PROMPT_SUBMIT], { env });
     let stdout = '';
     let stderr = '';
@@ -85,7 +92,7 @@ test('env override switches the layer on and off', () => {
   assert.equal(jev.provider, 'jev');
 });
 
-test('jev without TYPESAFE_API_KEY is treated as disabled', async () => {
+test('jev without an explicitly configured key is treated as disabled', async () => {
   let called = 0;
   const cfg = { ...DEFAULTS, enabled: true, provider: 'jev' };
   assert.equal(resolveTarget(cfg, {}), null);
@@ -98,7 +105,7 @@ test('jev with a key sends a pinned model and bearer auth', async () => {
   let seen;
   await classify('state', QUESTIONS, {
     config: { ...DEFAULTS, enabled: true, provider: 'jev' },
-    env: { TYPESAFE_API_KEY: 'k-test' },
+    env: { PRO_WORKFLOW_TYPESAFE_API_KEY: 'k-test' },
     fetch: (url, init) => {
       seen = { url, init };
       return Promise.resolve({ ok: true, json: () => Promise.resolve({ answers: {} }) });
@@ -107,6 +114,25 @@ test('jev with a key sends a pinned model and bearer auth', async () => {
   assert.equal(seen.url, DEFAULTS.jev_url);
   assert.equal(seen.init.headers.authorization, 'Bearer k-test');
   assert.equal(JSON.parse(seen.init.body).model, 'jev-1.13.0');
+});
+
+test('jev does not make a request with only an ambient credential', async () => {
+  const result = await classify('private state', QUESTIONS, {
+    config: { ...DEFAULTS, enabled: true, provider: 'jev' },
+    env: { TYPESAFE_API_KEY: 'ambient-key' },
+    fetch: () => { assert.fail('ambient credentials must not enable Jev'); },
+  });
+  assert.equal(result, null);
+});
+
+test('laya does not attach an ambient credential', async () => {
+  let seen;
+  await classify('state', QUESTIONS, {
+    config: { ...DEFAULTS, enabled: true, provider: 'laya' },
+    env: { LAYA_API_KEY: 'ambient-key' },
+    fetch: (url, init) => { seen = init; return Promise.resolve({ ok: false }); },
+  });
+  assert.equal(seen.headers.authorization, undefined);
 });
 
 test('bearer key only goes to https or loopback', async () => {
@@ -121,7 +147,7 @@ test('bearer key only goes to https or loopback', async () => {
   let seen;
   await classify('state', QUESTIONS, {
     config: { ...DEFAULTS, enabled: true, provider: 'laya', laya_url: 'http://10.0.0.5:8791/v1/systemone' },
-    env: { LAYA_API_KEY: 'lk' },
+    env: { PRO_WORKFLOW_LAYA_API_KEY: 'lk' },
     fetch: (url, init) => {
       seen = init;
       return Promise.resolve({ ok: false });
@@ -134,7 +160,7 @@ test('enabled laya parses answers from the server', async () => {
   const answers = { correction: { noul: 0.95, confidence: 0.95 } };
   const { server, hits, url } = await startServer(reply(200, { answers, usage: { input_tokens: 9, output_tokens: 0 } }));
   try {
-    const result = await classify('undo that', QUESTIONS, { config: laya(url, { timeout_ms: 2000 }), env: { LAYA_API_KEY: 'lk' } });
+    const result = await classify('undo that', QUESTIONS, { config: laya(url, { timeout_ms: 2000 }), env: { PRO_WORKFLOW_LAYA_API_KEY: 'lk' } });
     assert.deepStrictEqual(result, answers);
     assert.equal(hits.length, 1);
     assert.equal(hits[0].body.model, 'multilingual');
@@ -192,26 +218,35 @@ test('prompt-submit stays quiet on stdout and sends nothing when disabled', asyn
   }
 });
 
-test('prompt-submit flags a classifier correction when enabled', async () => {
+test('prompt-submit uses the injected plugin credential and flags a classifier correction', async () => {
   const { server, hits, url } = await startServer(reply(200, { answers: { correction: { noul: 0.97 } } }));
   try {
-    const home = tempHome({ enabled: true, laya_url: url, timeout_ms: 2000 });
+    const home = tempHome({ enabled: true, laya_url: url, timeout_ms: 10000 });
     const input = JSON.stringify({ prompt: 'that is the wrong branch, use the release one', session_id: 's2' });
-    const out = await runHook(input, home);
+    const out = await runHook(input, home, {
+      CLAUDE_PLUGIN_OPTION_LAYA_API_KEY: 'plugin-test-key',
+      PRO_WORKFLOW_LAYA_API_KEY: 'standalone-test-key',
+      LAYA_API_KEY: 'ambient-test-key',
+    });
     assert.equal(out.code, 0);
     assert.equal(out.stdout, '');
-    assert.match(out.stderr, /system-one classifier \(p=0\.97\)/);
     assert.equal(hits.length, 1);
+    assert.equal(hits[0].headers.authorization, 'Bearer plugin-test-key');
+    assert.match(out.stderr, /system-one classifier \(p=0\.97\)/);
   } finally {
     server.close();
   }
 });
 
 test('prompt-submit ignores a classifier score below the threshold', async () => {
-  const { server, url } = await startServer(reply(200, { answers: { correction: { noul: 0.4 } } }));
+  const { server, hits, url } = await startServer(reply(200, { answers: { correction: { noul: 0.4 } } }));
   try {
-    const home = tempHome({ enabled: true, laya_url: url, timeout_ms: 2000 });
+    const home = tempHome({ enabled: true, laya_url: url, timeout_ms: 10000 });
     const out = await runHook(JSON.stringify({ prompt: 'now add a readme section', session_id: 's3' }), home);
+    assert.equal(out.code, 0);
+    assert.equal(out.stdout, '');
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0].body.state, 'now add a readme section');
     assert.doesNotMatch(out.stderr, /Correction detected/);
   } finally {
     server.close();

@@ -145,7 +145,7 @@ Full list: [`commands/`](./commands) &middot; [`skills/`](./skills) &middot; [`/
 /wiki research agent-memory --max-pages 5 --budget-usd 0.50
 
 # 4. Hybrid retrieval (BM25 + vector RRF, optional)
-/wiki embed agent-memory                       # OPENAI_API_KEY or VOYAGE_API_KEY
+/wiki embed agent-memory                       # configure an OpenAI or Voyage key for this plugin
 /wiki hybrid "consolidation patterns" --wiki agent-memory
 
 # 5. Multi-LLM deliberation (transcript persists as a wiki page)
@@ -420,19 +420,25 @@ See [`mcp-config.example.json`](mcp-config.example.json):
 
 Rule: start with three MCPs, add only for concrete needs.
 
+### Provider credentials
+
+Configure optional API keys in the plugin configuration dialog. Sensitive values stay in Claude Code's secure credential storage and reach API-backed runners through the bundled `providers` MCP server. Ordinary environment keys such as `OPENAI_API_KEY` and `GH_TOKEN` are no longer consumed automatically.
+
+Standalone CLI users must explicitly supply the corresponding `PRO_WORKFLOW_*` variable below. Local BM25 search, learnings, and deterministic guards require no credentials. See [provider configuration and migration](references/provider-configuration.md) for setup and MCP examples.
+
 ### Knowledge plane env
 
 | Env | When |
 |-----|------|
 | `WIKI_ROOT` | Override default `~/.pro-workflow/wikis` |
-| `OPENAI_API_KEY` / `VOYAGE_API_KEY` | Enable hybrid retrieval (embeddings) |
-| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `OPENROUTER_API_KEY` / `FIREWORKS_API_KEY` / `LLM_COUNCIL_BASE_URL`+`LLM_COUNCIL_API_KEY` | Pick a council provider (first match wins) |
+| `PRO_WORKFLOW_OPENAI_API_KEY` / `PRO_WORKFLOW_VOYAGE_API_KEY` | Explicit standalone embedding credentials |
+| `PRO_WORKFLOW_ANTHROPIC_API_KEY` / `PRO_WORKFLOW_OPENAI_API_KEY` / `PRO_WORKFLOW_OPENROUTER_API_KEY` / `PRO_WORKFLOW_FIREWORKS_API_KEY` / `LLM_COUNCIL_BASE_URL`+`PRO_WORKFLOW_LLM_COUNCIL_API_KEY` | Explicit standalone council and survey credentials; the four named providers also support optimization |
 | `WIKI_LOOP_BUDGET_USD` / `WIKI_LOOP_MAX_PAGES` / `WIKI_LOOP_MAX_DEPTH` | Per-run loop overrides |
-| `GH_TOKEN` / `GITHUB_TOKEN` | Lifts GitHub-fetcher rate limit |
+| `PRO_WORKFLOW_GITHUB_TOKEN` | Explicit standalone GitHub research token; public requests work without it |
 
 ### Optional: System 1 classifiers
 
-Off by default. Set `PRO_WORKFLOW_SYSTEM_ONE=laya` (local Laya server) or `=jev` (with `TYPESAFE_API_KEY`) to add fast correction hints and risk suggestions. The classifier never allows or denies a tool call. See [`references/system-one-classifiers.md`](references/system-one-classifiers.md).
+Off by default. Set `PRO_WORKFLOW_SYSTEM_ONE=laya` (local Laya server) or `=jev` (with a TypeSafe key in plugin configuration, or `PRO_WORKFLOW_TYPESAFE_API_KEY` for standalone use) to add fast correction hints and risk suggestions. The classifier never allows or denies a tool call. See [`references/system-one-classifiers.md`](references/system-one-classifiers.md).
 
 ---
 

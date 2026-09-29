@@ -1,3 +1,7 @@
+---
+description: Analyze session history, captured learnings, and correction patterns.
+---
+
 # /insights - Session & Learning Analytics
 
 Surface patterns from your pro-workflow learnings and session history.

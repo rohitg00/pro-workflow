@@ -1,4 +1,5 @@
 import * as https from 'node:https';
+import { getCredential } from '../../scripts/lib/credentials.js';
 
 const DEFAULT_TIMEOUT_MS = 120_000;
 
@@ -43,8 +44,8 @@ const PRICE_PER_M_TOKENS: Record<string, { input: number; output: number }> = {
 
 export async function callLLM(req: LLMRequest): Promise<LLMResponse> {
   const cfg = PROVIDER_CFG[req.provider];
-  const apiKey = process.env[cfg.envKey];
-  if (!apiKey) throw new Error(`${cfg.envKey} not set in environment`);
+  const apiKey = getCredential(cfg.envKey);
+  if (!apiKey) throw new Error(`Configure ${req.provider} in plugin settings, or set PRO_WORKFLOW_${cfg.envKey} for the standalone CLI`);
 
   const body = req.provider === 'anthropic'
     ? buildAnthropicBody(req)

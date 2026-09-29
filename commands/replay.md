@@ -1,3 +1,7 @@
+---
+description: Surface relevant past learnings before starting a task.
+---
+
 # /replay - Surface Past Learnings for Current Task
 
 Automatically find and surface relevant learnings from your pro-workflow database before you start working. Like muscle memory for your coding sessions.

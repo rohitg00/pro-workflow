@@ -1,3 +1,7 @@
+---
+description: Set up parallel Claude Code sessions with isolated git worktrees.
+---
+
 # /parallel - Worktree Setup Guide
 
 Set up parallel Claude Code sessions using git worktrees.

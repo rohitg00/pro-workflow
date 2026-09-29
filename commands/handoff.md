@@ -1,3 +1,7 @@
+---
+description: Write a session handoff with progress, decisions, and next steps.
+---
+
 # /handoff - Session Handoff Document
 
 Generate a structured handoff document that another Claude session (or your future self) can consume immediately to continue where you left off.

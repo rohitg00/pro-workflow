@@ -1,3 +1,7 @@
+---
+description: Show Claude Code best practices and save confirmed session learnings.
+---
+
 # /learn - Claude Code Best Practices & Learning Capture
 
 Learn Claude Code best practices and capture lessons into persistent memory.

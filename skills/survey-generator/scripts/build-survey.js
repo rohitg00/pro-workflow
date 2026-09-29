@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { execFileSync } = require('child_process');
+const { getCredential } = require('../../../scripts/lib/credentials.js');
 
 const PRO_WORKFLOW_ROOT = path.resolve(__dirname, '..', '..', '..');
 const COUNCIL = path.join(PRO_WORKFLOW_ROOT, 'skills', 'llm-council', 'scripts', 'council.js');
@@ -59,18 +60,19 @@ const PROVIDER_DEFAULTS = {
 };
 
 function pickProvider(arg) {
-  if (arg && PROVIDER_DEFAULTS[arg]) return arg;
-  for (const [name, p] of Object.entries(PROVIDER_DEFAULTS)) if (process.env[p.envKey]) return name;
+  if (arg) return Object.hasOwn(PROVIDER_DEFAULTS, arg) && getCredential(PROVIDER_DEFAULTS[arg].envKey) ? arg : null;
+  for (const [name, p] of Object.entries(PROVIDER_DEFAULTS)) if (getCredential(p.envKey)) return name;
   return null;
 }
 
 async function callProvider(providerName, model, system, user, maxTokens) {
   const p = PROVIDER_DEFAULTS[providerName];
-  if (!process.env[p.envKey]) die(`${p.envKey} not set`);
+  const apiKey = getCredential(p.envKey);
+  if (!apiKey) die(`Configure ${providerName} in plugin settings, or set PRO_WORKFLOW_${p.envKey} for the standalone CLI`);
   if (providerName === 'anthropic') {
     const res = await postJSON(`${p.baseUrl}/v1/messages`, {
       model, max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }],
-    }, { 'x-api-key': process.env[p.envKey], 'anthropic-version': '2023-06-01' });
+    }, { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' });
     if (res.status >= 400) die(`anthropic error ${res.status}: ${res.body.slice(0, 300)}`);
     const data = JSON.parse(res.body);
     return (data.content || []).map(b => b.text || '').join('');
@@ -78,7 +80,7 @@ async function callProvider(providerName, model, system, user, maxTokens) {
   const res = await postJSON(`${p.baseUrl}/chat/completions`, {
     model, max_tokens: maxTokens, temperature: 0.7,
     messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-  }, { Authorization: `Bearer ${process.env[p.envKey]}` });
+  }, { Authorization: `Bearer ${apiKey}` });
   if (res.status >= 400) die(`${providerName} error ${res.status}: ${res.body.slice(0, 300)}`);
   const data = JSON.parse(res.body);
   return data.choices?.[0]?.message?.content || '';
@@ -191,7 +193,7 @@ async function cmdRun(args) {
   }
 
   const providerName = pickProvider(args.provider);
-  if (!providerName) die('no provider env var set');
+  if (!providerName) die('No configured provider. Set a key in plugin settings, or use a PRO_WORKFLOW_*_API_KEY variable for the standalone CLI.');
   const model = args.model || PROVIDER_DEFAULTS[providerName].model;
   if (!model) die('no model — pass --model');
 

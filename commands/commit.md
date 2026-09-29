@@ -1,3 +1,7 @@
+---
+description: Create a focused git commit after running quality checks.
+---
+
 # /commit - Smart Commit with Quality Gates
 
 Create a well-crafted commit after running pro-workflow quality checks.

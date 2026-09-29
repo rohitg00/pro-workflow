@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import * as https from 'https';
+import { getCredential } from '../../scripts/lib/credentials.js';
 
 export interface EmbeddingProvider {
   name: string;
@@ -9,8 +10,10 @@ export interface EmbeddingProvider {
 }
 
 function pickProvider(): EmbeddingProvider | null {
-  if (process.env.OPENAI_API_KEY) return openai();
-  if (process.env.VOYAGE_API_KEY) return voyage();
+  const openaiKey = getCredential('OPENAI_API_KEY');
+  if (openaiKey) return openai(openaiKey);
+  const voyageKey = getCredential('VOYAGE_API_KEY');
+  if (voyageKey) return voyage(voyageKey);
   return null;
 }
 
@@ -39,13 +42,13 @@ function postJSON(urlStr: string, body: unknown, headers: Record<string, string>
   });
 }
 
-function openai(): EmbeddingProvider {
+function openai(apiKey: string): EmbeddingProvider {
   const model = process.env.PROWORKFLOW_EMBED_MODEL || 'text-embedding-3-small';
   const dim = model === 'text-embedding-3-large' ? 3072 : 1536;
   return {
     name: 'openai', model, dim,
     async embed(texts) {
-      const res = await postJSON('https://api.openai.com/v1/embeddings', { input: texts, model }, { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` });
+      const res = await postJSON('https://api.openai.com/v1/embeddings', { input: texts, model }, { Authorization: `Bearer ${apiKey}` });
       if (res.status >= 400) throw new Error(`openai embeddings ${res.status}: ${res.body.slice(0, 200)}`);
       const data = JSON.parse(res.body);
       return data.data.map((d: { embedding: number[] }) => Float32Array.from(d.embedding));
@@ -53,12 +56,12 @@ function openai(): EmbeddingProvider {
   };
 }
 
-function voyage(): EmbeddingProvider {
+function voyage(apiKey: string): EmbeddingProvider {
   const model = process.env.PROWORKFLOW_EMBED_MODEL || 'voyage-3';
   return {
     name: 'voyage', model, dim: 1024,
     async embed(texts) {
-      const res = await postJSON('https://api.voyageai.com/v1/embeddings', { input: texts, model }, { Authorization: `Bearer ${process.env.VOYAGE_API_KEY}` });
+      const res = await postJSON('https://api.voyageai.com/v1/embeddings', { input: texts, model }, { Authorization: `Bearer ${apiKey}` });
       if (res.status >= 400) throw new Error(`voyage embeddings ${res.status}: ${res.body.slice(0, 200)}`);
       const data = JSON.parse(res.body);
       return data.data.map((d: { embedding: number[] }) => Float32Array.from(d.embedding));

@@ -55,16 +55,17 @@ or `~/.pro-workflow/config.json`:
 { "system_one": { "enabled": true, "provider": "laya" } }
 ```
 
-If you set `LAYA_API_KEY` on the server, export the same value for Claude Code. The client sends it as a bearer token only to an `https:` URL or a loopback host (`127.0.0.1`, `localhost`, `::1`). For any other `http:` URL it drops the key, so the request fails with 401 and the hook carries on without the classifier.
+If you set `LAYA_API_KEY` on the server, enter the same value in the plugin's sensitive Laya API key option. For standalone use, supply `PRO_WORKFLOW_LAYA_API_KEY` explicitly. The client sends it as a bearer token only to an `https:` URL or a loopback host (`127.0.0.1`, `localhost`, `::1`). For any other `http:` URL it drops the key, so the request fails with 401 and the hook carries on without the classifier.
 
 ## Enable Jev (hosted)
 
+Enter a TypeSafe API key in the plugin configuration dialog, then enable the classifier:
+
 ```bash
-export TYPESAFE_API_KEY=...
 export PRO_WORKFLOW_SYSTEM_ONE=jev
 ```
 
-Without `TYPESAFE_API_KEY` the Jev provider counts as disabled. Jev bills per input token, so each prompt costs a small amount.
+Without a configured TypeSafe key the Jev provider counts as disabled. Standalone use accepts `PRO_WORKFLOW_TYPESAFE_API_KEY`. Ordinary `TYPESAFE_API_KEY` is ignored. Never put keys in chat or committed configuration. Jev bills per input token, so each prompt costs a small amount.
 
 ## Settings
 

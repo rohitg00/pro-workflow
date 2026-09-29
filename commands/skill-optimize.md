@@ -23,8 +23,10 @@ Run an offline, budget-capped optimization loop over a skill's accumulated `lear
 ## Requirements
 
 - 8 or more existing `learnings` rows for the slug
-- `ANTHROPIC_API_KEY` (or `OPENAI_API_KEY` / `OPENROUTER_API_KEY` / `FIREWORKS_API_KEY` with matching `--optimizer-provider`)
+- A key configured for the selected provider in the plugin configuration dialog, or a corresponding `PRO_WORKFLOW_*_API_KEY` variable for standalone CLI use
 - `npm run build` has been run in the pro-workflow plugin directory at least once
+
+In a plugin session, invoke `run_provider_task` on the `providers` MCP server with `task: "optimizer"` and the requested runner arguments. See [provider configuration](../references/provider-configuration.md).
 
 ## Examples
 

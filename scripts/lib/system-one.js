@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { getCredential } = require('./credentials.js');
 
 const DEFAULTS = {
   enabled: false,
@@ -42,12 +43,12 @@ function loadConfig(env = process.env, files) {
 function resolveTarget(cfg, env = process.env) {
   if (!cfg.enabled) return null;
   if (cfg.provider === 'jev') {
-    const key = env.TYPESAFE_API_KEY;
+    const key = getCredential('TYPESAFE_API_KEY', env);
     if (!key) return null;
     return { url: cfg.jev_url, model: cfg.jev_model, key };
   }
   if (cfg.provider === 'laya') {
-    return { url: cfg.laya_url, model: cfg.laya_model, key: env.LAYA_API_KEY || null };
+    return { url: cfg.laya_url, model: cfg.laya_model, key: getCredential('LAYA_API_KEY', env) || null };
   }
   return null;
 }

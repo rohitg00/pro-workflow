@@ -18,7 +18,7 @@ Use this skill when:
 Do not use when:
 - Skill has fewer than 8 trajectories (nothing to learn from)
 - The user wants real-time edits (this is offline, single-shot)
-- No `ANTHROPIC_API_KEY` (or equivalent provider key) is available
+- No key has been explicitly configured for the selected provider
 
 ## Architecture (mirrors SkillOpt's six-stage loop)
 
@@ -36,6 +36,8 @@ slow update  at epoch boundary, consolidate accepted edits into a coherent rewri
 Failed candidates are stored in a rejection buffer and fed back to the next reflect step so the optimizer doesn't propose the same patch twice.
 
 ## Run it
+
+In a plugin session, use the `providers` MCP server's `run_provider_task` tool with `task: "optimizer"` and `args: ["--slug", "<slug>", "--budget-usd", "0.50"]`. Keys come from the plugin configuration dialog. Standalone CLI installations use explicit `PRO_WORKFLOW_*_API_KEY` variables. See [provider configuration](../../references/provider-configuration.md); never request keys in chat or retrieve existing machine credentials.
 
 ```bash
 /skill-optimize <slug> [options]

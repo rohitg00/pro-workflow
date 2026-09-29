@@ -25,7 +25,9 @@
     "best-practices",
     "sqlite"
   ],
-  "skills": ["./skills/"],
+  "skills": [
+    "./skills/"
+  ],
   "agents": [
     "./agents/planner.md",
     "./agents/reviewer.md",
@@ -35,5 +37,94 @@
     "./agents/context-engineer.md",
     "./agents/permission-analyst.md",
     "./agents/cost-analyst.md"
-  ]
+  ],
+  "userConfig": {
+    "anthropic_api_key": {
+      "type": "string",
+      "title": "Anthropic API key",
+      "description": "Optional key for council, surveys, and skill optimization.",
+      "sensitive": true,
+      "required": false
+    },
+    "openai_api_key": {
+      "type": "string",
+      "title": "OpenAI API key",
+      "description": "Optional key for council, surveys, embeddings, and skill optimization.",
+      "sensitive": true,
+      "required": false
+    },
+    "openrouter_api_key": {
+      "type": "string",
+      "title": "OpenRouter API key",
+      "description": "Optional key for council, surveys, and skill optimization.",
+      "sensitive": true,
+      "required": false
+    },
+    "fireworks_api_key": {
+      "type": "string",
+      "title": "Fireworks API key",
+      "description": "Optional key for council, surveys, and skill optimization.",
+      "sensitive": true,
+      "required": false
+    },
+    "voyage_api_key": {
+      "type": "string",
+      "title": "Voyage API key",
+      "description": "Optional key for wiki embeddings.",
+      "sensitive": true,
+      "required": false
+    },
+    "llm_council_api_key": {
+      "type": "string",
+      "title": "Custom provider API key",
+      "description": "Optional key for the custom OpenAI-compatible council and survey endpoint.",
+      "sensitive": true,
+      "required": false
+    },
+    "github_token": {
+      "type": "string",
+      "title": "GitHub token",
+      "description": "Optional token for GitHub research requests. Leave empty for public unauthenticated requests.",
+      "sensitive": true,
+      "required": false
+    },
+    "typesafe_api_key": {
+      "type": "string",
+      "title": "TypeSafe API key",
+      "description": "Optional key for the Jev classifier. Classification remains disabled until you enable it.",
+      "sensitive": true,
+      "required": false
+    },
+    "laya_api_key": {
+      "type": "string",
+      "title": "Laya API key",
+      "description": "Optional key for your Laya classifier. Classification remains disabled until you enable it.",
+      "sensitive": true,
+      "required": false
+    },
+    "llm_council_base_url": {
+      "type": "string",
+      "title": "Custom provider URL",
+      "description": "Optional HTTPS base URL for an OpenAI-compatible council and survey provider.",
+      "default": ""
+    }
+  },
+  "mcpServers": {
+    "providers": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/scripts/provider-tools.js"
+      ],
+      "env": {
+        "PRO_WORKFLOW_ANTHROPIC_API_KEY": "${user_config.anthropic_api_key}",
+        "PRO_WORKFLOW_OPENAI_API_KEY": "${user_config.openai_api_key}",
+        "PRO_WORKFLOW_OPENROUTER_API_KEY": "${user_config.openrouter_api_key}",
+        "PRO_WORKFLOW_FIREWORKS_API_KEY": "${user_config.fireworks_api_key}",
+        "PRO_WORKFLOW_VOYAGE_API_KEY": "${user_config.voyage_api_key}",
+        "PRO_WORKFLOW_LLM_COUNCIL_API_KEY": "${user_config.llm_council_api_key}",
+        "PRO_WORKFLOW_GITHUB_TOKEN": "${user_config.github_token}",
+        "LLM_COUNCIL_BASE_URL": "${user_config.llm_council_base_url}"
+      }
+    }
+  }
 }

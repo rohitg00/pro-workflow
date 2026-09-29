@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PRO_WORKFLOW_ROOT = path.resolve(__dirname, '..');
+const NO_EMBEDDING_PROVIDER = 'No embedding provider configured. Set an OpenAI or Voyage key in plugin settings, or PRO_WORKFLOW_OPENAI_API_KEY / PRO_WORKFLOW_VOYAGE_API_KEY for the standalone CLI.';
 
 function getStore() {
   const distPath = path.join(PRO_WORKFLOW_ROOT, 'dist', 'db', 'store.js');
@@ -31,7 +32,7 @@ async function cmdAll(args) {
   const helpers = getEmbedHelpers();
   const provider = helpers.getEmbeddingProvider();
   if (!provider) {
-    console.error('No embedding provider env set. OPENAI_API_KEY or VOYAGE_API_KEY required.');
+    console.error(NO_EMBEDDING_PROVIDER);
     process.exit(2);
   }
   const store = getStore();
@@ -66,27 +67,26 @@ async function cmdAll(args) {
 async function cmdSearch(args) {
   const query = args._[0];
   if (!query) { console.error('search: query required'); process.exit(1); }
-  const helpers = getEmbedHelpers();
-  const provider = helpers.getEmbeddingProvider();
-  if (!provider) { console.error('No embedding provider env'); process.exit(2); }
   const store = getStore();
   try {
-    const [qv] = await provider.embed([query]);
     const limit = parseInt(args.limit, 10) || 10;
+    if (args.mode === 'bm25') {
+      const hits = store.searchWiki(query, { wikiSlug: args.wiki, limit, loose: true });
+      console.log(JSON.stringify(hits, null, 2));
+      return;
+    }
 
+    const helpers = getEmbedHelpers();
+    const provider = helpers.getEmbeddingProvider();
+    if (!provider) { console.error(NO_EMBEDDING_PROVIDER); process.exit(2); }
+    const [qv] = await provider.embed([query]);
     const vectorHits = helpers.vectorSearch(store.db, qv, { wikiSlug: args.wiki, limit });
-    const bm25Hits = store.searchWiki(query, { wikiSlug: args.wiki, limit, loose: true });
-
     if (args.mode === 'vector') {
       console.log(JSON.stringify(vectorHits, null, 2));
       return;
     }
-    if (args.mode === 'bm25') {
-      console.log(JSON.stringify(bm25Hits, null, 2));
-      return;
-    }
 
-    // hybrid via RRF
+    const bm25Hits = store.searchWiki(query, { wikiSlug: args.wiki, limit, loose: true });
     const fused = helpers.reciprocalRankFusion(
       [vectorHits.map(v => ({ page_id: v.page_id })), bm25Hits.map(h => ({ page_id: h.page_id }))],
       (x) => String(x.page_id),

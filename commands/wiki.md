@@ -1,3 +1,7 @@
+---
+description: Build, query, and maintain persistent research wikis
+---
+
 # /wiki — Persistent Research Wikis
 
 Build, query, and maintain long-lived knowledge bases. Each wiki = markdown folder + SQLite FTS5 shadow index. Survives sessions, indexes auto-load on `SessionStart`.
@@ -19,13 +23,15 @@ Build, query, and maintain long-lived knowledge bases. Each wiki = markdown fold
 | `/wiki seeds <slug> [--status pending\|active\|done\|failed]` | List queued seeds |
 | `/wiki cancel <slug>` | Mark all pending/active seeds as failed |
 | `/wiki status` | Cross-wiki seed counts + kill-switch state |
-| `/wiki embed [<slug>] [--limit N]` | Compute embeddings for indexed pages (needs `OPENAI_API_KEY` or `VOYAGE_API_KEY`) |
+| `/wiki embed [<slug>] [--limit N]` | Compute embeddings for indexed pages (needs an explicitly configured OpenAI or Voyage key) |
 | `/wiki hybrid "<query>" [--wiki <slug>]` | Hybrid retrieval: BM25 + vector + RRF |
 | `/wiki council "<query>" --wiki <slug>` | Run llm-council; persist transcript as a wiki page |
 | `/wiki survey --bundle <path> --wiki <slug>` | Generate literature survey from a research_bundle.json |
 | `/wiki view <slug> [--out path] [--theme dark\|light]` | Render a single-file HTML viewer for the wiki (pages + sources + seeds + link graph + search) |
 
 ## Routes to skills
+
+For `embed`, `hybrid`, `council`, `survey`, and `research` in a plugin session, use `run_provider_task` from the `providers` MCP server. Task names are `embeddings`, `council`, `survey`, and `research`. Pass the corresponding runner arguments, such as `{"task":"embeddings","args":["search","<query>","--mode","hybrid"]}` or `{"task":"embeddings","args":["all","<slug>"]}`. Plain `ask` and BM25-only search stay local and require no credentials. See [provider configuration](../references/provider-configuration.md).
 
 - `init / list / info / page / reindex` → `wiki-builder`
 - `ask / related / show / hybrid` → `wiki-query` (+ `embed-wiki.js` for hybrid)

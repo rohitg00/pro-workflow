@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const https = require('https');
+const { getCredential } = require('../../../scripts/lib/credentials.js');
 
 const PRO_WORKFLOW_ROOT = path.resolve(__dirname, '..', '..', '..');
 const COUNCIL_ROOT = path.join(os.homedir(), '.pro-workflow', 'council');
@@ -50,9 +51,9 @@ const PROVIDERS = {
 };
 
 function pickProvider(arg) {
-  if (arg && PROVIDERS[arg]) return arg;
+  if (arg) return Object.hasOwn(PROVIDERS, arg) && getCredential(PROVIDERS[arg].envKey) ? arg : null;
   for (const [name, p] of Object.entries(PROVIDERS)) {
-    if (process.env[p.envKey]) return name;
+    if (getCredential(p.envKey)) return name;
   }
   return null;
 }
@@ -86,7 +87,7 @@ async function callOpenAICompat(provider, model, system, user) {
     messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
     max_tokens: 4000,
     temperature: 1,
-  }, { Authorization: `Bearer ${process.env[provider.envKey]}` });
+  }, { Authorization: `Bearer ${getCredential(provider.envKey)}` });
   const elapsed = Date.now() - start;
   if (res.status >= 400) return { success: false, content: `[ERROR ${res.status}: ${res.body.slice(0, 300)}]`, model, latency_ms: elapsed };
   let data;
@@ -104,7 +105,7 @@ async function callAnthropic(provider, model, system, user) {
     system,
     messages: [{ role: 'user', content: user }],
   }, {
-    'x-api-key': process.env[provider.envKey],
+    'x-api-key': getCredential(provider.envKey),
     'anthropic-version': '2023-06-01',
   });
   const elapsed = Date.now() - start;
@@ -160,7 +161,7 @@ async function cmdRun(args) {
   const query = args._[0];
   if (!query) { console.error('run: query required'); process.exit(1); }
   const providerName = pickProvider(args.provider);
-  if (!providerName) { console.error('No provider env var set. Try ANTHROPIC_API_KEY or OPENAI_API_KEY.'); process.exit(2); }
+  if (!providerName) { console.error('No configured provider. Set a key in plugin settings, or use a PRO_WORKFLOW_*_API_KEY variable for the standalone CLI.'); process.exit(2); }
   const provider = PROVIDERS[providerName];
   if (!provider.baseUrl) { console.error(`provider ${providerName} requires LLM_COUNCIL_BASE_URL`); process.exit(2); }
 
@@ -246,8 +247,8 @@ async function cmdRun(args) {
 function cmdProviders() {
   const rows = Object.entries(PROVIDERS).map(([name, p]) => ({
     name,
-    env_var: p.envKey,
-    has_key: !!process.env[p.envKey],
+    env_var: `PRO_WORKFLOW_${p.envKey}`,
+    has_key: !!getCredential(p.envKey),
     base_url: p.baseUrl || '(unset)',
     default_models: p.defaultModels,
     default_chairman: p.defaultChairman,

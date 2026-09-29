@@ -33,6 +33,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Run regression tests
+        run: npm test
+
       - name: Verify dist files exist
         run: |
           test -f dist/index.js

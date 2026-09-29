@@ -90,13 +90,15 @@ ls -1 ~/.pro-workflow/STOP 2>/dev/null && echo "KILL SWITCH ACTIVE — no resear
 tail -5 ~/.pro-workflow/tick.log 2>/dev/null
 ```
 - List of wikis · seed counts per status · kill-switch state · last cron-tick activity
-- Embeddings: `OPENAI_API_KEY`/`VOYAGE_API_KEY` set? Hybrid search uses provider; otherwise BM25-only.
+- Embeddings require an OpenAI or Voyage key configured for this plugin. BM25 search remains local and needs no key. Never print environment values or read credential files.
 
 ### 9. Council Providers
+
+In a plugin session, call `run_provider_task` on the `providers` MCP server with `{"task":"council","args":["providers"]}`. It reports configured status without revealing values. The command below is for standalone CLI use.
 ```bash
 node $PRO_WORKFLOW_ROOT/skills/llm-council/scripts/council.js providers 2>/dev/null
 ```
-- Shows which provider env vars are set (Anthropic/OpenAI/OpenRouter/Fireworks/custom).
+- Shows which pro-workflow credentials are configured (Anthropic/OpenAI/OpenRouter/Fireworks/custom), without exposing values.
 
 ## Quick Fixes
 

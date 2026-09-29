@@ -1,3 +1,7 @@
+---
+description: Browse saved learnings by recency, category, or project.
+---
+
 # /list - List All Learnings
 
 Display all learnings stored in the pro-workflow database.

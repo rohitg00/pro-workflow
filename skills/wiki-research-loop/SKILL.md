@@ -34,6 +34,8 @@ seed-queue (pending) → next-seed
 
 ## Commands
 
+In a plugin session, call the `providers` MCP server's `run_provider_task` tool with `task: "research"` and the runner arguments below, for example `args: ["run", "agent-memory", "--fetchers", "github"]`. Its optional GitHub token comes from the plugin configuration dialog. The direct CLI uses `PRO_WORKFLOW_GITHUB_TOKEN` when explicitly supplied. Never retrieve tokens from existing machine credentials.
+
 ```
 node $SKILL_ROOT/scripts/research-loop.js run <slug> [--max-pages N] [--max-depth N] [--budget-usd 0.50] [--fetchers web,arxiv,github]
 node $SKILL_ROOT/scripts/research-loop.js seed <slug> "<query>" [--depth 0] [--parent-id N]
@@ -62,9 +64,9 @@ module.exports = {
 Built-in:
 - **`web.js`** — Fetches via the user's available `WebFetch` tool through a stdin/stdout shim. Treats result as plain text/markdown.
 - **`arxiv.js`** — `https://export.arxiv.org/api/query` (free, public, no key). Returns abstract + metadata.
-- **`github.js`** — `https://api.github.com/search/repositories` + README pull (uses `GH_TOKEN` if set, otherwise unauthenticated rate limit).
+- **`github.js`** — `https://api.github.com/search/repositories` + README pull (uses the explicitly configured GitHub token, otherwise unauthenticated rate limit).
 
-Drop a new file in `~/.pro-workflow/fetchers/<name>.js` to add a custom fetcher. Loaded at startup if present.
+Standalone CLI runs load custom fetchers from `~/.pro-workflow/fetchers/<name>.js`. The plugin MCP server uses only bundled fetchers so configured tokens are not handed to user-supplied modules.
 
 ## Budget enforcement
 

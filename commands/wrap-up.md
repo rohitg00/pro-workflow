@@ -1,3 +1,7 @@
+---
+description: Audit session changes and capture learnings and next steps
+---
+
 # /wrap-up - Session Wrap-Up
 
 End your Claude Code session with intention.
