@@ -40,6 +40,8 @@ Override per-run with `--provider openai|anthropic|openrouter|fireworks|custom`.
 
 Default model rosters per provider live in `scripts/council.js` and can be overridden via `--models` CSV and `--chairman <id>`.
 
+For a self-hosted gateway such as [Bifrost](https://github.com/maximhq/bifrost), use the custom provider: set `LLM_COUNCIL_BASE_URL` to the gateway's OpenAI-compatible endpoint (for example `https://bifrost.example.com/v1`), supply a Bifrost virtual key (`sk-bf-...`) as the custom key, and mix providers with `provider/model` ids: `--provider custom --models openai/gpt-4o,anthropic/claude-sonnet-4-6,gemini/gemini-2.5-pro --chairman anthropic/claude-sonnet-4-6`.
+
 ## Commands
 
 In a plugin session, pass these runner arguments through `run_provider_task`. The direct commands below are for standalone CLI installations with explicit credentials.
